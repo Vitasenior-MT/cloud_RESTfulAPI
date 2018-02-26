@@ -1,4 +1,4 @@
-var db = require('../../config/db');
+var db = require('../../models/db');
 
 exports.create = (attributes) => {
     return new Promise((resolve, reject) => {

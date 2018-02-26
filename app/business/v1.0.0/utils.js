@@ -1,7 +1,7 @@
 var crypto = require("crypto"),
     fs = require("fs"),
     jwt = require('jsonwebtoken'),
-    db = require('../../config/db');
+    db = require('../../models/db');
 
 exports.encrypt = function (to_encrypt) {
     return new Promise((resolve, reject) => {

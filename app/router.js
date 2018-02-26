@@ -2,7 +2,7 @@
 // =============================================================================
 module.exports = (app) => {
 
-    var controllers = require('../controllers/index'),
+    var controllers = require('./controllers/index'),
         versioning = require('express-routes-versioning')();
 
 

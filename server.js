@@ -9,10 +9,10 @@ var cluster = require('cluster');
 require('dotenv').config();
 
 if (cluster.isMaster) {
-    var db = require('./app/config/db');
+    var db = require('./app/models/db');
     db.sequelize.sync().then(
         () => {
-            require('./app/config/seed').seed(db).then(
+            require('./app/models/seed').seed(db).then(
                 () => {
                     console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with MongoDB and MySQL');
 
@@ -45,7 +45,7 @@ if (cluster.isMaster) {
     var express = require('express'),           // call express
         // https = require('https'),
         // fs = require("fs"),
-        router = require('./app/config/router'),
+        router = require('./app/router'),
         bodyParser = require('body-parser'),
         utils = require('./app/business/index').v1_0_0.utils;
 

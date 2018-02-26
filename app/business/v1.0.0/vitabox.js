@@ -1,4 +1,4 @@
-var db = require('../../config/db'),
+var db = require('../../models/db'),
     utils = require('./utils');
 
 exports.create = function () {
