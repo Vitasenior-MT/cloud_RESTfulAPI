@@ -55,5 +55,9 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+# .env
 
+# vagrant dependencies
+.vagrant/
+
+package-lock.json

@@ -1,0 +1,25 @@
+{
+  "name": "vitasenior_mt_api",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "version": "1.0.0",
+  "author": "Diogo Mendes",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "~1.0.1",
+    "cluster": "^0.7.7",
+    "crypto": "^1.0.1",
+    "dateformat": "^3.0.2",
+    "dotenv": "^5.0.0",
+    "express": "~4.0.0",
+    "express-routes-versioning": "^1.0.1",
+    "jsonwebtoken": "^8.1.1",
+    "mongoose": "^5.0.3",
+    "mysql2": "^1.5.1",
+    "os": "^0.1.1",
+    "request": "^2.83.0",
+    "sequelize": "^4.32.3"
+  }
+}
