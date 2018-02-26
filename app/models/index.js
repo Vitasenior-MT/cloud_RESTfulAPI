@@ -1,7 +1,15 @@
 var mongoose = require('mongoose'),
-    Sequelize = require('sequelize'),
-    mongo_uri = 'mongodb://localhost:27017/myproject',
+    Sequelize = require('sequelize');
+
+var mongo_uri = "", mysql_uri = "";
+
+if (process.env.NODE_ENV==="production") {
+    mongo_uri = 'mongodb://localhost:27017/myproject';
     mysql_uri = 'mysql://api:123qwe@localhost:3306/node';
+}else{
+    mongo_uri = 'mongodb://localhost:27017/test';
+    mysql_uri = 'mysql://api:123qwe@localhost:3306/test';
+}
 
 const operatorsAliases = {
     $eq: Sequelize.Op.eq,
@@ -54,7 +62,7 @@ const db = {
     'User': require('./mysql/user')(sequelize, Sequelize),
     'Vitabox': require('./mysql/vitabox')(sequelize, Sequelize),
 
-    'record': require('./mongodb/record')
+    'Record': require('./mongodb/record')
 }
 
 Object.keys(db).forEach(modelName => {
