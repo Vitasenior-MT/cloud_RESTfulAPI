@@ -9,7 +9,7 @@ var cluster = require('cluster');
 require('dotenv').config();
 
 if (cluster.isMaster) {
-    var db = require('./app/models/db');
+    var db = require('./app/models/index');
     db.sequelize.sync().then(
         () => {
             require('./app/models/seed').seed(db).then(

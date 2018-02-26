@@ -46,13 +46,13 @@ mongoose.connect(mongo_uri);
 var sequelize = new Sequelize(mysql_uri, { operatorsAliases: operatorsAliases, logging: false });
 
 const db = {
-    'Boardmodel': sequelize.import('./mysql/board_model'),
-    'Board': sequelize.import('./mysql/board'),
-    'Patient': sequelize.import('./mysql/patient'),
-    'Sensor': sequelize.import('./mysql/sensor'),
-    'UserVitabox': sequelize.import('./mysql/user_vitabox'),
-    'User': sequelize.import('./mysql/user'),
-    'Vitabox': sequelize.import('./mysql/vitabox'),
+    'Boardmodel': require('./mysql/board_model')(sequelize, Sequelize),
+    'Board': require('./mysql/board')(sequelize, Sequelize),
+    'Patient': require('./mysql/patient')(sequelize, Sequelize),
+    'Sensor': require('./mysql/sensor')(sequelize, Sequelize),
+    'UserVitabox': require('./mysql/user_vitabox')(sequelize, Sequelize),
+    'User': require('./mysql/user')(sequelize, Sequelize),
+    'Vitabox': require('./mysql/vitabox')(sequelize, Sequelize),
 
     'record': require('./mongodb/record')
 }

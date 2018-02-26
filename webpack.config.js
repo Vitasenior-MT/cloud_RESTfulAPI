@@ -13,10 +13,19 @@ fs.readdirSync('node_modules')
 
 module.exports = {
   entry: './server.js',
+  context: __dirname,
+  node: {
+    __dirname: true
+  },
   target: 'node',
   output: {
     path: path.join(__dirname, 'build'),
     filename: 'bundle.js'
   },
-  externals: nodeModules
+  externals: nodeModules,
+  plugins: [
+    new webpack.IgnorePlugin(/\.(css|less)$/),
+    new webpack.BannerPlugin({banner:'require("source-map-support").install();', raw: true, entryOnly: false })
+  ],
+  devtool: 'sourcemap'
 }

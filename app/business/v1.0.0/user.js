@@ -1,4 +1,4 @@
-var db = require('../../models/db'),
+var db = require('../../models/index'),
     utils = require('./utils');
 
 exports.register = function (email, password) {
