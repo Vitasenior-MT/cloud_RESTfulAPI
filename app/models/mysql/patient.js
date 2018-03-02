@@ -8,16 +8,16 @@ module.exports = (sequelize, DataTypes) => {
         },
         birthdate: {
             type: DataTypes.DATEONLY,
-            allowNull:{
-                args: false,
-                msg: "patient birth date must be defined"
-            }
+            allowNull:false
         },
         name: {
             type: DataTypes.STRING,
-            allowNull:{
-                args: false,
-                msg: "patient name must be defined"
+            allowNull: false,
+            defaultValue: '',
+            validate: {
+                notEmpty: {
+                    msg: "patient name must be defined"
+                }
             }
         },
         gender: {

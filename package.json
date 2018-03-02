@@ -3,7 +3,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node build/bundle.js",
-    "test": "mocha",
+    "test": "mocha --timeout 1000",
     "dev": "NODE_ENV=development node server.js",
     "build": "webpack -p"
   },

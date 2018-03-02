@@ -10,6 +10,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
             defaultValue: null
+        },
+        mac_address:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: '',
+            validate: {
+                notEmpty: {
+                    msg: "MAC address must be defined"
+                }
+            }
         }
     }, { underscored: true });
 

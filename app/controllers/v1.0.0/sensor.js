@@ -115,6 +115,7 @@ exports.list = (req, res) => {
  */
 exports.update = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
+        console.log(req.client.admin);
         business.sensor.update(req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
             error => res.status(500).json({ error: error.message })

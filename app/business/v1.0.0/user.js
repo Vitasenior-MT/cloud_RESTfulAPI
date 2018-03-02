@@ -35,18 +35,19 @@ exports.login = function (email, password) {
 
 exports.changePassword = function (user_id, old_password, new_password) {
     return new Promise((resolve, reject) => {
-
-        utils.encrypt([old_password, new_password]).then(
-            encrypted => {
-                db.User.findOne({ where: { id: user_id, password: encrypted[0] } }).then(
-                    user => {
-                        if (user) user.update({ password: encrypted[1] }).then(
-                            () => resolve(),
-                            error => reject(error));
-                        else reject(new Error("old password don't match"));
-                    },
-                    error => reject(error));
-            }, error => reject(error));
+        if (/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d$@$!%*#?&-.]{8,}$/.test(new_password)) {
+            utils.encrypt([old_password, new_password]).then(
+                encrypted => {
+                    db.User.findOne({ where: { id: user_id, password: encrypted[0] } }).then(
+                        user => {
+                            if (user) user.update({ password: encrypted[1] }).then(
+                                () => resolve(),
+                                error => reject(error));
+                            else reject(new Error("old password don't match"));
+                        },
+                        error => reject(error));
+                }, error => reject(error));
+        } else reject(new Error("invalid password, must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters"));
     });
 }
 

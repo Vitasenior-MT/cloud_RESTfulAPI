@@ -8,44 +8,61 @@ module.exports = (sequelize, DataTypes) => {
         },
         transducer: {
             type: DataTypes.STRING,
-            allowNull:{
-                args: false,
-                msg: "transducer name must be defined"
+            allowNull: false,
+            defaultValue: '',
+            validate: {
+                notEmpty: {
+                    msg: "transducer name must be defined"
+                }
             }
         },
-        measure:{
+        measure: {
             type: DataTypes.STRING,
-            allowNull: {
-                args: false,
-                msg: "transducer measure must be defined"
+            allowNull: false,
+            defaultValue: '',
+            validate: {
+                notEmpty: {
+                    msg: "transducer measure must be defined"
+                }
             }
         },
         min_acceptable: {
             type: DataTypes.DECIMAL(10, 5),
-            allowNull: {
-                args: false,
-                msg: "minimum acceptable value must be defined"
+            allowNull: false,
+            validate: {
+                isDecimal: {
+                    args: true,
+                    msg: "minimum acceptable value must be defined"
+                }
             }
         },
         max_acceptable: {
             type: DataTypes.DECIMAL(10, 5),
-            allowNull: {
-                args: false,
-                msg: "maximum acceptable value must be defined"
+            allowNull: false,
+            validate: {
+                isDecimal: {
+                    args: true,
+                    msg: "maximum acceptable value must be defined"
+                }
             }
         },
         min_possible: {
             type: DataTypes.DECIMAL(10, 5),
-            allowNull: {
-                args: false,
-                msg: "minimum possible value must be defined"
+            allowNull: false,
+            validate: {
+                isDecimal: {
+                    args: true,
+                    msg: "minimum possible value must be defined"
+                }
             }
         },
         max_possible: {
             type: DataTypes.DECIMAL(10, 5),
-            allowNull: {
-                args: false,
-                msg: "maximum possible value must be defined"
+            validate: {
+                isDecimal: {
+                    args: true,
+                    msg: "maximum possible value must be defined"
+                }
             }
         }
     }, { underscored: true });

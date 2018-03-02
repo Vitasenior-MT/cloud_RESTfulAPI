@@ -8,24 +8,26 @@ module.exports = (sequelize, DataTypes) => {
         },
         type: {
             type: DataTypes.ENUM,
-            values: ['environmental', 'wearable', 'non-wearable'],
-            allowNull: {
-                args: false,
-                msg: "board type must be defined"
-            },
+            values: ["environmental", "wearable", "non-wearable"],
             validate: {
                 isIn: {
-                    args: ['environmental', 'wearable', 'non-wearable'],
-                    msg: "board type must be 'environmental', 'wearable' or 'non-wearable'"
+                    args: [["environmental", "wearable", "non-wearable"]],
+                    msg: "board type must be environmental, wearable or non-wearable"
                 }
             }
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false,
             unique: {
                 args: true,
                 msg: 'board model already registered'
+            },
+            allowNull: false,
+            defaultValue: '',
+            validate: {
+                notEmpty: {
+                    msg: "board model must be defined"
+                }
             }
         }
     }, { underscored: true });

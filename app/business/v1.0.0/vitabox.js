@@ -18,13 +18,15 @@ exports.create = function () {
 
 exports.register = function (vitabox_id, attributes) {
     return new Promise((resolve, reject) => {
-        db.Vitabox.findOne({ where: { id: vitabox_id, registered: false } }).then(vitabox => {
-            if (vitabox) {
-                vitabox.update({ registered: true, address: attributes.address, longitude: attributes.longitude, latitude: attributes.latitude }).then(
-                    () => resolve(vitabox),
-                    error => reject(error));
-            } else reject(new Error("Vitabox already registered or doesn´t exist"));
-        }, error => reject(error));
+        if (attributes.address) {
+            db.Vitabox.findOne({ where: { id: vitabox_id, registered: false } }).then(vitabox => {
+                if (vitabox) {
+                    vitabox.update({ registered: true, address: attributes.address, longitude: attributes.longitude, latitude: attributes.latitude }).then(
+                        () => resolve(vitabox),
+                        error => reject(error));
+                } else reject(new Error("Vitabox already registered or doesn´t exist"));
+            }, error => reject(error));
+        } else reject(new Error("Vitabox address must be defined"));
     });
 }
 
@@ -32,13 +34,13 @@ exports.connect = function (vitabox_id, password) {
     return new Promise((resolve, reject) => {
         utils.encrypt([password]).then(
             encrypted => {
-                db.Vitabox.findOne({ where: { password: encrypted[0], id: vitabox_id } }).then(
+                db.Vitabox.findOne({ where: { password: encrypted[0], id: vitabox_id, registered: true } }).then(
                     vitabox => {
                         if (vitabox) {
                             vitabox.update({ active: true }).then(
                                 () => resolve(vitabox),
                                 error => reject(error));
-                        } else reject(new Error("vitabox id or password incorrect, verify if was already registered"));
+                        } else reject(new Error("vitabox not found, verify if was already created and registered"));
                     }, error => reject(error));
             }, error => reject(error));
     });
@@ -219,8 +221,7 @@ exports.removeUser = function (current_user, vitabox_id, user_id) {
                             vitabox.removeUser(user_id).then(
                                 () => resolve(),
                                 error => reject(error));
-                        }, error => reject(error)
-                    );
+                        }, error => reject(error));
                 } else reject(new Error("Vitabox not found"));
             }, error => reject(error)
         );
@@ -332,6 +333,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
             if (client.admin)
                 db.Board.findAll({
                     where: { vitabox_id: vitabox_id },
+                    attributes: ['id', 'location', 'mac_address', 'created_at'],
                     include: [{
                         model: db.Boardmodel,
                         attributes: ['id', 'type', 'name'],
@@ -339,8 +341,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
                             model: db.Sensor,
                             attributes: { exclude: ['created_at', 'updated_at'] }
                         }]
-                    }],
-                    attributes: ['id', 'location', 'created_at']
+                    }]
                 }).then(
                     boards => {
                         boards.forEach(board => board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor));
@@ -351,6 +352,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
                 () => {
                     db.Board.findAll({
                         where: { vitabox_id: vitabox_id },
+                        attributes: ['id', 'location', 'mac_address', 'created_at'],
                         include: [{
                             model: db.Boardmodel,
                             attributes: ['id', 'type', 'name'],
@@ -358,8 +360,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
                                 model: db.Sensor,
                                 attributes: { exclude: ['created_at', 'updated_at'] }
                             }]
-                        }],
-                        attributes: ['id', 'location', 'created_at']
+                        }]
                     }).then(
                         boards => {
                             boards.forEach(board => board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor));
@@ -369,7 +370,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
                 }, error => reject(error));
         } else {
             client.getBoards({
-                attributes: ['id', 'location', 'created_at'],
+                attributes: ['id', 'location','mac_address',  'created_at'],
                 include: [{
                     model: db.Boardmodel,
                     attributes: ['id', 'type', 'name'],
@@ -415,9 +416,9 @@ exports.removeBoard = function (current_user, vitabox_id, board_id) {
 // ________________________________________________________________________
 _isSponsor = (vitabox, user) => {
     return new Promise((resolve, reject) => {
-        vitabox.getUsers({ through: { sponsor: true }, where: { id: user.id } }).then(
+        vitabox.getUsers({ where: { id: user.id } }).then(
             users => {
-                if (users.length > 0) resolve();
+                if (users.length > 0 && users[0].UserVitabox.sponsor) resolve();
                 else reject(new Error("Unauthorized"));
             }, error => reject(error)
         );

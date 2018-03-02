@@ -48,3 +48,17 @@ module.exports.seed = (db) => {
     });
 
 }
+
+module.exports.testSeed = (db) => {
+    return new Promise((resolve, reject) => {
+
+        utils.encrypt(["admin@a.aa", "123qweASD"])
+            .then(
+                encrypted => {
+
+                    db.User.create({ "email": encrypted[0], "admin": true, "password": encrypted[1] }).then(
+                        () => resolve(),
+                        error => reject(error));
+                }, error => reject(error));
+    });
+}

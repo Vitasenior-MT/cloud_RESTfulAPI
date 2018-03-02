@@ -15,7 +15,8 @@ module.exports = (app) => {
         *_____________________USERS_______________________
         *_________________________________________________*/
         .post('/register', versioning({
-            "1.0.0": controllers.v1_0_0.user.register
+            "1.0.0": controllers.v1_0_0.user.register,
+            "2.0.0": (req, res) => res.json({ error: 'invalid version' })
         }))
         .post('/login', versioning({
             "1.0.0": controllers.v1_0_0.user.login,
@@ -34,6 +35,9 @@ module.exports = (app) => {
         }))
         .get('/vitabox/:id', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.find
+        }))
+        .get('/vitabox/:id/settings', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.settings
         }))
         .put('/vitabox/:id', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.update
@@ -127,6 +131,9 @@ module.exports = (app) => {
         *_________________________________________________*/
         .get('/destroy', versioning({
             "1.0.0": controllers.v1_0_0.manage.destroyAll
+        }))
+        .get('/testdb', versioning({
+            "1.0.0": controllers.v1_0_0.manage.testDb
         }))
 
 

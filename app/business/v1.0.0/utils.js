@@ -96,3 +96,11 @@ exports.deleteAll = function () {
         }, error => reject(error));
     });
 }
+
+exports.testSeed = function () {
+    return new Promise((resolve, reject) => {
+        require('../../models/seed').testSeed(db).then(
+            () => resolve(),
+            error => reject(error));
+    });
+}

@@ -18,12 +18,12 @@ var business = require('../../business/index').v1_0_0;
  * 
  * @apiPermission admin
  * @apiSuccess {string} id created box id
- * @apiSuccess {string} serial_key created box serial key
+ * @apiSuccess {string} password created box serial key
  */
 exports.create = function (req, res) {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.vitabox.create().then(
-            data => res.status(201).json(data),
+            data => res.status(200).json(data),
             error => res.status(500).json({ error: error.message })
         );
     } else {
@@ -61,7 +61,7 @@ exports.register = function (req, res) {
                 business.vitabox.register(req.params.id, req.body).then(
                     vitabox => {
                         business.vitabox.addUser(req.client, vitabox.id, user.id, true).then(
-                            () => res.status(201).json({ result: true }),
+                            () => res.status(200).json({ result: true }),
                             error => res.status(500).json({ error: error.message }));
                     },
                     error => res.status(500).json({ error: error.message }));
@@ -88,7 +88,7 @@ exports.connect = function (req, res) {
     business.vitabox.connect(req.params.id, req.body.password).then(
         data => {
             business.utils.createToken(data, req.connection.remoteAddress).then(
-                token => res.status(201).json({ token: token }),
+                token => res.status(200).json({ token: token }),
                 error => res.status(500).json({ error: error.message }));
         },
         error => res.status(500).json({ error: error.message })
@@ -189,12 +189,12 @@ exports.list = function (req, res) {
  * @apiVersion 1.0.0
  * @apiUse box
  * 
- * @apiPermission vitabox user
+ * @apiPermission user
  * @apiParam {string} :id vitabox unique ID
- * @apiSuccess {string} id id of each vitabox
- * @apiSuccess {decimal} latitude latitude of each vitabox, min: -90, max: 90 (based on google maps coordinates)
- * @apiSuccess {decimal} longitude longitude of each vitabox, min: -180, max: 180 (based on google maps coordinates)
- * @apiSuccess {string} address full address of each vitabox
+ * @apiSuccess {string} id vitabox unique ID
+ * @apiSuccess {decimal} latitude vitabox latitude, min: -90, max: 90 (based on google maps coordinates)
+ * @apiSuccess {decimal} longitude vitabox longitude, min: -180, max: 180 (based on google maps coordinates)
+ * @apiSuccess {string} address vitabox full address 
  * @apiSuccess {boolean} sponsor flag indicating if the requester is sponsor of that vitabox (only if NOT admin)
  * @apiSuccess {json} settings configuration's structure, defined by vitabox (only if admin)
  * @apiSuccess {boolean} registered flag indicating if the vitabox was already registered (only if admin)
@@ -240,7 +240,35 @@ exports.find = function (req, res) {
 }
 
 /**
- * @api {put} /vitabox/:id 06) Update
+ * @api {get} /vitabox/:id/settings 06) Settings
+ * @apiGroup Vitabox
+ * @apiName settings
+ * @apiDescription returns the vitabox settings
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox
+ * @apiParam {string} :id vitabox unique ID
+ * @apiSuccess {json} settings configuration's structure, defined by vitabox (only if admin)
+ * @apiSuccessExample {json} Response example:
+ * {
+ *      "settings":{
+ *          "cnfg1": "true",
+ *          "cnfg2": "12345",
+ *          "cnfg3": "some other config"
+ *      },
+ * }
+ */
+exports.settings = function (req, res) {
+    if (req.client.constructor.name === "Vitabox" && req.client.id === req.params.id) {
+        res.status(200).json({ settings: req.client.settings })
+    } else {
+        res.status(500).json({ error: "Unauthorized" });
+    }
+}
+
+/**
+ * @api {put} /vitabox/:id 07) Update
  * @apiGroup Vitabox
  * @apiName update
  * @apiDescription update a specific vitabox if the requester is sponsor of it.
@@ -284,7 +312,7 @@ exports.update = function (req, res) {
 }
 
 /**
- * @api {delete} /vitabox/:id 07) Delete
+ * @api {delete} /vitabox/:id 08) Delete
  * @apiGroup Vitabox
  * @apiName delete
  * @apiDescription list all users related with the vitabox if the requester is related too.
@@ -307,7 +335,7 @@ exports.delete = function (req, res) {
 }
 
 /**
- * @api {post} /vitabox/:id/user 08) Add User
+ * @api {post} /vitabox/:id/user 09) Add User
  * @apiGroup Vitabox
  * @apiName addUser
  * @apiDescription add user to a specific vitabox if the requester is sponsor of it.
@@ -316,26 +344,28 @@ exports.delete = function (req, res) {
  * 
  * @apiPermission vitabox sponsor
  * @apiParam {string} :id vitabox unique ID
- * @apiParam {string} user_id user unique ID
+ * @apiParam {string} email email of the user to add
  * @apiParamExample {json} Request example:
  *     {
- *          "user_id": "9f846ccb-e5a0-4bd4-94ac-621847dfa780"
+ *          "email": "user-example@some.thing"
  *     }
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
 exports.addUser = function (req, res) {
     if (req.client.constructor.name === "User") {
-        business.vitabox.addUser(req.client, req.params.id, req.body.user_id).then(
-            () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
-        );
+        let flag = req.body.sponsor ? true : false;
+        business.user.findByEmail(req.body.email).then(
+            user => business.vitabox.addUser(req.client, req.params.id, user.id, flag).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(500).json({ error: error.message })),
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }
 }
 
 /**
- * @api {get} /vitabox/:id/user 09) Get Users
+ * @api {get} /vitabox/:id/user 10) Get Users
  * @apiGroup Vitabox
  * @apiName getUsers
  * @apiDescription get users of specific vitabox if the requester is related to it.
@@ -375,7 +405,7 @@ exports.getUsers = function (req, res) {
 }
 
 /**
- * @api {delete} /vitabox/:id/user 10) Remove User
+ * @api {delete} /vitabox/:id/user 11) Remove User
  * @apiGroup Vitabox
  * @apiName removeUser
  * @apiDescription remove user from a specific vitabox if the requester is sponsor of it.
@@ -403,7 +433,7 @@ exports.removeUser = function (req, res) {
 }
 
 /**
- * @api {post} /vitabox/:id/patient 11) Add Patient
+ * @api {post} /vitabox/:id/patient 12) Add Patient
  * @apiGroup Vitabox
  * @apiName addPatient
  * @apiDescription add patient to a specific vitabox if the requester is sponsor of it.
@@ -437,7 +467,7 @@ exports.addPatient = function (req, res) {
 }
 
 /**
- * @api {get} /vitabox/:id/patients 12) Get Patients
+ * @api {get} /vitabox/:id/patients 13) Get Patients
  * @apiGroup Vitabox
  * @apiName getPatients
  * @apiDescription get patients of specific vitabox if the requester is related to it.
@@ -473,7 +503,7 @@ exports.getPatients = function (req, res) {
 }
 
 /**
- * @api {delete} /vitabox/:id/patient 13) Remove Patient
+ * @api {delete} /vitabox/:id/patient 14) Remove Patient
  * @apiGroup Vitabox
  * @apiName removePatient
  * @apiDescription remove patient from a specific vitabox if the requester is sponsor of it.
@@ -502,7 +532,7 @@ exports.removePatient = function (req, res) {
 }
 
 /**
- * @api {post} /vitabox/:id/board 14) Add Board
+ * @api {post} /vitabox/:id/board 15) Add Board
  * @apiGroup Vitabox
  * @apiName addBoard
  * @apiDescription add board to a specific vitabox if the requester is sponsor of it.
@@ -513,10 +543,12 @@ exports.removePatient = function (req, res) {
  * @apiParam {string} :id vitabox unique ID
  * @apiParam {string} location place where the board is located, if wearable is null
  * @apiParam {string} model model id of the board
+ * @apiParam {string} mac_address board MAC address
  * @apiParamExample {json} Request example:
  *     {
  *          "location": "kitchen",
- *          "model":"5d93585b-f511-4fa8-b69e-692c2474d5e8"
+ *          "model":"5d93585b-f511-4fa8-b69e-692c2474d5e8",
+ *          "mac_address": "00:19:B9:FB:E2:58"
  *     }
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
@@ -534,7 +566,7 @@ exports.addBoard = function (req, res) {
 }
 
 /**
- * @api {get} /vitabox/:id/board 15) Get Boards
+ * @api {get} /vitabox/:id/board 16) Get Boards
  * @apiGroup Vitabox
  * @apiName getBoards
  * @apiDescription get boards of specific vitabox if the requester is related to it.
@@ -546,6 +578,8 @@ exports.addBoard = function (req, res) {
  * @apiSuccess {array} boards vitabox boards list
  * @apiSuccess {string} id id of each board
  * @apiSuccess {string} location place where the board is located (house division)
+ * @apiSuccess {string} mac_address board MAC address
+ * @apiSuccess {datetime} created_at register day to the vitabox
  * @apiSuccess {json} BoardModel model of each board, contains an id, type and name
  * @apiSuccessExample {json} Response example:
  * {
@@ -553,6 +587,7 @@ exports.addBoard = function (req, res) {
  *      {
  *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
  *          "location": "kitchen",
+ *          "mac_address": "00:19:B9:FB:E2:58",
  *          "created_at": "2018-02-22T15:25:50.000Z",
  *          "BoardModel": {
  *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
@@ -571,7 +606,7 @@ exports.getBoards = function (req, res) {
 }
 
 /**
- * @api {delete} /vitabox/:id/patient 16) Remove Board
+ * @api {delete} /vitabox/:id/patient 17) Remove Board
  * @apiGroup Vitabox
  * @apiName removeBoard
  * @apiDescription remove board from a specific vitabox if the requester is sponsor of it.

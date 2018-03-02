@@ -2,7 +2,7 @@ var db = require('../../models/index');
 
 exports.create = (attributes) => {
     return new Promise((resolve, reject) => {
-        db.Board.create({ location: attributes.location, boardmodel_id: attributes.model }).then(
+        db.Board.create({ location: attributes.location, mac_address: attributes.mac_address, boardmodel_id: attributes.model }).then(
             board => resolve(board),
             error => reject(error));
     });

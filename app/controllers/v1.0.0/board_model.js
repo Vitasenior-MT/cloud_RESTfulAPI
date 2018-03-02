@@ -123,7 +123,7 @@ exports.delete = (req, res) => {
 }
 
 /**
- * @api {get} /boardmodel/:id/sensor 05) Add Sensors
+ * @api {post} /boardmodel/:id/sensor 05) Add Sensors
  * @apiGroup Board
  * @apiName setSensors
  * @apiDescription add sensors to a board model

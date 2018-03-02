@@ -495,7 +495,7 @@
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n \"sensors\": [\n     {\n          \"transducer\": \"dht22\",\n          \"measure\":\"temperature\",\n          \"min_acceptable\": \"10\",\n          \"max_acceptable\": \"25\",\n          \"min_possible\": \"-20\",\n          \"max_possible\": \"50\"\n     }\n ]\n}",
+          "content": "{\n \"sensors\": [\n     {\n          \"id\": \"e783b552-567f-499b-b480-9d373fe62a17\"\n          \"transducer\": \"dht22\",\n          \"measure\":\"temperature\",\n          \"min_acceptable\": \"10\",\n          \"max_acceptable\": \"25\",\n          \"min_possible\": \"-20\",\n          \"max_possible\": \"50\"\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -737,7 +737,7 @@
     }
   },
   {
-    "type": "get",
+    "type": "post",
     "url": "/boardmodel/:id/sensor",
     "title": "05) Add Sensors",
     "group": "Board",
@@ -1204,7 +1204,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"sensors\": [\n     {\n         \"transducer\": \"dht22\",\n         \"measure\":\"temperature\",\n         \"min_acceptable\": \"10\",\n         \"max_acceptable\": \"25\",\n         \"min_possible\": \"-20\",\n         \"max_possible\": \"50\"\n     },\n     {\n         \"transducer\": \"mq-7\",\n         \"measure\":\"carbon_monoxide\",\n         \"min_acceptable\": \"2\",\n         \"max_acceptable\": \"10\",\n         \"min_possible\": \"10\",\n         \"max_possible\": \"500\"\n     },\n ]\n}",
+          "content": "{\n \"sensors\": [\n     {\n         \"transducer\": \"dht22\",\n         \"measure\":\"temperature\",\n         \"min_acceptable\": \"10\",\n         \"max_acceptable\": \"25\",\n         \"min_possible\": \"-20\",\n         \"max_possible\": \"50\"\n     },\n     {\n         \"transducer\": \"mq-7\",\n         \"measure\":\"carbon_monoxide\",\n         \"min_acceptable\": \"2\",\n         \"max_acceptable\": \"10\",\n         \"min_possible\": \"10\",\n         \"max_possible\": \"500\"\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -1386,7 +1386,7 @@
   {
     "type": "post",
     "url": "/vitabox/:id/board",
-    "title": "14) Add Board",
+    "title": "15) Add Board",
     "group": "Vitabox",
     "name": "addBoard",
     "description": "<p>add board to a specific vitabox if the requester is sponsor of it.</p>",
@@ -1419,13 +1419,20 @@
             "optional": false,
             "field": "model",
             "description": "<p>model id of the board</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "mac_address",
+            "description": "<p>board MAC address</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"location\": \"kitchen\",\n     \"model\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\"\n}",
+          "content": "{\n     \"location\": \"kitchen\",\n     \"model\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\",\n     \"mac_address\": \"00:19:B9:FB:E2:58\"\n}",
           "type": "json"
         }
       ]
@@ -1489,7 +1496,7 @@
   {
     "type": "post",
     "url": "/vitabox/:id/patient",
-    "title": "11) Add Patient",
+    "title": "12) Add Patient",
     "group": "Vitabox",
     "name": "addPatient",
     "description": "<p>add patient to a specific vitabox if the requester is sponsor of it.</p>",
@@ -1599,7 +1606,7 @@
   {
     "type": "post",
     "url": "/vitabox/:id/user",
-    "title": "08) Add User",
+    "title": "09) Add User",
     "group": "Vitabox",
     "name": "addUser",
     "description": "<p>add user to a specific vitabox if the requester is sponsor of it.</p>",
@@ -1623,15 +1630,15 @@
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "user_id",
-            "description": "<p>user unique ID</p>"
+            "field": "email",
+            "description": "<p>email of the user to add</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"user_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\"\n}",
+          "content": "{\n     \"email\": \"user-example@some.thing\"\n}",
           "type": "json"
         }
       ]
@@ -1719,7 +1726,7 @@
             "group": "Success 200",
             "type": "string",
             "optional": false,
-            "field": "serial_key",
+            "field": "password",
             "description": "<p>created box serial key</p>"
           }
         ]
@@ -1771,7 +1778,7 @@
   {
     "type": "delete",
     "url": "/vitabox/:id",
-    "title": "07) Delete",
+    "title": "08) Delete",
     "group": "Vitabox",
     "name": "delete",
     "description": "<p>list all users related with the vitabox if the requester is related too.</p>",
@@ -1860,7 +1867,7 @@
     "version": "1.0.0",
     "permission": [
       {
-        "name": "vitabox user"
+        "name": "user"
       }
     ],
     "parameter": {
@@ -1884,28 +1891,28 @@
             "type": "string",
             "optional": false,
             "field": "id",
-            "description": "<p>id of each vitabox</p>"
+            "description": "<p>vitabox unique ID</p>"
           },
           {
             "group": "Success 200",
             "type": "decimal",
             "optional": false,
             "field": "latitude",
-            "description": "<p>latitude of each vitabox, min: -90, max: 90 (based on google maps coordinates)</p>"
+            "description": "<p>vitabox latitude, min: -90, max: 90 (based on google maps coordinates)</p>"
           },
           {
             "group": "Success 200",
             "type": "decimal",
             "optional": false,
             "field": "longitude",
-            "description": "<p>longitude of each vitabox, min: -180, max: 180 (based on google maps coordinates)</p>"
+            "description": "<p>vitabox longitude, min: -180, max: 180 (based on google maps coordinates)</p>"
           },
           {
             "group": "Success 200",
             "type": "string",
             "optional": false,
             "field": "address",
-            "description": "<p>full address of each vitabox</p>"
+            "description": "<p>vitabox full address</p>"
           },
           {
             "group": "Success 200",
@@ -2010,7 +2017,7 @@
   {
     "type": "get",
     "url": "/vitabox/:id/board",
-    "title": "15) Get Boards",
+    "title": "16) Get Boards",
     "group": "Vitabox",
     "name": "getBoards",
     "description": "<p>get boards of specific vitabox if the requester is related to it.</p>",
@@ -2059,6 +2066,20 @@
           },
           {
             "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "mac_address",
+            "description": "<p>board MAC address</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "datetime",
+            "optional": false,
+            "field": "created_at",
+            "description": "<p>register day to the vitabox</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "json",
             "optional": false,
             "field": "BoardModel",
@@ -2069,7 +2090,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"created_at\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_address\": \"00:19:B9:FB:E2:58\",\n         \"created_at\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -2120,7 +2141,7 @@
   {
     "type": "get",
     "url": "/vitabox/:id/patients",
-    "title": "12) Get Patients",
+    "title": "13) Get Patients",
     "group": "Vitabox",
     "name": "getPatients",
     "description": "<p>get patients of specific vitabox if the requester is related to it.</p>",
@@ -2244,7 +2265,7 @@
   {
     "type": "get",
     "url": "/vitabox/:id/user",
-    "title": "09) Get Users",
+    "title": "10) Get Users",
     "group": "Vitabox",
     "name": "getUsers",
     "description": "<p>get users of specific vitabox if the requester is related to it.</p>",
@@ -2512,7 +2533,7 @@
   {
     "type": "delete",
     "url": "/vitabox/:id/patient",
-    "title": "16) Remove Board",
+    "title": "17) Remove Board",
     "group": "Vitabox",
     "name": "removeBoard",
     "description": "<p>remove board from a specific vitabox if the requester is sponsor of it.</p>",
@@ -2608,7 +2629,7 @@
   {
     "type": "delete",
     "url": "/vitabox/:id/patient",
-    "title": "13) Remove Patient",
+    "title": "14) Remove Patient",
     "group": "Vitabox",
     "name": "removePatient",
     "description": "<p>remove patient from a specific vitabox if the requester is sponsor of it.</p>",
@@ -2704,7 +2725,7 @@
   {
     "type": "delete",
     "url": "/vitabox/:id/user",
-    "title": "10) Remove User",
+    "title": "11) Remove User",
     "group": "Vitabox",
     "name": "removeUser",
     "description": "<p>remove user from a specific vitabox if the requester is sponsor of it.</p>",
@@ -2798,9 +2819,98 @@
     }
   },
   {
+    "type": "get",
+    "url": "/vitabox/:id/settings",
+    "title": "06) Settings",
+    "group": "Vitabox",
+    "name": "settings",
+    "description": "<p>returns the vitabox settings</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>vitabox unique ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "json",
+            "optional": false,
+            "field": "settings",
+            "description": "<p>configuration's structure, defined by vitabox (only if admin)</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n     \"settings\":{\n         \"cnfg1\": \"true\",\n         \"cnfg2\": \"12345\",\n         \"cnfg3\": \"some other config\"\n     },\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "put",
     "url": "/vitabox/:id",
-    "title": "06) Update",
+    "title": "07) Update",
     "group": "Vitabox",
     "name": "update",
     "description": "<p>update a specific vitabox if the requester is sponsor of it.</p>",

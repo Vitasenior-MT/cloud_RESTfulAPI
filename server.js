@@ -62,7 +62,7 @@ if (cluster.isMaster) {
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
         res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
         res.header('Access-Control-Allow-Credentials', true);
-        //console.log(dateFormat(new Date(), "dd/mm/yyyy hh:MM:ss"), "\x1b[34m" + req.method, req.url + "\x1b[0m"+ " pid: "+process.pid);
+        console.log("\x1b[36m" + req.method, req.url + "\x1b[0m");
         if (req.headers && req.headers.authorization) {
             utils.validateToken(req.headers.authorization, req.connection.remoteAddress).then(
                 client => {

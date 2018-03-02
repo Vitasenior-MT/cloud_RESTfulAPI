@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         min: {
           args: -90,
           msg: "latitude minimum acceptable value is -90"
-        }, 
+        },
         max: {
           args: 90,
           msg: "latitude maximum acceptable value is 90"
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         min: {
           args: -180,
           msg: "longitude minimum acceptable value is -180"
-        }, 
+        },
         max: {
           args: 180,
           msg: "longitude maximum acceptable value is 180"
@@ -45,7 +45,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: null,
     },
-    address: { type: DataTypes.STRING },
+    address: {
+      type: DataTypes.STRING,
+      defaultValue: null
+    },
     registered: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
