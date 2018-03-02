@@ -62,7 +62,7 @@ if (cluster.isMaster) {
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
         res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
         res.header('Access-Control-Allow-Credentials', true);
-        console.log("\x1b[36m" + req.method, req.url + "\x1b[0m");
+        if (process.env.NODE_ENV === "development") console.log("\x1b[36m" + req.method, req.url + "\x1b[0m");
         if (req.headers && req.headers.authorization) {
             utils.validateToken(req.headers.authorization, req.connection.remoteAddress).then(
                 client => {
@@ -80,7 +80,9 @@ if (cluster.isMaster) {
     });
 
     // Present SPA
-    app.use(express.static(__dirname + '/public'));
+    app.use('/', express.static(__dirname + '/public'));
+    // Present Documentation
+    app.use('/docs', express.static(__dirname + '/docs'));
     // REGISTER ROUTES -------------------------------
     router(app);
 

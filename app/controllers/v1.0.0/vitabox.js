@@ -592,7 +592,18 @@ exports.addBoard = function (req, res) {
  *          "BoardModel": {
  *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
  *              "type": "environmental",
- *              "name": "Zolertia RE-Mote"
+ *              "name": "Zolertia RE-Mote",
+ *              "Sensors": [
+ *                  {
+ *                      "id": "2a2f5839-6b68-41a6-ada7-f9cd4c66cf38",
+ *                      "transducer": "dht22",
+ *                      "measure": "temperature",
+ *                      "min_acceptable": "10.00000",
+ *                      "max_acceptable": "25.00000",
+ *                      "min_possible": "-20.00000",
+ *                      "max_possible": "50.00000"
+ *                  }
+ *              ]
  *          }
  *      }
  *  ]

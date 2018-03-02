@@ -7,10 +7,6 @@ module.exports = (app) => {
 
 
     app
-        .get('/', versioning({
-            "1.0.0": (req, res) => res.json({ message: 'Welcome to our api!' }),
-            "2.0.0": (req, res) => res.json({ error: 'invalid version' })
-        }))
         /*________________________________________________check
         *_____________________USERS_______________________
         *_________________________________________________*/
@@ -123,8 +119,14 @@ module.exports = (app) => {
         .post('/record', versioning({
             "1.0.0": controllers.v1_0_0.record.create
         }))
-        .get('/record', versioning({
-            "1.0.0": controllers.v1_0_0.record.list
+        .get('/record/patient/:id', versioning({
+            "1.0.0": controllers.v1_0_0.record.listByPatient
+        }))
+        .get('/record/board/:id', versioning({
+            "1.0.0": controllers.v1_0_0.record.listByBoard
+        }))
+        .get('/record/sensor/:id', versioning({
+            "1.0.0": controllers.v1_0_0.record.listBySensor
         }))
         /*________________________________________________
         *_____________________TRASH_______________________

@@ -7,7 +7,6 @@
     "dev": "NODE_ENV=development node server.js",
     "build": "webpack -p"
   },
-  "version": "1.0.0",
   "author": "Diogo Mendes",
   "license": "ISC",
   "dependencies": {
@@ -30,5 +29,16 @@
     "request": "^2.83.0",
     "webpack": "^4.0.0",
     "webpack-cli": "^2.0.9"
+  },
+  "apidoc": {
+    "name": "Vitasenior API Documentation",
+    "version": "1.0.0",
+    "order": [
+      "Authentication",
+      "Sensor",
+      "Board",
+      "Vitabox",
+      "Record"
+    ]
   }
 }
