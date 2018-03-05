@@ -40,13 +40,17 @@ exports.remove = (board_model_id) => {
     });
 }
 
-exports.setSensors = (board_model_id, sensors) => {
+exports.setSensor = (board_model_id, sensor_id) => {
     return new Promise((resolve, reject) => {
         db.Boardmodel.findById(board_model_id).then(
             model => {
-                if (model) model.addSensors(sensors).then(
-                    () => resolve(),
-                    error => reject(error));
+                if (model) model.hasSensor(sensor_id).then(
+                    success => {
+                        if (!success) model.addSensor(sensor_id).then(
+                            () => resolve(),
+                            error => reject(error));
+                        else reject(new Error("sensor is already associated"));
+                    }, error => reject(error));
                 else reject(new Error("board model not found"));
             }, error => reject(error));
     });

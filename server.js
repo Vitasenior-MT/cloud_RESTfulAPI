@@ -45,6 +45,7 @@ if (cluster.isMaster) {
     var express = require('express'),           // call express
         // https = require('https'),
         // fs = require("fs"),
+        path=require('path'),
         router = require('./app/router'),
         bodyParser = require('body-parser'),
         utils = require('./app/business/index').v1_0_0.utils;
@@ -80,9 +81,9 @@ if (cluster.isMaster) {
     });
 
     // Present SPA
-    app.use('/', express.static(__dirname + '/public'));
+    app.use('/', express.static(path.resolve(__dirname, 'public')));
     // Present Documentation
-    app.use('/docs', express.static(__dirname + '/docs'));
+    app.use('/docs', express.static(path.resolve(__dirname, 'docs')));
     // REGISTER ROUTES -------------------------------
     router(app);
 

@@ -3,15 +3,17 @@ var db = require('../../models/index'),
 
 exports.create = (attributes) => {
     return new Promise((resolve, reject) => {
-        utils.encrypt([attributes.name]).then(
-            encrypted_name => db.Patient.create({
-                name: encrypted_name[0],
-                birthdate: attributes.birthdate,
-                gender: attributes.gender
-            }).then(
-                patient => resolve(patient),
-                error => reject(error)
-            ), error => reject(error)
-        );
+        if (/[A-Z][a-zA-Z\'][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,20}$/.test(attributes.name)) {
+            utils.encrypt([attributes.name]).then(
+                encrypted_name => db.Patient.create({
+                    name: encrypted_name[0],
+                    birthdate: attributes.birthdate,
+                    gender: attributes.gender
+                }).then(
+                    patient => resolve(patient),
+                    error => reject(error)
+                ), error => reject(error)
+            );
+        } else reject(new Error("invalid name"));
     });
 }

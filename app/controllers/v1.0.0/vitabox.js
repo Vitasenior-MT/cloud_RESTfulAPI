@@ -467,7 +467,7 @@ exports.addPatient = function (req, res) {
 }
 
 /**
- * @api {get} /vitabox/:id/patients 13) Get Patients
+ * @api {get} /vitabox/:id/patient 13) Get Patients
  * @apiGroup Vitabox
  * @apiName getPatients
  * @apiDescription get patients of specific vitabox if the requester is related to it.

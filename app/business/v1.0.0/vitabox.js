@@ -189,14 +189,13 @@ exports.getUsers = function (is_user, client, vitabox_id) {
                             }, error => reject(error)
                         );
                     } else reject(new Error("Vitabox not found"));
-                }, error => reject(error)
-            );
+                }, error => reject(error));
         } else {
             client.getUsers({ attributes: ['id', 'email'] }).then(
                 users => {
                     users.forEach(user => {
                         user.email = utils.decrypt(user.email);
-                        user.dataValues.since = user.dataValues.UserVitabox.dataValues.createdAt;
+                        user.dataValues.since = user.dataValues.UserVitabox.dataValues.created_at;
                         user.dataValues.sponsor = user.dataValues.UserVitabox.dataValues.sponsor;
                         delete user.dataValues.UserVitabox;
                     });
@@ -260,17 +259,22 @@ exports.getPatients = function (is_user, client, vitabox_id) {
                         resolve(patients);
                     },
                     error => reject(error));
-            else _isUser(vitabox, client).then(
-                () => {
-                    db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
-                        patients => {
-                            patients.forEach(patient => patient.name = utils.decrypt(patient.name));
-                            resolve(patients);
-                        },
-                        error => reject(error));
+            else db.Vitabox.findById(vitabox_id).then(
+                vitabox => {
+                    if (vitabox) {
+                        _isUser(vitabox, client).then(
+                            () => {
+                                db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
+                                    patients => {
+                                        patients.forEach(patient => patient.name = utils.decrypt(patient.name));
+                                        resolve(patients);
+                                    },
+                                    error => reject(error));
+                            }, error => reject(error));
+                    } else reject(new Error("Vitabox not found"));
                 }, error => reject(error));
         } else {
-            client.getPatients({ attributes: ['id', 'birthdate', 'name', 'gender', ['createdAt', 'since']] }).then(
+            client.getPatients({ attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
                 patients => {
                     patients.forEach(patient => {
                         patient.name = utils.decrypt(patient.name);
@@ -348,29 +352,34 @@ exports.getBoards = function (is_user, client, vitabox_id) {
                         resolve(boards);
                     },
                     error => reject(error));
-            else _isUser(vitabox, client).then(
-                () => {
-                    db.Board.findAll({
-                        where: { vitabox_id: vitabox_id },
-                        attributes: ['id', 'location', 'mac_address', 'created_at'],
-                        include: [{
-                            model: db.Boardmodel,
-                            attributes: ['id', 'type', 'name'],
-                            include: [{
-                                model: db.Sensor,
-                                attributes: { exclude: ['created_at', 'updated_at'] }
-                            }]
-                        }]
-                    }).then(
-                        boards => {
-                            boards.forEach(board => board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor));
-                            resolve(boards);
-                        },
-                        error => reject(error));
+            else db.Vitabox.findById(vitabox_id).then(
+                vitabox => {
+                    if (vitabox) {
+                        _isUser(vitabox, client).then(
+                            () => {
+                                db.Board.findAll({
+                                    where: { vitabox_id: vitabox_id },
+                                    attributes: ['id', 'location', 'mac_address', 'created_at'],
+                                    include: [{
+                                        model: db.Boardmodel,
+                                        attributes: ['id', 'type', 'name'],
+                                        include: [{
+                                            model: db.Sensor,
+                                            attributes: { exclude: ['created_at', 'updated_at'] }
+                                        }]
+                                    }]
+                                }).then(
+                                    boards => {
+                                        boards.forEach(board => board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor));
+                                        resolve(boards);
+                                    },
+                                    error => reject(error));
+                            }, error => reject(error));
+                    } else reject(new Error("Vitabox not found"));
                 }, error => reject(error));
         } else {
             client.getBoards({
-                attributes: ['id', 'location','mac_address',  'created_at'],
+                attributes: ['id', 'location', 'mac_address', 'created_at'],
                 include: [{
                     model: db.Boardmodel,
                     attributes: ['id', 'type', 'name'],
@@ -406,8 +415,7 @@ exports.removeBoard = function (current_user, vitabox_id, board_id) {
                         }, error => reject(error)
                     );
                 } else reject(new Error("Vitabox not found"));
-            }, error => reject(error)
-        );
+            }, error => reject(error));
     });
 }
 
@@ -420,8 +428,7 @@ _isSponsor = (vitabox, user) => {
             users => {
                 if (users.length > 0 && users[0].UserVitabox.sponsor) resolve();
                 else reject(new Error("Unauthorized"));
-            }, error => reject(error)
-        );
+            }, error => reject(error));
     });
 }
 
@@ -431,7 +438,6 @@ _isUser = (vitabox, user) => {
             success => {
                 if (success) resolve();
                 else reject(new Error("Unauthorized"));
-            }, error => reject(error)
-        );
+            }, error => reject(error));
     });
 }

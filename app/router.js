@@ -90,7 +90,7 @@ module.exports = (app) => {
             "1.0.0": controllers.v1_0_0.board_model.delete
         }))
         .post('/boardmodel/:id/sensor', versioning({
-            "1.0.0": controllers.v1_0_0.board_model.setSensors
+            "1.0.0": controllers.v1_0_0.board_model.setSensor
         }))
         .get('/boardmodel/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board_model.getSensors

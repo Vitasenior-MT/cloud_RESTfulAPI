@@ -22,8 +22,7 @@ exports.create = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.create(req.body).then(
             model => res.status(200).json({ id: model.id }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }
@@ -62,8 +61,7 @@ exports.list = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.list().then(
             models => res.status(200).json({ models: models }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }
@@ -92,8 +90,7 @@ exports.update = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.update(req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }
@@ -115,15 +112,14 @@ exports.delete = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.remove(req.params.id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }
 }
 
 /**
- * @api {post} /boardmodel/:id/sensor 05) Add Sensors
+ * @api {post} /boardmodel/:id/sensor 05) Add Sensor
  * @apiGroup Board
  * @apiName setSensors
  * @apiDescription add sensors to a board model
@@ -131,23 +127,18 @@ exports.delete = (req, res) => {
  * @apiUse box
  * 
  * @apiPermission admin
- * @apiParam {array} sensors list of sensors IDs
+ * @apiParam {array} sensor_id sensors unique ID
  * @apiParamExample {json} Request example:
  * {
- *  "sensors": [
- *      "75a60f5f-ef3d-4556-9cdd-981894c8f1dc",
- *      "c704c803-d1fc-4eed-831e-0aba3cd75a60",
- *      "00397579-0a11-42ee-b522-b25e11630eda"
- *  ]
+ *  "sensor_id": "75a60f5f-ef3d-4556-9cdd-981894c8f1dc"
  * }
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
-exports.setSensors = (req, res) => {
+exports.setSensor = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
-        business.boardmodel.setSensors(req.params.id, req.body.sensors).then(
+        business.boardmodel.setSensor(req.params.id, req.body.sensor_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }
@@ -189,8 +180,7 @@ exports.getSensors = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.getSensors(req.params.id).then(
             sensors => res.status(200).json({ sensors: sensors }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }
@@ -217,8 +207,7 @@ exports.removeSensor = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.removeSensor(req.params.id, req.body.sensor_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).json({ error: error.message }));
     } else {
         res.status(500).json({ error: "Unauthorized" });
     }

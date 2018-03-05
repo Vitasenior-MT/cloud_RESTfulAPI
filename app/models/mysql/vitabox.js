@@ -47,7 +47,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     address: {
       type: DataTypes.STRING,
-      defaultValue: null
+      defaultValue: null,
+      validate: {
+        notEmpty: {
+          args:true,
+          msg: "address must be defined"
+        }
+      }
     },
     registered: {
       type: DataTypes.BOOLEAN,
