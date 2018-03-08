@@ -1889,7 +1889,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/vitabox/:id/board",
-    "title": "15) Add Board",
+    "title": "16) Add Board",
     "group": "Vitabox",
     "name": "addBoard",
     "description": "<p>add board to a specific vitabox if the requester is sponsor of it.</p>",
@@ -1999,7 +1999,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/vitabox/:id/patient",
-    "title": "12) Add Patient",
+    "title": "13) Add Patient",
     "group": "Vitabox",
     "name": "addPatient",
     "description": "<p>add patient to a specific vitabox if the requester is sponsor of it.</p>",
@@ -2109,7 +2109,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/vitabox/:id/user",
-    "title": "09) Add User",
+    "title": "10) Add User",
     "group": "Vitabox",
     "name": "addUser",
     "description": "<p>add user to a specific vitabox if the requester is sponsor of it.</p>",
@@ -2281,7 +2281,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id",
-    "title": "08) Delete",
+    "title": "09) Delete",
     "group": "Vitabox",
     "name": "delete",
     "description": "<p>list all users related with the vitabox if the requester is related too.</p>",
@@ -2520,7 +2520,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/vitabox/:id/board",
-    "title": "16) Get Boards",
+    "title": "17) Get Boards",
     "group": "Vitabox",
     "name": "getBoards",
     "description": "<p>get boards of specific vitabox if the requester is related to it.</p>",
@@ -2644,7 +2644,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/vitabox/:id/patient",
-    "title": "13) Get Patients",
+    "title": "14) Get Patients",
     "group": "Vitabox",
     "name": "getPatients",
     "description": "<p>get patients of specific vitabox if the requester is related to it.</p>",
@@ -2767,8 +2767,84 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/settings/vitabox",
+    "title": "06) Get Settings",
+    "group": "Vitabox",
+    "name": "getSettings",
+    "description": "<p>returns the vitabox settings</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "json",
+            "optional": false,
+            "field": "settings",
+            "description": "<p>configuration's structure, defined by vitabox</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n     \"settings\":{\n         \"cnfg1\": \"true\",\n         \"cnfg2\": \"12345\",\n         \"cnfg3\": \"some other config\"\n     }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
     "url": "/vitabox/:id/user",
-    "title": "10) Get Users",
+    "title": "11) Get Users",
     "group": "Vitabox",
     "name": "getUsers",
     "description": "<p>get users of specific vitabox if the requester is related to it.</p>",
@@ -3036,7 +3112,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id/patient",
-    "title": "17) Remove Board",
+    "title": "18) Remove Board",
     "group": "Vitabox",
     "name": "removeBoard",
     "description": "<p>remove board from a specific vitabox if the requester is sponsor of it.</p>",
@@ -3132,7 +3208,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id/patient",
-    "title": "14) Remove Patient",
+    "title": "15) Remove Patient",
     "group": "Vitabox",
     "name": "removePatient",
     "description": "<p>remove patient from a specific vitabox if the requester is sponsor of it.</p>",
@@ -3228,7 +3304,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id/user",
-    "title": "11) Remove User",
+    "title": "12) Remove User",
     "group": "Vitabox",
     "name": "removeUser",
     "description": "<p>remove user from a specific vitabox if the requester is sponsor of it.</p>",
@@ -3322,12 +3398,12 @@ define({ "api": [
     }
   },
   {
-    "type": "get",
-    "url": "/vitabox/:id/settings",
-    "title": "06) Settings",
+    "type": "put",
+    "url": "/settings/vitabox",
+    "title": "07) Set Settings",
     "group": "Vitabox",
-    "name": "settings",
-    "description": "<p>returns the vitabox settings</p>",
+    "name": "setSettings",
+    "description": "<p>update vitabox settings</p>",
     "version": "1.0.0",
     "permission": [
       {
@@ -3339,33 +3415,33 @@ define({ "api": [
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":id",
-            "description": "<p>vitabox unique ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
             "type": "json",
             "optional": false,
             "field": "settings",
-            "description": "<p>configuration's structure, defined by vitabox (only if admin)</p>"
+            "description": "<p>configuration's structure to be updated</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n     \"settings\":{\n         \"cnfg1\": \"true\",\n         \"cnfg2\": \"12345\",\n         \"cnfg3\": \"some other config\"\n     },\n}",
+          "content": "{\n     \"settings\":{\n         \"cnfg1\": \"true\",\n         \"cnfg2\": \"12345\",\n         \"cnfg3\": \"some other config\"\n     }\n}",
           "type": "json"
         }
       ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly updated</p>"
+          }
+        ]
+      }
     },
     "filename": "app/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
@@ -3413,7 +3489,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id",
-    "title": "07) Update",
+    "title": "08) Update",
     "group": "Vitabox",
     "name": "update",
     "description": "<p>update a specific vitabox if the requester is sponsor of it.</p>",
@@ -3540,6 +3616,39 @@ define({ "api": [
     "name": "vitaboxLogin",
     "description": "<p>request for a token to the vitabox</p>",
     "version": "1.0.0",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -3574,47 +3683,7 @@ define({ "api": [
       }
     },
     "filename": "app/controllers/v1.0.0/vitabox.js",
-    "groupTitle": "Vitabox",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "error",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
+    "groupTitle": "Vitabox"
   },
   {
     "type": "post",

@@ -45,7 +45,7 @@ if (cluster.isMaster) {
     var express = require('express'),           // call express
         // https = require('https'),
         // fs = require("fs"),
-        path=require('path'),
+        path = require('path'),
         router = require('./app/router'),
         bodyParser = require('body-parser'),
         utils = require('./app/business/index').v1_0_0.utils;
@@ -60,20 +60,23 @@ if (cluster.isMaster) {
     app.use(bodyParser.json());
     app.use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Accept-Version");
         res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
         res.header('Access-Control-Allow-Credentials', true);
         if (process.env.NODE_ENV === "development") console.log("\x1b[36m" + req.method, req.url + "\x1b[0m");
+       
+        if (req.method === "OPTIONS") {
+            return res.send(200);
+        } 
         if (req.headers && req.headers.authorization) {
             utils.validateToken(req.headers.authorization, req.connection.remoteAddress).then(
                 client => {
                     if (client) {
                         req.client = client;
                         next();
-                    } else res.status(500).json({ msg: "Client not registered" })
+                    } else res.status(500).send("Client not registered");
                 },
-                error => res.status(500).json({ msg: error.message })
-            )
+                error => res.status(500).send(error.message));
         } else {
             req.user = undefined;
             next(); // make sure that proceeds to the next routes and don't stop here

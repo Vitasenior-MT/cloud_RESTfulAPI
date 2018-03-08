@@ -94,9 +94,9 @@ exports.listByPatient = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.record.listByPatient(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -140,9 +140,9 @@ exports.listByBoard = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.record.listByBoard(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -186,8 +186,8 @@ exports.listBySensor = function (req, res) {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.record.listBySensor(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }

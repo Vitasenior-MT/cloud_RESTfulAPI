@@ -54,7 +54,7 @@ exports.validateToken = function (token, client_address) {
             if (err) reject(err);
             db[payload.role].findById(payload.id).then(
                 obj => resolve(obj),
-                error => reject(error.message)
+                error => reject(error)
             );
         });
     });

@@ -30,10 +30,9 @@ exports.create = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.sensor.create(req.body).then(
             sensor => res.status(200).json({ id: sensor.id }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -79,10 +78,9 @@ exports.list = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.sensor.list().then(
             sensors => res.status(200).json({ sensors: sensors }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -117,10 +115,9 @@ exports.update = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.sensor.update(req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
-        );
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -140,9 +137,9 @@ exports.delete = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.sensor.remove(req.params.id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }

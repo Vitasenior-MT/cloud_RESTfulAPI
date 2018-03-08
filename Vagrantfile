@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
     # mysql -u root -p123qwe -h localhost node < ../../vagrant/db_dump.sql
     
     # to get in mysql terminal
-    # mysql -u root -p123qwe node
+    # mysql -u root -p123qwe test
 
     # if: protocol error, symlink '../semver/bin/semver' -> '/vagrant/node_modules/.bin/semver'
     # sudo npm install --save --no-bin-links

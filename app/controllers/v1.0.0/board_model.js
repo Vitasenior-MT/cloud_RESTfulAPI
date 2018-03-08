@@ -22,9 +22,9 @@ exports.create = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.create(req.body).then(
             model => res.status(200).json({ id: model.id }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized" );
     }
 }
 
@@ -61,9 +61,9 @@ exports.list = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.list().then(
             models => res.status(200).json({ models: models }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -90,9 +90,9 @@ exports.update = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.update(req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -112,9 +112,9 @@ exports.delete = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.remove(req.params.id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -138,9 +138,9 @@ exports.setSensor = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.setSensor(req.params.id, req.body.sensor_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -180,9 +180,9 @@ exports.getSensors = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.getSensors(req.params.id).then(
             sensors => res.status(200).json({ sensors: sensors }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -207,8 +207,8 @@ exports.removeSensor = (req, res) => {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.removeSensor(req.params.id, req.body.sensor_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }

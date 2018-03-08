@@ -7,7 +7,7 @@ module.exports.seed = (db) => {
         db.User.count({ where: { admin: true } }).then(
             count => {
                 if (count < 1) {
-                    utils.encrypt(["admin@a.aa", "user1@a.aa", "user2@a.aa", "123qweASD", "passvita"])
+                    utils.encrypt(["admin@a.aa", "user1@a.aa", "user2@a.aa", "123qweASD", "passvita", "José António", "Manuela Antonieta"])
                         .then(
                             encrypted => {
 
@@ -28,13 +28,27 @@ module.exports.seed = (db) => {
                                                     { "vitabox_id": vitabox.id, "boardmodel_id": board_models[1].id },
                                                     { "vitabox_id": vitabox.id, "boardmodel_id": board_models[2].id, "location": "bedroom" }
                                                 ]).then(
-                                                    () => db.Sensor.bulkCreate([
+                                                    boards => db.Sensor.bulkCreate([
                                                         { "transducer": "dht22", "measure": "temperature", "min_acceptable": "10", "max_acceptable": "25", "min_possible": "-20", "max_possible": "50" },
                                                         { "transducer": "dht22", "measure": "humidity", "min_acceptable": "30", "max_acceptable": "50", "min_possible": "20", "max_possible": "60" },
                                                         { "transducer": "mq-7", "measure": "carbon_monoxide", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" }
                                                     ]).then(
                                                         sensors => board_models[0].addSensors([sensors[0].id, sensors[1].id]).then(
-                                                            () => resolve(),
+                                                            () => db.Record.insertMany([
+                                                                { value: "20", datetime: "2018-03-08T09:43:40.000Z", board_id: boards[0].id, sensor_id: sensors[0].id },
+                                                                { value: "22", datetime: "2018-03-08T09:47:28.000Z", board_id: boards[0].id, sensor_id: sensors[0].id },
+                                                                { value: "19", datetime: "2018-03-08T09:53:47.000Z", board_id: boards[0].id, sensor_id: sensors[0].id }
+                                                            ], (error, doc) => {
+                                                                if (error) reject(error);
+                                                                else db.Patient.bulkCreate([
+                                                                    { "name": encrypted[5], "birthdate": "1987-02-28", "gender": "male" },
+                                                                    { "name": encrypted[6], "birthdate": "1972-02-28", "gender": "female" }
+                                                                ]).then(
+                                                                    patients => vitabox.addPatients(patients).then(
+                                                                        () => resolve(),
+                                                                        error => reject(error)),
+                                                                    error => reject(error));
+                                                            }),
                                                             error => reject(error)),
                                                         error => reject(error)),
                                                     error => reject(error)),

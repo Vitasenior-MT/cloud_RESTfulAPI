@@ -32,8 +32,11 @@ module.exports = (app) => {
         .get('/vitabox/:id', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.find
         }))
-        .get('/vitabox/:id/settings', versioning({
-            "1.0.0": controllers.v1_0_0.vitabox.settings
+        .get('/settings/vitabox', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.getSettings
+        }))
+        .put('/settings/vitabox', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.setSettings
         }))
         .put('/vitabox/:id', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.update

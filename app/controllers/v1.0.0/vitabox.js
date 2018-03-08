@@ -24,10 +24,10 @@ exports.create = function (req, res) {
     if (req.client.constructor.name === "User" && req.client.admin) {
         business.vitabox.create().then(
             data => res.status(200).json(data),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -62,13 +62,13 @@ exports.register = function (req, res) {
                     vitabox => {
                         business.vitabox.addUser(req.client, vitabox.id, user.id, true).then(
                             () => res.status(200).json({ result: true }),
-                            error => res.status(500).json({ error: error.message }));
+                            error => res.status(500).send(error.message));
                     },
-                    error => res.status(500).json({ error: error.message }));
+                    error => res.status(500).send(error.message));
             },
-            error => res.status(500).json({ error: error.message }));
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -78,7 +78,9 @@ exports.register = function (req, res) {
  * @apiName vitaboxLogin
  * @apiDescription request for a token to the vitabox
  * @apiVersion 1.0.0
- * @apiUse box
+ * @apiHeader Accept-Version="1.0.0"
+ * @apiHeader Content-Type="application/json"
+ * @apiError {string} error error description
  * 
  * @apiParam {string} :id vitabox id
  * @apiParam {string} password password defined by sponsor on registration
@@ -89,9 +91,9 @@ exports.connect = function (req, res) {
         data => {
             business.utils.createToken(data, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token }),
-                error => res.status(500).json({ error: error.message }));
+                error => res.status(500).send({ error: error.message }));
         },
-        error => res.status(500).json({ error: error.message })
+        error => res.status(500).send(error.message)
     );
 }
 
@@ -174,10 +176,10 @@ exports.list = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.vitabox.list(req.client).then(
             data => res.status(200).json({ vitaboxes: data }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
@@ -232,43 +234,72 @@ exports.find = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.vitabox.find(req.client, req.params.id).then(
             data => res.status(200).json({ vitabox: data }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {get} /vitabox/:id/settings 06) Settings
+ * @api {get} /settings/vitabox 06) Get Settings
  * @apiGroup Vitabox
- * @apiName settings
+ * @apiName getSettings
  * @apiDescription returns the vitabox settings
  * @apiVersion 1.0.0
  * @apiUse box
  * 
  * @apiPermission vitabox
- * @apiParam {string} :id vitabox unique ID
- * @apiSuccess {json} settings configuration's structure, defined by vitabox (only if admin)
+ * @apiSuccess {json} settings configuration's structure, defined by vitabox
  * @apiSuccessExample {json} Response example:
  * {
  *      "settings":{
  *          "cnfg1": "true",
  *          "cnfg2": "12345",
  *          "cnfg3": "some other config"
- *      },
+ *      }
  * }
  */
-exports.settings = function (req, res) {
-    if (req.client.constructor.name === "Vitabox" && req.client.id === req.params.id) {
+exports.getSettings = function (req, res) {
+    if (req.client.constructor.name === "Vitabox") {
         res.status(200).json({ settings: req.client.settings })
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {put} /vitabox/:id 07) Update
+ * @api {put} /settings/vitabox 07) Set Settings
+ * @apiGroup Vitabox
+ * @apiName setSettings
+ * @apiDescription update vitabox settings
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox
+ * @apiParam {json} settings configuration's structure to be updated
+ * @apiParamExample {json} Response example:
+ * {
+ *      "settings":{
+ *          "cnfg1": "true",
+ *          "cnfg2": "12345",
+ *          "cnfg3": "some other config"
+ *      }
+ * }
+ * @apiSuccess {boolean} result return true if was sucessfuly updated
+ */
+exports.setSettings = function (req, res) {
+    if (req.client.constructor.name === "Vitabox") {
+        req.client.update({ settings: req.body.settings }).then(
+            () => res.status(200).json({ result: true }),
+            error => res.status(500).send(error.message));
+    } else {
+        res.status(500).send("Unauthorized");
+    }
+}
+
+/**
+ * @api {put} /vitabox/:id 08) Update
  * @apiGroup Vitabox
  * @apiName update
  * @apiDescription update a specific vitabox if the requester is sponsor of it.
@@ -304,15 +335,15 @@ exports.update = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.vitabox.update(req.client, req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {delete} /vitabox/:id 08) Delete
+ * @api {delete} /vitabox/:id 09) Delete
  * @apiGroup Vitabox
  * @apiName delete
  * @apiDescription list all users related with the vitabox if the requester is related too.
@@ -327,15 +358,15 @@ exports.delete = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.vitabox.delete(req.client, req.params.id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {post} /vitabox/:id/user 09) Add User
+ * @api {post} /vitabox/:id/user 10) Add User
  * @apiGroup Vitabox
  * @apiName addUser
  * @apiDescription add user to a specific vitabox if the requester is sponsor of it.
@@ -357,15 +388,15 @@ exports.addUser = function (req, res) {
         business.user.findByEmail(req.body.email).then(
             user => business.vitabox.addUser(req.client, req.params.id, user.id, flag).then(
                 () => res.status(200).json({ result: true }),
-                error => res.status(500).json({ error: error.message })),
-            error => res.status(500).json({ error: error.message }));
+                error => res.status(500).send(error.message)),
+            error => res.status(500).send(error.message));
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {get} /vitabox/:id/user 10) Get Users
+ * @api {get} /vitabox/:id/user 11) Get Users
  * @apiGroup Vitabox
  * @apiName getUsers
  * @apiDescription get users of specific vitabox if the requester is related to it.
@@ -400,12 +431,12 @@ exports.addUser = function (req, res) {
 exports.getUsers = function (req, res) {
     business.vitabox.getUsers(req.client.constructor.name === "User", req.client, req.params.id).then(
         data => res.status(200).json({ users: data }),
-        error => res.status(500).json({ error: error.message })
+        error => res.status(500).send(error.message)
     );
 }
 
 /**
- * @api {delete} /vitabox/:id/user 11) Remove User
+ * @api {delete} /vitabox/:id/user 12) Remove User
  * @apiGroup Vitabox
  * @apiName removeUser
  * @apiDescription remove user from a specific vitabox if the requester is sponsor of it.
@@ -425,15 +456,15 @@ exports.removeUser = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.vitabox.removeUser(req.client, req.params.id, req.body.user_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {post} /vitabox/:id/patient 12) Add Patient
+ * @api {post} /vitabox/:id/patient 13) Add Patient
  * @apiGroup Vitabox
  * @apiName addPatient
  * @apiDescription add patient to a specific vitabox if the requester is sponsor of it.
@@ -458,16 +489,16 @@ exports.addPatient = function (req, res) {
         business.patient.create(req.body).then(
             patient => business.vitabox.addPatient(req.client, req.params.id, patient.id).then(
                 () => res.status(200).json({ result: true }),
-                error => res.status(500).json({ error: error.message })),
-            error => res.status(500).json({ error: error.message })
+                error => res.status(500).send(error.message)),
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {get} /vitabox/:id/patient 13) Get Patients
+ * @api {get} /vitabox/:id/patient 14) Get Patients
  * @apiGroup Vitabox
  * @apiName getPatients
  * @apiDescription get patients of specific vitabox if the requester is related to it.
@@ -498,12 +529,12 @@ exports.addPatient = function (req, res) {
 exports.getPatients = function (req, res) {
     business.vitabox.getPatients(req.client.constructor.name === "User", req.client, req.params.id).then(
         data => res.status(200).json({ patients: data }),
-        error => res.status(500).json({ error: error.message })
+        error => res.status(500).send(error.message)
     );
 }
 
 /**
- * @api {delete} /vitabox/:id/patient 14) Remove Patient
+ * @api {delete} /vitabox/:id/patient 15) Remove Patient
  * @apiGroup Vitabox
  * @apiName removePatient
  * @apiDescription remove patient from a specific vitabox if the requester is sponsor of it.
@@ -524,15 +555,15 @@ exports.removePatient = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.vitabox.removePatient(req.client, req.params.id, req.body.patient_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {post} /vitabox/:id/board 15) Add Board
+ * @api {post} /vitabox/:id/board 16) Add Board
  * @apiGroup Vitabox
  * @apiName addBoard
  * @apiDescription add board to a specific vitabox if the requester is sponsor of it.
@@ -557,16 +588,16 @@ exports.addBoard = function (req, res) {
         business.board.create(req.body).then(
             board => business.vitabox.addBoard(req.client, req.params.id, board.id).then(
                 () => res.status(200).json({ result: true }),
-                error => res.status(500).json({ error: error.message })),
-            error => res.status(500).json({ error: error.message })
+                error => res.status(500).send(error.message)),
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
 
 /**
- * @api {get} /vitabox/:id/board 16) Get Boards
+ * @api {get} /vitabox/:id/board 17) Get Boards
  * @apiGroup Vitabox
  * @apiName getBoards
  * @apiDescription get boards of specific vitabox if the requester is related to it.
@@ -612,12 +643,12 @@ exports.addBoard = function (req, res) {
 exports.getBoards = function (req, res) {
     business.vitabox.getBoards(req.client.constructor.name === "User", req.client, req.params.id).then(
         data => res.status(200).json({ boards: data }),
-        error => res.status(500).json({ error: error.message })
+        error => res.status(500).send(error.message)
     );
 }
 
 /**
- * @api {delete} /vitabox/:id/patient 17) Remove Board
+ * @api {delete} /vitabox/:id/patient 18) Remove Board
  * @apiGroup Vitabox
  * @apiName removeBoard
  * @apiDescription remove board from a specific vitabox if the requester is sponsor of it.
@@ -638,9 +669,9 @@ exports.removeBoard = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.vitabox.removeBoard(req.client, req.params.id, req.body.board_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).json({ error: error.message })
+            error => res.status(500).send(error.message)
         );
     } else {
-        res.status(500).json({ error: "Unauthorized" });
+        res.status(500).send("Unauthorized");
     }
 }
