@@ -24,9 +24,9 @@ module.exports.seed = (db) => {
                                                 { "name": "MySignals", "type": "non-wearable" }
                                             ]).then(
                                                 board_models => db.Board.bulkCreate([
-                                                    { "vitabox_id": vitabox.id, "boardmodel_id": board_models[0].id, "location": "kitchen" },
-                                                    { "vitabox_id": vitabox.id, "boardmodel_id": board_models[1].id },
-                                                    { "vitabox_id": vitabox.id, "boardmodel_id": board_models[2].id, "location": "bedroom" }
+                                                    { "vitabox_id": vitabox.id, "boardmodel_id": board_models[0].id, "location": "kitchen", "mac_addr":"00:12:4b:00:06:0d:60:c8", password: encrypted[4], active:true  },
+                                                    { "vitabox_id": vitabox.id, "boardmodel_id": board_models[1].id , "mac_addr":"00:12:4b:00:06:0d:b2:1a", password: encrypted[4], active:true },
+                                                    { "vitabox_id": vitabox.id, "boardmodel_id": board_models[2].id, "location": "bedroom", "mac_addr":"00:12:4b:00:06:0d:60:fb", password: encrypted[4], active:true }
                                                 ]).then(
                                                     boards => db.Sensor.bulkCreate([
                                                         { "transducer": "dht22", "measure": "temperature", "min_acceptable": "10", "max_acceptable": "25", "min_possible": "-20", "max_possible": "50" },

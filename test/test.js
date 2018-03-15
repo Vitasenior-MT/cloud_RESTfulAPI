@@ -6,7 +6,7 @@ var test1_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/js
 var test2_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
 var admin_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
 var box_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
-var board1, board2, sensor1, sensor2, vitabox1, vitabox2, testuser1, testpatient1, testboard1, records = [];
+var board1, board2, sensor1, sensor2, vitabox1, vitabox2, testuser1, testpatient1, testboard1, testboard1_mac, testboard1_pass, records = [];
 
 describe("Tests", () => {
 
@@ -204,7 +204,7 @@ describe("Tests", () => {
             url: base_url + "sensor",
             form: { transducer: "dht22", measure: "temperature", min_acceptable: "10", max_acceptable: "25", min_possible: "-20", max_possible: "50" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /sensor -> must accept user:admin@a.aa and must receive the ID", (done) => {
@@ -246,7 +246,7 @@ describe("Tests", () => {
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             sensor2 = JSON.parse(body).id;
-            assert.equal(200, response.statusCode);done();
+            assert.equal(200, response.statusCode); done();
         });
     });
     it("GET /sensor -> must refuse user:test2@ipt.pt", (done) => {
@@ -254,7 +254,7 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "sensor",
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /sensor -> must accept user:admin@a.aa and must receive an array", (done) => {
@@ -274,7 +274,7 @@ describe("Tests", () => {
             url: base_url + "sensor/" + sensor1,
             form: { transducer: "dht22", measure: "temperature", min_acceptable: "10", max_acceptable: "27", min_possible: "-15", max_possible: "50" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("PUT /sensor/:id -> must accept user:admin@a.aa", (done) => {
@@ -292,7 +292,7 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "sensor/" + sensor1
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /sensor/:id -> must accept user:admin@a.aa", (done) => {
@@ -330,7 +330,7 @@ describe("Tests", () => {
             url: base_url + "boardmodel",
             form: { name: "Zolertia RE-Mote", type: "environmental" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /boardmodel -> must accept user:admin@a.aa and must receive the ID", (done) => {
@@ -374,12 +374,21 @@ describe("Tests", () => {
             assert.equal(200, response.statusCode); done();
         });
     });
+    it("POST /boardmodel -> must refuse duplicated names", (done) => {
+        request.post({
+            headers: admin_headers,
+            url: base_url + "boardmodel",
+            form: { "name": "MySignals", "type": "non-wearable" }
+        }, (error, response, body) => {
+            assert.equal(500, response.statusCode); done();
+        });
+    });
     it("GET /boardmodel -> must refuse user:test2@ipt.pt", (done) => {
         request.get({
             headers: test2_headers,
             url: base_url + "boardmodel"
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /boardmodel -> must accept user:admin@a.aa and must receive an array", (done) => {
@@ -399,7 +408,7 @@ describe("Tests", () => {
             url: base_url + "boardmodel/" + board2,
             form: { name: "MySignals v2.1", type: "non-wearable" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("PUT /boardmodel/:id -> must accept user:admin@a.aa", (done) => {
@@ -445,7 +454,7 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "boardmodel/" + board1
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /boardmodel/:id -> must accept user:admin@a.aa", (done) => {
@@ -462,7 +471,7 @@ describe("Tests", () => {
             url: base_url + "boardmodel/" + board2 + "/sensor",
             form: { sensor_id: sensor2 }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /boardmodel/:id/sensor -> must accept user:admin@a.aa", (done) => {
@@ -517,7 +526,7 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "boardmodel/" + board2 + "/sensor"
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /boardmodel/:id/sensor -> must accept user:admin@a.aa and must receive an array", (done) => {
@@ -537,7 +546,7 @@ describe("Tests", () => {
             url: base_url + "boardmodel/" + board2 + "/sensor",
             form: { sensor_id: sensor2 }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /boardmodel/:id/sensor -> must accept user:admin@a.aa", (done) => {
@@ -547,6 +556,37 @@ describe("Tests", () => {
             form: { sensor_id: sensor2 }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("POST /board -> must refuse a non admin to create a board", (done) => {
+        request.post({
+            headers: test1_headers,
+            url: base_url + "board",
+            form: { "model": board2, "mac_addr": "00:12:4b:00:06:0d:60:fb" }
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("POST /board -> must refuse invalid MAC address", (done) => {
+        request.post({
+            headers: admin_headers,
+            url: base_url + "board",
+            form: { "model": board2, "mac_addr": "1234" }
+        }, (error, response, body) => {
+            assert.equal(500, response.statusCode); done();
+        });
+    });
+    it("POST /board -> must accept admin to create a board", (done) => {
+        request.post({
+            headers: admin_headers,
+            url: base_url + "board",
+            form: { "model": board2, "mac_addr": "00:12:4b:00:06:0d:60:fb" }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            testboard1 = JSON.parse(body).id;
+            testboard1_mac = JSON.parse(body).mac_addr;
+            testboard1_pass = JSON.parse(body).password;
             assert.equal(200, response.statusCode); done();
         });
     });
@@ -563,7 +603,7 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "vitabox"
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /vitabox -> must accept user:admin@a.aa and must receive an id and password", (done) => {
@@ -594,7 +634,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/register",
             form: { latitude: "38.8976763", longitude: "-77.0387185", address: "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA", email: "test2@ipt.pt" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /vitabox/:id/register -> must refuse non registered emails", (done) => {
@@ -652,7 +692,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox2.id + "/connect",
             form: { password: vitabox2.password }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /vitabox -> any User may list their vitaboxes", (done) => {
@@ -688,7 +728,7 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "settings/vitabox"
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /settings/vitabox -> must accept access to vitabox settings about itself", (done) => {
@@ -712,7 +752,7 @@ describe("Tests", () => {
                 }
             }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("PUT /settings/vitabox -> must accept vitabox settings update by itself", (done) => {
@@ -737,7 +777,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id,
             form: { "latitude": "38.8976763", "longitude": "-77.0387185", "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("PUT /vitabox/:id -> must accept a sponsor to edit vitabox parameters", (done) => {
@@ -774,7 +814,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/user",
             form: { "email": "test1@ipt.pt" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /vitabox/:id/user -> must refuse to add a non registered user", (done) => {
@@ -802,7 +842,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/user",
             form: { "user_id": testuser1 }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /vitabox/:id/user -> must accept sponsor or admin to remove a existing user from vitabox", (done) => {
@@ -820,7 +860,7 @@ describe("Tests", () => {
             headers: test1_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/user",
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /vitabox/:id/user -> must accept any user related with vitabox to list the users", (done) => {
@@ -858,7 +898,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/user",
             form: { "user_id": testuser1 }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /vitabox/:id/user -> must accept sponsor or admin to remove a existing user from vitabox", (done) => {
@@ -876,7 +916,7 @@ describe("Tests", () => {
             headers: test1_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/user",
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /vitabox/:id/user -> must accept any user related with vitabox to list the users", (done) => {
@@ -905,7 +945,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/patient",
             form: { "name": "José António", "birthdate": "1987-02-28", "gender": "male" }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /vitabox/:id/patient -> must refuse a invalid name", (done) => {
@@ -932,7 +972,7 @@ describe("Tests", () => {
             headers: test1_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/patient",
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /vitabox/:id/patient -> must accept any user related with vitabox to list the patients", (done) => {
@@ -960,19 +1000,28 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/board",
-            form: { "location": "kitchen", "model": board2, "mac_address": "00:19:B9:FB:E2:58" }
+            form: { "location": "kitchen", "password": testboard1_pass, "mac_addr": testboard1_mac }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /vitabox/:id/board -> must accept a new board from sponsor", (done) => {
         request.post({
             headers: test2_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/board",
-            form: { "location": "kitchen", "model": board2, "mac_address": "00:19:B9:FB:E2:58" }
+            form: { "location": "kitchen", "password": testboard1_pass, "mac_addr": testboard1_mac }
         }, (error, response, body) => {
-            if (response.statusCode != 200) console.log(body);
+            if (response.statusCode != 200) console.log(response.statusMessage);
             assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("POST /vitabox/:id/board -> must refuse to add a board in use to a vitabox", (done) => {
+        request.post({
+            headers: test2_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/board",
+            form: { "location": "kitchen", "password": testboard1_pass, "mac_addr": testboard1_mac }
+        }, (error, response, body) => {
+            assert.equal(500, response.statusCode); done();
         });
     });
     it("GET /vitabox/:id/board -> must refuse a user not related with vitabox to list the boards", (done) => {
@@ -980,7 +1029,7 @@ describe("Tests", () => {
             headers: test1_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/board",
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /vitabox/:id/board -> must accept any user related with vitabox to list the boards", (done) => {
@@ -989,7 +1038,6 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/board",
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
-            testboard1 = JSON.parse(body).boards[0].id;
             assert.equal(200, response.statusCode);
             assert.equal(true, Array.isArray(JSON.parse(body).boards)); done();
         });
@@ -1017,7 +1065,7 @@ describe("Tests", () => {
             url: base_url + "record",
             form: { "records": records }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("POST /record -> must refuse empty value, datetime, board_id or sensor_id", (done) => {
@@ -1072,7 +1120,7 @@ describe("Tests", () => {
             headers: test1_headers,
             url: base_url + "record/patient/" + testpatient1,
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /record/patient/:id -> must accept any user related with vitabox to query records by patient", (done) => {
@@ -1090,7 +1138,7 @@ describe("Tests", () => {
             headers: test1_headers,
             url: base_url + "record/board/" + testboard1,
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /record/board/:id -> must accept any user related with vitabox to query records by board", (done) => {
@@ -1108,7 +1156,7 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "record/sensor/" + sensor2,
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("GET /record/sensor/:id -> must accept admin to query records by sensor", (done) => {
@@ -1127,7 +1175,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/patient",
             form: { "patient_id": testpatient1 }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /vitabox/:id/patient -> must accept patient removal from sponsor", (done) => {
@@ -1146,7 +1194,7 @@ describe("Tests", () => {
             url: base_url + "vitabox/" + vitabox1.id + "/board",
             form: { "board_id": testboard1 }
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /vitabox/:id/board -> must accept board removal from sponsor", (done) => {
@@ -1164,7 +1212,7 @@ describe("Tests", () => {
             headers: test1_headers,
             url: base_url + "vitabox/" + vitabox1.id
         }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
+            assert.equal(401, response.statusCode); done();
         });
     });
     it("DELETE /vitabox/:id -> must accept a sponsor to remove vitabox", (done) => {

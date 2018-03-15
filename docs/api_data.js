@@ -73,6 +73,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -149,6 +156,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -223,6 +237,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -321,6 +342,137 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/board",
+    "title": "08) Create Board",
+    "group": "Board",
+    "name": "create_a_new_Board",
+    "description": "<p>register a new board on the system</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "model",
+            "description": "<p>model id of the board</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "mac_address",
+            "description": "<p>board MAC address</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"model\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\",\n     \"mac_addr\": \"00:12:4b:00:06:0d:60:fb\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>return the id</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "mac_addr",
+            "description": "<p>return the mac address</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "password",
+            "description": "<p>return the generated password</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n     \"id\":\"c293462b-fac1-4f67-b69e-47841274d5e8\",\n     \"mac_addr\": \"00:12:4b:00:06:0d:60:fb\",\n     \"password\": \"aj34Ah1DA1\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "app/controllers/v1.0.0/board.js",
+    "groupTitle": "Board",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -401,6 +553,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -534,6 +693,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -629,6 +795,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -727,6 +900,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -814,6 +994,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -917,6 +1104,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -1050,6 +1244,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -1172,6 +1373,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -1298,6 +1506,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -1420,6 +1635,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -1546,6 +1768,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -1626,6 +1855,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -1744,6 +1980,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -1877,6 +2120,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -1920,8 +2170,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "model",
-            "description": "<p>model id of the board</p>"
+            "field": "password",
+            "description": "<p>board password</p>"
           },
           {
             "group": "Parameter",
@@ -1935,7 +2185,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"location\": \"kitchen\",\n     \"model\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\",\n     \"mac_address\": \"00:19:B9:FB:E2:58\"\n}",
+          "content": "{\n     \"location\": \"kitchen\",\n     \"password\":\"WkN1NNQiRD\",\n     \"mac_addr\": \"00:12:4b:00:06:0d:60:fb\"\n}",
           "type": "json"
         }
       ]
@@ -1985,6 +2235,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -2097,6 +2354,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -2193,6 +2457,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -2267,6 +2538,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -2349,6 +2627,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -2508,6 +2793,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -2571,7 +2863,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "string",
             "optional": false,
-            "field": "mac_address",
+            "field": "mac_addr",
             "description": "<p>board MAC address</p>"
           },
           {
@@ -2592,8 +2884,13 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Response example:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_address\": \"00:19:B9:FB:E2:58\",\n         \"created_at\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
+          "title": "Response example to user:",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"created_at\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
+          "type": "json"
+        },
+        {
+          "title": "Response example to vitabox:",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"created_at\": \"2018-02-22T15:25:50.000Z\",\n         \"node_id\": \"E258\"\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -2630,6 +2927,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -2756,6 +3060,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -2830,6 +3141,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -2947,6 +3265,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -3100,6 +3425,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -3194,6 +3526,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -3292,6 +3631,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -3388,6 +3734,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -3475,6 +3828,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",
@@ -3599,6 +3959,13 @@ define({ "api": [
         "Error 4xx": [
           {
             "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
             "type": "string",
             "optional": false,
             "field": "error",
@@ -3664,7 +4031,7 @@ define({ "api": [
             "type": "string",
             "optional": false,
             "field": "password",
-            "description": "<p>password defined by sponsor on registration</p>"
+            "description": "<p>password generated on creation</p>"
           }
         ]
       }
@@ -3791,6 +4158,13 @@ define({ "api": [
     "error": {
       "fields": {
         "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
           {
             "group": "Error 4xx",
             "type": "string",

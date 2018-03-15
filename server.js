@@ -1,4 +1,4 @@
-// apidoc -i docs/ -f .js -o docs/
+// apidoc -i app/ -f .js -o docs/
 
 // server.js
 

@@ -3,7 +3,7 @@ var db = require('../../models/index'),
 
 exports.create = (attributes) => {
     return new Promise((resolve, reject) => {
-        if (/[A-Z][a-zA-Z\'][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,20}$/.test(attributes.name)) {
+        if (/[A-Z][a-zA-Z\'][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,20}$/.test(attributes.name))
             utils.encrypt([attributes.name]).then(
                 encrypted_name => db.Patient.create({
                     name: encrypted_name[0],
@@ -14,6 +14,6 @@ exports.create = (attributes) => {
                     error => reject(error)
                 ), error => reject(error)
             );
-        } else reject(new Error("invalid name"));
+        else reject({ code: 500, msg: "invalid name" });
     });
 }

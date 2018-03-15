@@ -6,20 +6,32 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         location: {
             type: DataTypes.STRING,
             allowNull: true,
             defaultValue: null
         },
-        mac_address:{
+        mac_addr: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: '',
+            unique: {
+                args: true,
+                msg: 'MAC address already in use'
+            },
             validate: {
-                notEmpty: {
-                    msg: "MAC address must be defined"
+                is: {
+                    args: /^([0-9a-f]{2}[:]){7}([0-9a-f]{2})$/,
+                    msg: "MAC addres must be valid"
                 }
             }
+        },
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     }, { underscored: true });
 

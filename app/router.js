@@ -101,6 +101,9 @@ module.exports = (app) => {
         .delete('/boardmodel/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board_model.removeSensor
         }))
+        .post('/board', versioning({
+            "1.0.0": controllers.v1_0_0.board.create
+        }))
         /*________________________________________________check
         *_____________________SENSOR______________________
         *_________________________________________________*/

@@ -4,6 +4,7 @@ var business = require('../../business/index').v1_0_0;
  * 
  * @apiHeader Accept-Version="1.0.0"
  * @apiHeader Content-Type="application/json"
+ * @apiError {number} status http status code: 500 to business logic errors and 401 to unauthorized
  * @apiError {string} error error description
  */
 
@@ -22,7 +23,7 @@ exports.register = function (req, res) {
         user => {
             business.utils.createToken(user, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token, user: user.id }),
-                error => res.status(500).send(error.message));
+                error => res.status(error.code).send(error.message));
         },
         error => res.status(500).send(error.message)
     );
@@ -39,14 +40,13 @@ exports.register = function (req, res) {
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
  */
 exports.login = function (req, res) {
-    // console.log(req);
     business.user.login(req.body.email, req.body.password).then(
         user => {
             business.utils.createToken(user, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token, user: user.id }),
-                error => res.status(500).send(error.message));
+                error => res.status(error.code).send(error.message));
         },
-        error => res.status(500).send(error.message));
+        error => res.status(error.code).send(error.message));
 }
 
 /**
@@ -64,8 +64,8 @@ exports.changePassword = function (req, res) {
     if (req.client.constructor.name === "User") {
         business.user.changePassword(req.client.id, req.body.old_password, req.body.new_password).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).send(error.message));
+            error => res.status(error.code).send(error.message));
     } else {
-        res.status(500).send("Unauthorized");
+        res.status(401).send("Unauthorized");
     }
 }

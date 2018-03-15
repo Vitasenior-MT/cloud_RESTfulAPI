@@ -21,7 +21,7 @@ exports.decrypt = function (to_decrypt) {
 exports.createToken = function (obj, client_address) {
     return new Promise((resolve, reject) => {
         let private_key = fs.readFileSync(__dirname + '/../../keys/key.pem').toString();
-        if (private_key === undefined) reject(new Error("error on load private key"));
+        if (private_key === undefined) reject({ code: 500, msg: "error on load private key" });
 
         let payload = {
             id: obj.id,
@@ -32,9 +32,8 @@ exports.createToken = function (obj, client_address) {
             algorithm: "RS256",
             subject: client_address
         };
-
-        jwt.sign(payload, private_key, options, function (err, token) {
-            if (err) reject(err);
+        jwt.sign(payload, private_key, options, function (error, token) {
+            if (error) reject({ code: 500, msg: error.message });
             resolve(token);
         });
     });
@@ -50,11 +49,11 @@ exports.validateToken = function (token, client_address) {
             subject: client_address
         };
 
-        jwt.verify(token, public_key, options, function (err, payload) {
-            if (err) reject(err);
+        jwt.verify(token, public_key, options, function (error, payload) {
+            if (error) reject({ code: 500, msg: error.message });
             db[payload.role].findById(payload.id).then(
                 obj => resolve(obj),
-                error => reject(error)
+                error => reject({ code: 500, msg: error.message })
             );
         });
     });
@@ -62,9 +61,7 @@ exports.validateToken = function (token, client_address) {
 
 exports.generatePassword = () => {
     let sk = "", i, j, base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    for (i = 0; i < 10; i++) {
-        sk += base[Math.floor(Math.random() * 61)];
-    }
+    for (i = 0; i < 10; i++) sk += base[Math.floor(Math.random() * 61)];
     return sk;
 }
 

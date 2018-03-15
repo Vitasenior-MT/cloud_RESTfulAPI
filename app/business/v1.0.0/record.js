@@ -15,7 +15,7 @@ exports.create = function (body) {
             else invalid = true
         });
         db.Record.insertMany(to_insert, (error, doc) => {
-            if (error) reject(error);
+            if (error) reject({ code: 500, msg: error.message });
             else resolve(invalid);
         });
     });
@@ -32,13 +32,13 @@ exports.listByPatient = function (current_user, patient_id) {
                 success => {
                     if (success)
                         db.Record.find().where('patient_id').equals(patient_id).select("-_id").exec((error, doc) => {
-                            if (error) reject(error);
+                            if (error) reject({ code: 500, msg: error.message });
                             else resolve(doc);
                         });
-                    else reject("Unauthorized");
+                    else reject({ code: 401, msg: "Unauthorized" });
                 },
-                error => reject(error)),
-            error => reject(error));
+                error => reject({ code: 500, msg:error.message })),
+            error => reject({ code: 500, msg:error.message }));
     });
 }
 
@@ -53,20 +53,20 @@ exports.listByBoard = function (current_user, board_id) {
                 success => {
                     if (success)
                         db.Record.find().where('board_id').equals(board_id).select("-_id").exec((error, doc) => {
-                            if (error) reject(error);
+                            if (error) reject({ code: 500, msg:error.message });
                             else resolve(doc)
                         });
-                    else reject("Unauthorized");
+                    else reject({ code: 401, msg: "Unauthorized" });
                 },
-                error => reject(error)),
-            error => reject(error));
+                error => reject({ code: 500, msg:error.message })),
+            error => reject({ code: 500, msg:error.message }));
     });
 }
 
 exports.listBySensor = function (current_user, sensor_id) {
     return new Promise((resolve, reject) => {
         db.Record.find().where('sensor_id').equals(sensor_id).select("-_id").exec((error, doc) => {
-            if (error) reject(error);
+            if (error) reject({ code: 500, msg:error.message });
             else resolve(doc);
         });
     });
