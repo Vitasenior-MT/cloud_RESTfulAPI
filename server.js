@@ -64,23 +64,19 @@ if (cluster.isMaster) {
         res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
         res.header('Access-Control-Allow-Credentials', true);
         if (process.env.NODE_ENV === "development") console.log("\x1b[36m" + req.method, req.url + "\x1b[0m");
-       
+
         if (req.method === "OPTIONS") {
             return res.send(200);
-        } 
-        if (req.headers && req.headers.authorization) {
+        }
+        if (req.headers.authorization) {
             utils.validateToken(req.headers.authorization, req.connection.remoteAddress).then(
                 client => {
-                    if (client) {
-                        req.client = client;
-                        next();
-                    } else res.status(500).send("Client not registered");
+                    if (client) req.client = client;
+                    else req.client = null;
+                    next();
                 },
-                error => res.status(500).send(error.message));
-        } else {
-            req.user = undefined;
-            next(); // make sure that proceeds to the next routes and don't stop here
-        }
+                error => { req.client = null; next(); });
+        } else { req.client = null; next(); }
     });
 
     // Present SPA

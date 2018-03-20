@@ -27,10 +27,10 @@ var business = require('../../business/index').v1_0_0;
  *     }
  */
 exports.create = function (req, res) {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.board.create(req.body).then(
             result => res.status(200).json(result),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }

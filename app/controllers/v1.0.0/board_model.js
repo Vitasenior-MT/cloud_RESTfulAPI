@@ -19,12 +19,12 @@ var business = require('../../business/index').v1_0_0;
  * @apiSuccess {string} id created board model id
  */
 exports.create = (req, res) => {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.create(req.body).then(
             model => res.status(200).json({ id: model.id }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized" );
+        res.status(401).send("Unauthorized");
     }
 }
 
@@ -58,10 +58,10 @@ exports.create = (req, res) => {
 * }
 */
 exports.list = (req, res) => {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.list().then(
             models => res.status(200).json({ models: models }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -87,10 +87,10 @@ exports.list = (req, res) => {
  * @apiSuccess {boolean} result return "true" if was sucessfuly updated
  */
 exports.update = (req, res) => {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.update(req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -109,10 +109,10 @@ exports.update = (req, res) => {
  * @apiSuccess {boolean} result return "true" if was sucessfuly removed
  */
 exports.delete = (req, res) => {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.remove(req.params.id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -135,10 +135,10 @@ exports.delete = (req, res) => {
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
 exports.setSensor = (req, res) => {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.setSensor(req.params.id, req.body.sensor_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -177,10 +177,10 @@ exports.setSensor = (req, res) => {
  * }
  */
 exports.getSensors = (req, res) => {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.getSensors(req.params.id).then(
             sensors => res.status(200).json({ sensors: sensors }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -204,10 +204,10 @@ exports.getSensors = (req, res) => {
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
 exports.removeSensor = (req, res) => {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.removeSensor(req.params.id, req.body.sensor_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }

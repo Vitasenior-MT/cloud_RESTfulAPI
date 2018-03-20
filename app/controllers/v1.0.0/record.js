@@ -42,15 +42,15 @@ var business = require('../../business/index').v1_0_0;
  * }
  */
 exports.create = function (req, res) {
-    if (req.client.constructor.name === "Vitabox") {
+    if (req.client && req.client.constructor.name === "Vitabox") {
         business.record.create(req.body.records).then(
             invalid => {
                 if (invalid) res.status(200).json({ result: true, error: "some records were discarded by invalid parameters, value, datetime, sensor_id and board_id are required" });
                 else res.status(200).json({ result: true, error: "" });
             },
-            error => res.status(500).json({ result: false, error: error.message }));
+            error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).json({ error: "Unauthorized" });
+        res.status(401).send("Unauthorized");
     }
 }
 
@@ -91,10 +91,10 @@ exports.create = function (req, res) {
  * }
  */
 exports.listByPatient = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.record.listByPatient(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -137,10 +137,10 @@ exports.listByPatient = function (req, res) {
  * }
  */
 exports.listByBoard = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.record.listByBoard(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -183,10 +183,10 @@ exports.listByBoard = function (req, res) {
  * }
  */
 exports.listBySensor = function (req, res) {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.record.listBySensor(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }

@@ -22,10 +22,10 @@ var business = require('../../business/index').v1_0_0;
  * @apiSuccess {string} password created box serial key
  */
 exports.create = function (req, res) {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.vitabox.create().then(
             data => res.status(200).json(data),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -55,18 +55,18 @@ exports.create = function (req, res) {
  * @apiSuccess {boolean} result return "true" if was sucessfuly registered
  */
 exports.register = function (req, res) {
-    if (req.client.constructor.name === "User" && req.client.admin) {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.user.findByEmail(req.body.email).then(
             user => {
                 business.vitabox.register(req.params.id, req.body).then(
                     vitabox => {
                         business.vitabox.addUser(req.client, vitabox.id, user.id, true).then(
                             () => res.status(200).json({ result: true }),
-                            error => res.status(error.code).send(error.message));
+                            error => res.status(error.code).send(error.msg));
                     },
-                    error => res.status(error.code).send(error.message));
+                    error => res.status(error.code).send(error.msg));
             },
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -91,9 +91,9 @@ exports.connect = function (req, res) {
         data => {
             business.utils.createToken(data, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token }),
-                error => res.status(500).send({ error: error.message }));
+                error => res.status(500).send({ error: error.msg }));
         },
-        error => res.status(401).send(error.message)
+        error => res.status(401).send(error.msg)
     );
 }
 
@@ -173,10 +173,10 @@ exports.connect = function (req, res) {
  * }
  */
 exports.list = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.vitabox.list(req.client).then(
             data => res.status(200).json({ vitaboxes: data }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -230,10 +230,10 @@ exports.list = function (req, res) {
  * }
  */
 exports.find = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.vitabox.find(req.client, req.params.id).then(
             data => res.status(200).json({ vitabox: data }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -259,7 +259,7 @@ exports.find = function (req, res) {
  * }
  */
 exports.getSettings = function (req, res) {
-    if (req.client.constructor.name === "Vitabox") {
+    if (req.client && req.client.constructor.name === "Vitabox") {
         res.status(200).json({ settings: req.client.settings })
     } else {
         res.status(401).send("Unauthorized");
@@ -287,10 +287,10 @@ exports.getSettings = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
 exports.setSettings = function (req, res) {
-    if (req.client.constructor.name === "Vitabox") {
+    if (req.client && req.client.constructor.name === "Vitabox") {
         req.client.update({ settings: req.body.settings }).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -330,10 +330,10 @@ exports.setSettings = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
 exports.update = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.vitabox.update(req.client, req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -352,10 +352,10 @@ exports.update = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
 exports.delete = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.vitabox.delete(req.client, req.params.id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -379,13 +379,13 @@ exports.delete = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
 exports.addUser = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         let flag = req.body.sponsor ? true : false;
         business.user.findByEmail(req.body.email).then(
             user => business.vitabox.addUser(req.client, req.params.id, user.id, flag).then(
                 () => res.status(200).json({ result: true }),
-                error => res.status(error.code).send(error.message)),
-            error => res.status(error.code).send(error.message));
+                error => res.status(error.code).send(error.msg)),
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -425,9 +425,13 @@ exports.addUser = function (req, res) {
  * }
  */
 exports.getUsers = function (req, res) {
-    business.vitabox.getUsers(req.client.constructor.name === "User", req.client, req.params.id).then(
-        data => res.status(200).json({ users: data }),
-        error => res.status(error.code).send(error.message));
+    if (req.client) {
+        business.vitabox.getUsers(req.client.constructor.name === "User", req.client, req.params.id).then(
+            data => res.status(200).json({ users: data }),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send("Unauthorized");
+    }
 }
 
 /**
@@ -448,10 +452,10 @@ exports.getUsers = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
 exports.removeUser = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeUser(req.client, req.params.id, req.body.user_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -479,12 +483,12 @@ exports.removeUser = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
 exports.addPatient = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.patient.create(req.body).then(
             patient => business.vitabox.addPatient(req.client, req.params.id, patient.id).then(
                 () => res.status(200).json({ result: true }),
-                error => res.status(error.code).send(error.message)),
-            error => res.status(error.code).send(error.message));
+                error => res.status(error.code).send(error.msg)),
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -520,9 +524,13 @@ exports.addPatient = function (req, res) {
  * }
  */
 exports.getPatients = function (req, res) {
-    business.vitabox.getPatients(req.client.constructor.name === "User", req.client, req.params.id).then(
-        data => res.status(200).json({ patients: data }),
-        error => res.status(error.code).send(error.message));
+    if (req.client) {
+        business.vitabox.getPatients(req.client.constructor.name === "User", req.client, req.params.id).then(
+            data => res.status(200).json({ patients: data }),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send("Unauthorized");
+    }
 }
 
 /**
@@ -544,10 +552,10 @@ exports.getPatients = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
 exports.removePatient = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removePatient(req.client, req.params.id, req.body.patient_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -575,14 +583,14 @@ exports.removePatient = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
 exports.addBoard = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.board.authenticate(req.body.mac_addr, req.body.password).then(
             board => business.vitabox.addBoard(req.client, req.params.id, board.id).then(
                 () => business.board.setLocation(board, req.body.location ? req.body.location : null).then(
                     () => res.status(200).json({ result: true }),
-                    error => res.status(error.code).send(error.message)),
-                error => res.status(error.code).send(error.message)),
-            error => res.status(error.code).send(error.message));
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg)),
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -661,9 +669,13 @@ exports.addBoard = function (req, res) {
  * }
  */
 exports.getBoards = function (req, res) {
-    business.vitabox.getBoards(req.client.constructor.name === "User", req.client, req.params.id).then(
-        data => res.status(200).json({ boards: data }),
-        error => res.status(error.code).send(error.message));
+    if (req.client) {
+        business.vitabox.getBoards(req.client.constructor.name === "User", req.client, req.params.id).then(
+            data => res.status(200).json({ boards: data }),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send("Unauthorized");
+    }
 }
 
 /**
@@ -685,10 +697,10 @@ exports.getBoards = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
 exports.removeBoard = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeBoard(req.client, req.params.id, req.body.board_id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }

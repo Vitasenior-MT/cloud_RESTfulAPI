@@ -23,9 +23,9 @@ exports.register = function (req, res) {
         user => {
             business.utils.createToken(user, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token, user: user.id }),
-                error => res.status(error.code).send(error.message));
+                error => res.status(error.code).send(error.msg));
         },
-        error => res.status(500).send(error.message)
+        error => res.status(500).send(error.msg)
     );
 }
 
@@ -44,9 +44,9 @@ exports.login = function (req, res) {
         user => {
             business.utils.createToken(user, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token, user: user.id }),
-                error => res.status(error.code).send(error.message));
+                error => res.status(error.code).send(error.msg));
         },
-        error => res.status(error.code).send(error.message));
+        error => res.status(error.code).send(error.msg));
 }
 
 /**
@@ -61,10 +61,10 @@ exports.login = function (req, res) {
  * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
 exports.changePassword = function (req, res) {
-    if (req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User") {
         business.user.changePassword(req.client.id, req.body.old_password, req.body.new_password).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.message));
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
