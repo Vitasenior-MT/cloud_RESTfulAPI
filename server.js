@@ -59,7 +59,7 @@ if (cluster.isMaster) {
     app.use('/docs', express.static(path.resolve(__dirname, 'docs')));
 
     // Define the listenning port
-    var port = process.env.PORT || 8080;
+    var port = process.env.PORT || 80;
     // start http server
     app.listen(port, () => {
         // https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
