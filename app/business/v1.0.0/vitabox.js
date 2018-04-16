@@ -3,12 +3,14 @@ var db = require('../../models/index'),
 
 exports.create = function () {
   return new Promise((resolve, reject) => {
-    let password = utils.generatePassword();
-    utils.encrypt([password]).then(
-      encrypted => db.Vitabox.create({ password: encrypted[0] }).then(
+    let password = utils.generatePassword(10);
+    let encrypted = utils.encrypt([password]);
+    if (!encrypted.error) {
+      db.Vitabox.create({ password: encrypted.value[0] }).then(
         vitabox => resolve({ id: vitabox.id, password: password }),
-        error => reject({ code: 500, msg: error.message })),
-      error => reject({ code: 500, msg: error.message }));
+        error => reject({ code: 500, msg: error.message }));
+    }
+    else reject({ code: 500, msg: encrypted.error.message });
   });
 }
 
@@ -27,16 +29,18 @@ exports.register = function (vitabox_id, attributes) {
 
 exports.connect = function (vitabox_id, password) {
   return new Promise((resolve, reject) => {
-    utils.encrypt([password]).then(
-      encrypted => db.Vitabox.findOne({ where: { password: encrypted[0], id: vitabox_id, registered: true } }).then(
-        vitabox => {
-          if (vitabox) if (!vitabox.active) vitabox.update({ active: true }).then(
+    let encrypted = utils.encrypt([password]);
+    if (!encrypted.error) db.Vitabox.findOne({ where: { password: encrypted.value[0], id: vitabox_id } }).then(
+      vitabox => {
+        if (vitabox) if (vitabox.registered)
+          if (!vitabox.active) vitabox.update({ active: true }).then(
             vitabox => resolve(vitabox),
             error => reject({ code: 500, msg: error.message }));
           else resolve(vitabox);
-          else reject({ code: 500, msg: "vitabox not found, verify if was already created and registered" });
-        }, error => reject({ code: 500, msg: error.message })),
-      error => reject({ code: 500, msg: error.message }));
+        else reject({ code: 401, msg: "vitabox not registered" });
+        else reject({ code: 401, msg: "invalid credentials" });
+      }, error => reject({ code: 500, msg: error.message }));
+    else reject({ code: 500, msg: encrypted.error.message });
   });
 }
 
@@ -219,7 +223,7 @@ exports.addPatient = function (current_user, vitabox_id, patient_id) {
 exports.getPatients = function (is_user, client, vitabox_id) {
   return new Promise((resolve, reject) => {
     if (is_user) if (client.admin)
-      db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
+      db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'active', 'name', 'gender', ['created_at', 'since']] }).then(
         patients => {
           patients.forEach(patient => patient.name = utils.decrypt(patient.name));
           resolve(patients);
@@ -227,7 +231,7 @@ exports.getPatients = function (is_user, client, vitabox_id) {
     else db.Vitabox.findById(vitabox_id).then(
       vitabox => {
         if (vitabox) _isUser(vitabox, client).then(
-          () => db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
+          () => db.Patient.findAll({ where: { vitabox_id: vitabox_id, active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
             patients => {
               patients.forEach(patient => patient.name = utils.decrypt(patient.name));
               resolve(patients);
@@ -235,7 +239,7 @@ exports.getPatients = function (is_user, client, vitabox_id) {
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
-    else client.getPatients({ attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
+    else client.getPatients({ where: { active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
       patients => {
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
@@ -259,11 +263,9 @@ exports.removePatient = function (current_user, vitabox_id, patient_id) {
             vitabox.removePatient(patient_id).then(
               () => resolve(),
               error => reject({ code: 500, msg: error.message }));
-          }, error => reject(error)
-        );
+          }, error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message })
-    );
+      }, error => reject({ code: 500, msg: error.message }));
   });
 }
 
@@ -280,11 +282,9 @@ exports.addBoard = function (current_user, vitabox_id, board_id) {
             vitabox.addBoard(board_id).then(
               () => resolve(),
               error => reject({ code: 500, msg: error.message }));
-          }, error => reject(error)
-        );
+          }, error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message })
-    );
+      }, error => reject({ code: 500, msg: error.message }));
   });
 }
 
@@ -292,36 +292,27 @@ exports.getBoards = function (is_user, client, vitabox_id) {
   return new Promise((resolve, reject) => {
     if (is_user) if (client.admin)
       db.Board.findAll({
-        where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'created_at'], include: [{
-          model: db.Boardmodel, attributes: ['id', 'type', 'name'], include: [{
-            model: db.Sensor, attributes: { exclude: ['created_at', 'updated_at'] }
-          }]
+        where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'active', ['created_at', 'since']], include: [{
+          model: db.Boardmodel, attributes: ['id', 'type', 'name']
         }]
       }).then(
-        boards => {
-          boards.forEach(board => board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor));
-          resolve(boards);
-        }, error => reject({ code: 500, msg: error.message }));
+        boards => resolve(boards),
+        error => reject({ code: 500, msg: error.message }));
     else db.Vitabox.findById(vitabox_id).then(
       vitabox => {
         if (vitabox) _isUser(vitabox, client).then(
           () => db.Board.findAll({
-            where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'created_at'], include: [{
-              model: db.Boardmodel, attributes: ['id', 'type', 'name'], include: [{
-                model: db.Sensor, attributes: { exclude: ['created_at', 'updated_at'] }
-              }]
+            where: { vitabox_id: vitabox_id, active: true }, attributes: ['id', 'location', 'mac_addr', ['created_at', 'since']], include: [{
+              model: db.Boardmodel, attributes: ['id', 'type', 'name']
             }]
           }).then(
-            boards => {
-              boards.forEach(board => board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor));
-              resolve(boards);
-            },
+            boards => resolve(boards),
             error => reject({ code: 500, msg: error.message })),
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
     else client.getBoards({
-      attributes: ['id', 'location', 'mac_addr', 'node_id', 'created_at'], include: [{
+      where: { active: true }, attributes: ['id', 'location', 'mac_addr', 'node_id', ['created_at', 'since']], include: [{
         model: db.Boardmodel, attributes: ['id', 'type', 'name'], include: [{
           model: db.Sensor, attributes: { exclude: ['created_at', 'updated_at'] }
         }]
@@ -347,8 +338,19 @@ exports.removeBoard = function (current_user, vitabox_id, board_id) {
             vitabox.removeBoard(board_id).then(
               () => resolve(),
               error => reject({ code: 500, msg: error.message }));
-          }, error => reject(error)
-        );
+          }, error => reject(error));
+        else reject({ code: 500, msg: "Vitabox not found" });
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.verifySponsor = function (current_user, vitabox_id) {
+  return new Promise((resolve, reject) => {
+    db.Vitabox.findById(vitabox_id).then(
+      vitabox => {
+        if (vitabox) _isSponsor(vitabox, current_user).then(
+          () => resolve(),
+          error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
   });

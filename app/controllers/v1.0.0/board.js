@@ -26,7 +26,7 @@ var business = require('../../business/index').v1_0_0;
  *          "password": "aj34Ah1DA1"
  *     }
  */
-exports.create = function (req, res) {
+exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.board.create(req.body).then(
             result => res.status(200).json(result),

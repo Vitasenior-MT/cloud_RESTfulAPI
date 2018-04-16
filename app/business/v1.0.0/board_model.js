@@ -42,17 +42,19 @@ exports.remove = (board_model_id) => {
 
 exports.setSensor = (board_model_id, sensor_id) => {
     return new Promise((resolve, reject) => {
-        db.Boardmodel.findById(board_model_id).then(
-            model => {
-                if (model) model.hasSensor(sensor_id).then(
-                    success => {
-                        if (!success) model.addSensor(sensor_id).then(
-                            () => resolve(),
-                            error => reject({ code: 500, msg: error.message }));
-                        else reject({ code: 500, msg: "sensor is already associated" });
-                    }, error => reject({ code: 500, msg: error.message }));
-                else reject({ code: 500, msg: "board model not found" });
-            }, error => reject({ code: 500, msg: error.message }));
+        if (sensor_id)
+            db.Boardmodel.findById(board_model_id).then(
+                model => {
+                    if (model) model.hasSensor(sensor_id).then(
+                        success => {
+                            if (!success) model.addSensor(sensor_id).then(
+                                () => resolve(),
+                                error => reject({ code: 500, msg: error.message }));
+                            else reject({ code: 500, msg: "sensor is already associated" });
+                        }, error => reject({ code: 500, msg: error.message }));
+                    else reject({ code: 500, msg: "board model not found" });
+                }, error => reject({ code: 500, msg: error.message }));
+        else reject({ code: 500, msg: "invalid sensor id" });
     });
 }
 
@@ -73,12 +75,14 @@ exports.getSensors = (board_model_id) => {
 
 exports.removeSensor = (board_model_id, sensor_id) => {
     return new Promise((resolve, reject) => {
-        db.Boardmodel.findById(board_model_id).then(
-            model => {
-                if (model) model.removeSensors(sensor_id).then(
-                    () => resolve(),
-                    error => reject({ code: 500, msg: error.message }));
-                else reject({ code: 500, msg: "board model not found" });
-            }, error => reject({ code: 500, msg: error.message }));
+        if (sensor_id)
+            db.Boardmodel.findById(board_model_id).then(
+                model => {
+                    if (model) model.removeSensors(sensor_id).then(
+                        () => resolve(),
+                        error => reject({ code: 500, msg: error.message }));
+                    else reject({ code: 500, msg: "board model not found" });
+                }, error => reject({ code: 500, msg: error.message }));
+        else reject({ code: 500, msg: "invalid sensor id" });
     });
 }

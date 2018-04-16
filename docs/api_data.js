@@ -40,14 +40,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "old_password",
-            "description": "<p>old password</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "new_password",
+            "field": "password",
             "description": "<p>new password</p>"
           }
         ]
@@ -68,6 +61,165 @@ define({ "api": [
     },
     "filename": "app/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/forgot",
+    "title": "04) Forgot Password",
+    "group": "Authentication",
+    "name": "forgotPassword",
+    "version": "1.0.0",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "email",
+            "description": "<p>valid email</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if the email was sucessfuly sended</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/user.js",
+    "groupTitle": "Authentication",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/reset",
+    "title": "05) Reset password",
+    "group": "Authentication",
+    "name": "resetPassword",
+    "version": "1.0.0",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "token",
+            "description": "<p>valid email</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "password",
+            "description": "<p>new password</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly reseted</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/user.js",
+    "groupTitle": "Authentication",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
     "error": {
       "fields": {
         "Error 4xx": [
@@ -1261,7 +1413,7 @@ define({ "api": [
     }
   },
   {
-    "type": "post",
+    "type": "get",
     "url": "/record/board/:id",
     "title": "3) List by Board",
     "group": "Record",
@@ -1392,7 +1544,7 @@ define({ "api": [
     }
   },
   {
-    "type": "post",
+    "type": "get",
     "url": "/record/patient/:id",
     "title": "2) List by Patient",
     "group": "Record",
@@ -1523,7 +1675,7 @@ define({ "api": [
     }
   },
   {
-    "type": "post",
+    "type": "get",
     "url": "/record/sensor/:id",
     "title": "4) List by Sensor",
     "group": "Record",
@@ -2139,7 +2291,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/vitabox/:id/board",
-    "title": "16) Add Board",
+    "title": "18) Add Board",
     "group": "Vitabox",
     "name": "addBoard",
     "description": "<p>add board to a specific vitabox if the requester is sponsor of it.</p>",
@@ -2195,10 +2347,10 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "boolean",
+            "type": "string",
             "optional": false,
-            "field": "result",
-            "description": "<p>return true if was sucessfuly added</p>"
+            "field": "id",
+            "description": "<p>return board id</p>"
           }
         ]
       }
@@ -2312,10 +2464,10 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "boolean",
+            "type": "string",
             "optional": false,
-            "field": "result",
-            "description": "<p>return true if was sucessfuly added</p>"
+            "field": "id",
+            "description": "<p>new patient id</p>"
           }
         ]
       }
@@ -2646,6 +2798,418 @@ define({ "api": [
     }
   },
   {
+    "type": "put",
+    "url": "/vitabox/:id/board/disable",
+    "title": "20) Disable Board",
+    "group": "Vitabox",
+    "name": "disableBoard",
+    "description": "<p>disable board from a specific vitabox if the requester is sponsor of it.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>vitabox unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "board_id",
+            "description": "<p>board unique ID</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"board_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly disabled</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/vitabox/:id/patient/disable",
+    "title": "15) Disable Patient",
+    "group": "Vitabox",
+    "name": "disablePatient",
+    "description": "<p>disable patient from a specific vitabox if the requester is sponsor of it.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>vitabox unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "patient_id",
+            "description": "<p>patient unique ID</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"patient_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly disabled</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/vitabox/:id/board/enable",
+    "title": "21) Disable Board",
+    "group": "Vitabox",
+    "name": "enableBoard",
+    "description": "<p>disable board from a specific vitabox if the requester is sponsor of it.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>vitabox unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "board_id",
+            "description": "<p>board unique ID</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"board_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly enabled</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/vitabox/:id/patient/enable",
+    "title": "16) Enable Patient",
+    "group": "Vitabox",
+    "name": "enablePatient",
+    "description": "<p>enable patient from a specific vitabox if the requester is sponsor of it.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>vitabox unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "patient_id",
+            "description": "<p>patient unique ID</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"patient_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly enabled</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "get",
     "url": "/vitabox/:id",
     "title": "05) Find",
@@ -2812,7 +3376,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/vitabox/:id/board",
-    "title": "17) Get Boards",
+    "title": "19) Get Boards",
     "group": "Vitabox",
     "name": "getBoards",
     "description": "<p>get boards of specific vitabox if the requester is related to it.</p>",
@@ -2868,9 +3432,16 @@ define({ "api": [
           },
           {
             "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "active",
+            "description": "<p>status of the board, only to admin, the other users will only receive boards with &quot;is_active=true&quot;</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "datetime",
             "optional": false,
-            "field": "created_at",
+            "field": "since",
             "description": "<p>register day to the vitabox</p>"
           },
           {
@@ -2878,19 +3449,24 @@ define({ "api": [
             "type": "json",
             "optional": false,
             "field": "BoardModel",
-            "description": "<p>model of each board, contains an id, type and name</p>"
+            "description": "<p>model of each board, contains an id, type and name, the vitabox itself wiil receive the transdutors list of each model</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Response example to user:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"created_at\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
+          "title": "Response example to admin:",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"active\": false,\n         \"since\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
           "type": "json"
         },
         {
           "title": "Response example to vitabox:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"created_at\": \"2018-02-22T15:25:50.000Z\",\n         \"node_id\": \"E258\"\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"since\": \"2018-02-22T15:25:50.000Z\",\n         \"node_id\": \"E258\"\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"tag\": \"temp\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
+          "type": "json"
+        },
+        {
+          "title": "Response example to user:",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"since\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -3443,11 +4019,11 @@ define({ "api": [
   },
   {
     "type": "delete",
-    "url": "/vitabox/:id/patient",
-    "title": "18) Remove Board",
+    "url": "/vitabox/:id/board",
+    "title": "22) Remove Board",
     "group": "Vitabox",
     "name": "removeBoard",
-    "description": "<p>remove board from a specific vitabox if the requester is sponsor of it.</p>",
+    "description": "<p>remove a board from a specific vitabox if the requester is sponsor of it, all the board records will became unavailable to the users of the vitabox.</p>",
     "version": "1.0.0",
     "permission": [
       {
@@ -3547,10 +4123,10 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id/patient",
-    "title": "15) Remove Patient",
+    "title": "17) Remove Patient",
     "group": "Vitabox",
     "name": "removePatient",
-    "description": "<p>remove patient from a specific vitabox if the requester is sponsor of it.</p>",
+    "description": "<p>remove a patient from a specific vitabox if the requester is sponsor of it, all the patient records will became unavailable to the users of the vitabox.</p>",
     "version": "1.0.0",
     "permission": [
       {

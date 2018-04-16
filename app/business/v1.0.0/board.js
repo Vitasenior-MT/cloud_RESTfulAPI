@@ -4,22 +4,17 @@ var db = require('../../models/index'),
 exports.create = (attributes) => {
   return new Promise((resolve, reject) => {
     if (attributes.mac_addr) {
-      let password = utils.generatePassword();
-      utils.encrypt([password]).then(
-        encrypted =>
-          db.Board.create({
-            mac_addr: attributes.mac_addr.toLowerCase(),
-            boardmodel_id: attributes.model,
-            node_id: attributes.mac_addr.substr(attributes.mac_addr.lastIndexOf(":") - 2).replace(":", "").toLowerCase(),
-            password: encrypted[0]
-          }).then(
-            board => resolve({
-              id: board.id,
-              mac_addr: board.mac_addr,
-              password: password
-            }),
-            error => reject({ code: 500, msg: error.message })),
+      let password = utils.generatePassword(10);
+      let encrypted = utils.encrypt([password]);
+      if (!encrypted.error) db.Board.create({
+        mac_addr: attributes.mac_addr.toLowerCase(),
+        boardmodel_id: attributes.model,
+        node_id: attributes.mac_addr.substr(attributes.mac_addr.lastIndexOf(":") - 2).replace(":", "").toLowerCase(),
+        password: encrypted.value[0]
+      }).then(
+        board => resolve({ id: board.id, mac_addr: board.mac_addr, password: password }),
         error => reject({ code: 500, msg: error.message }));
+      else reject({ code: 500, msg: encrypted.error.message });
     } else reject({ code: 500, msg: "MAC address is required" });
   });
 }
@@ -34,6 +29,19 @@ exports.findByMAC = (mac_addr) => {
   });
 }
 
+exports.authenticate = (mac_addr, password) => {
+  return new Promise((resolve, reject) => {
+    let encrypted = utils.encrypt([password]);
+    if (!encrypted.error) db.Board.findOne({ where: { mac_addr: mac_addr, password: encrypted.value[0] } }).then(
+      board => {
+        if (board) if (!board.vitabox_id) resolve(board);
+        else reject({ code: 500, msg: "board already in use" });
+        else reject({ code: 500, msg: "MAC address and password don't match" });
+      }, error => reject({ code: 500, msg: error.message }));
+    else reject({ code: 500, msg: encrypted.error.message });
+  });
+}
+
 exports.setLocation = (board, location) => {
   return new Promise((resolve, reject) => {
     board.update({ location: location, active: true }).then(
@@ -42,23 +50,30 @@ exports.setLocation = (board, location) => {
   });
 }
 
-exports.authenticate = (mac_addr, password) => {
+exports.removeLocation = (board_id) => {
   return new Promise((resolve, reject) => {
-    utils.encrypt([password]).then(
-      encrypted => db.Board.findOne({ where: { mac_addr: mac_addr, password: encrypted[0] } }).then(
-        board => {
-          if (board) if (!board.active) resolve(board);
-          else reject({ code: 500, msg: "board already in use" });
-          else reject({ code: 500, msg: "MAC address and password don't match" });
-        }, error => reject({ code: 500, msg: error.message })),
+    db.Board.findById(board_id).then(
+      board => board.update({ location: null, active: false }).then(
+        () => resolve(),
+        error => reject({ code: 500, msg: error.message })),
+      error => reject({ code: 500, msg: error.message }))
+  });
+}
+
+exports.enable = (board_id) => {
+  return new Promise((resolve, reject) => {
+    db.Board.findById(board_id).then(
+      board => board.update({ active: true }).then(
+        () => resolve(),
+        error => reject({ code: 500, msg: error.message })),
       error => reject({ code: 500, msg: error.message }));
   });
 }
 
-exports.remove = (board_id) => {
+exports.disable = (board_id) => {
   return new Promise((resolve, reject) => {
     db.Board.findById(board_id).then(
-      board => board.destroy().then(
+      board => board.update({ active: false }).then(
         () => resolve(),
         error => reject({ code: 500, msg: error.message })),
       error => reject({ code: 500, msg: error.message }));

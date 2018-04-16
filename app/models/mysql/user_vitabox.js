@@ -2,8 +2,8 @@
 module.exports = (sequelize, DataTypes) => {
   var UserVitabox = sequelize.define('UserVitabox', {
     sponsor: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, { underscored: true });
 

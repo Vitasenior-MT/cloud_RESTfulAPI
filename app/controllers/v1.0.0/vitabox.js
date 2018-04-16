@@ -21,7 +21,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiSuccess {string} id created box id
  * @apiSuccess {string} password created box serial key
  */
-exports.create = function (req, res) {
+exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.vitabox.create().then(
             data => res.status(200).json(data),
@@ -54,7 +54,7 @@ exports.create = function (req, res) {
  *     }
  * @apiSuccess {boolean} result return "true" if was sucessfuly registered
  */
-exports.register = function (req, res) {
+exports.register = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.user.findByEmail(req.body.email).then(
             user => {
@@ -86,14 +86,14 @@ exports.register = function (req, res) {
  * @apiParam {string} password password generated on creation
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
  */
-exports.connect = function (req, res) {
+exports.connect = (req, res) => {
     business.vitabox.connect(req.params.id, req.body.password).then(
         data => {
             business.utils.createToken(data, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token }),
                 error => res.status(500).send({ error: error.msg }));
         },
-        error => res.status(401).send(error.msg)
+        error => res.status(error.code).send(error.msg)
     );
 }
 
@@ -172,7 +172,7 @@ exports.connect = function (req, res) {
  *  ]
  * }
  */
-exports.list = function (req, res) {
+exports.list = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.list(req.client).then(
             data => res.status(200).json({ vitaboxes: data }),
@@ -229,7 +229,7 @@ exports.list = function (req, res) {
  *  }
  * }
  */
-exports.find = function (req, res) {
+exports.find = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.find(req.client, req.params.id).then(
             data => res.status(200).json({ vitabox: data }),
@@ -258,7 +258,7 @@ exports.find = function (req, res) {
  *      }
  * }
  */
-exports.getSettings = function (req, res) {
+exports.getSettings = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         res.status(200).json({ settings: req.client.settings })
     } else {
@@ -286,7 +286,7 @@ exports.getSettings = function (req, res) {
  * }
  * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
-exports.setSettings = function (req, res) {
+exports.setSettings = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         req.client.update({ settings: req.body.settings }).then(
             () => res.status(200).json({ result: true }),
@@ -329,7 +329,7 @@ exports.setSettings = function (req, res) {
  *     }
  * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
-exports.update = function (req, res) {
+exports.update = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.update(req.client, req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
@@ -351,7 +351,7 @@ exports.update = function (req, res) {
  * @apiParam {string} :id vitabox unique ID
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
-exports.delete = function (req, res) {
+exports.delete = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.delete(req.client, req.params.id).then(
             () => res.status(200).json({ result: true }),
@@ -378,7 +378,7 @@ exports.delete = function (req, res) {
  *     }
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
-exports.addUser = function (req, res) {
+exports.addUser = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         let flag = req.body.sponsor ? true : false;
         business.user.findByEmail(req.body.email).then(
@@ -424,7 +424,7 @@ exports.addUser = function (req, res) {
  *  ]
  * }
  */
-exports.getUsers = function (req, res) {
+exports.getUsers = (req, res) => {
     if (req.client) {
         business.vitabox.getUsers(req.client.constructor.name === "User", req.client, req.params.id).then(
             data => res.status(200).json({ users: data }),
@@ -451,7 +451,7 @@ exports.getUsers = function (req, res) {
  *     }
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
-exports.removeUser = function (req, res) {
+exports.removeUser = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeUser(req.client, req.params.id, req.body.user_id).then(
             () => res.status(200).json({ result: true }),
@@ -480,13 +480,13 @@ exports.removeUser = function (req, res) {
  *          "birthdate": "1987-02-28",
  *          "gender": "male"
  *     }
- * @apiSuccess {boolean} result return true if was sucessfuly added
+ * @apiSuccess {string} id new patient id
  */
-exports.addPatient = function (req, res) {
+exports.addPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
-        business.patient.create(req.body).then(
+        business.patient.createIfNotExists(req.body).then(
             patient => business.vitabox.addPatient(req.client, req.params.id, patient.id).then(
-                () => res.status(200).json({ result: true }),
+                () => res.status(200).json({ id: patient.id }),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -523,7 +523,7 @@ exports.addPatient = function (req, res) {
  *  ]
  * }
  */
-exports.getPatients = function (req, res) {
+exports.getPatients = (req, res) => {
     if (req.client) {
         business.vitabox.getPatients(req.client.constructor.name === "User", req.client, req.params.id).then(
             data => res.status(200).json({ patients: data }),
@@ -534,10 +534,82 @@ exports.getPatients = function (req, res) {
 }
 
 /**
- * @api {delete} /vitabox/:id/patient 15) Remove Patient
+ * @api {put} /vitabox/:id/patient/disable 15) Disable Patient
+ * @apiGroup Vitabox
+ * @apiName disablePatient
+ * @apiDescription disable patient from a specific vitabox if the requester is sponsor of it.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox sponsor
+ * @apiParam {string} :id vitabox unique ID
+ * @apiParam {string} patient_id patient unique ID
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "patient_id": "9f846ccb-e5a0-4bd4-94ac-621847dfa780"
+ *     }
+ * 
+ * @apiSuccess {boolean} result return true if was sucessfuly disabled
+ */
+exports.disablePatient = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        if (req.client.admin) {
+            business.patient.disable(req.body.patient_id).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        } else {
+            business.vitabox.verifySponsor(req.client, req.params.id).then(
+                () => business.patient.disable(req.body.patient_id).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg));
+        }
+    } else {
+        res.status(401).send("Unauthorized");
+    }
+}
+
+/**
+ * @api {put} /vitabox/:id/patient/enable 16) Enable Patient
+ * @apiGroup Vitabox
+ * @apiName enablePatient
+ * @apiDescription enable patient from a specific vitabox if the requester is sponsor of it.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox sponsor
+ * @apiParam {string} :id vitabox unique ID
+ * @apiParam {string} patient_id patient unique ID
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "patient_id": "9f846ccb-e5a0-4bd4-94ac-621847dfa780"
+ *     }
+ * 
+ * @apiSuccess {boolean} result return true if was sucessfuly enabled
+ */
+exports.enablePatient = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        if (req.client.admin) {
+            business.patient.enable(req.body.patient_id).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        } else {
+            business.vitabox.verifySponsor(req.client, req.params.id).then(
+                () => business.patient.enable(req.body.patient_id).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg));
+        }
+    } else {
+        res.status(401).send("Unauthorized");
+    }
+}
+
+/**
+ * @api {delete} /vitabox/:id/patient 17) Remove Patient
  * @apiGroup Vitabox
  * @apiName removePatient
- * @apiDescription remove patient from a specific vitabox if the requester is sponsor of it.
+ * @apiDescription remove a patient from a specific vitabox if the requester is sponsor of it, all the patient records will became unavailable to the users of the vitabox.
  * @apiVersion 1.0.0
  * @apiUse box
  * 
@@ -551,10 +623,12 @@ exports.getPatients = function (req, res) {
  * 
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
-exports.removePatient = function (req, res) {
+exports.removePatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removePatient(req.client, req.params.id, req.body.patient_id).then(
-            () => res.status(200).json({ result: true }),
+            () => business.record.withdrawsAccess('patient_id', req.body.patient_id).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
@@ -562,7 +636,7 @@ exports.removePatient = function (req, res) {
 }
 
 /**
- * @api {post} /vitabox/:id/board 16) Add Board
+ * @api {post} /vitabox/:id/board 18) Add Board
  * @apiGroup Vitabox
  * @apiName addBoard
  * @apiDescription add board to a specific vitabox if the requester is sponsor of it.
@@ -580,14 +654,14 @@ exports.removePatient = function (req, res) {
  *          "password":"WkN1NNQiRD",
  *          "mac_addr": "00:12:4b:00:06:0d:60:fb"
  *     }
- * @apiSuccess {boolean} result return true if was sucessfuly added
+ * @apiSuccess {string} id return board id
  */
-exports.addBoard = function (req, res) {
+exports.addBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.authenticate(req.body.mac_addr, req.body.password).then(
             board => business.vitabox.addBoard(req.client, req.params.id, board.id).then(
                 () => business.board.setLocation(board, req.body.location ? req.body.location : null).then(
-                    () => res.status(200).json({ result: true }),
+                    () => res.status(200).json({ id: board.id }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
@@ -597,7 +671,7 @@ exports.addBoard = function (req, res) {
 }
 
 /**
- * @api {get} /vitabox/:id/board 17) Get Boards
+ * @api {get} /vitabox/:id/board 19) Get Boards
  * @apiGroup Vitabox
  * @apiName getBoards
  * @apiDescription get boards of specific vitabox if the requester is related to it.
@@ -610,31 +684,22 @@ exports.addBoard = function (req, res) {
  * @apiSuccess {string} id id of each board
  * @apiSuccess {string} location place where the board is located (house division)
  * @apiSuccess {string} mac_addr board MAC address
- * @apiSuccess {datetime} created_at register day to the vitabox
- * @apiSuccess {json} BoardModel model of each board, contains an id, type and name
- * @apiSuccessExample {json} Response example to user:
+ * @apiSuccess {boolean} active status of the board, only to admin, the other users will only receive boards with "is_active=true"
+ * @apiSuccess {datetime} since register day to the vitabox
+ * @apiSuccess {json} BoardModel model of each board, contains an id, type and name, the vitabox itself wiil receive the transdutors list of each model
+ * @apiSuccessExample {json} Response example to admin:
  * {
  *  "boards": [
  *      {
  *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
  *          "location": "kitchen",
  *          "mac_addr": "00:19:B9:FB:E2:58",
- *          "created_at": "2018-02-22T15:25:50.000Z",
+ *          "active": false,
+ *          "since": "2018-02-22T15:25:50.000Z",
  *          "BoardModel": {
  *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
  *              "type": "environmental",
- *              "name": "Zolertia RE-Mote",
- *              "Sensors": [
- *                  {
- *                      "id": "2a2f5839-6b68-41a6-ada7-f9cd4c66cf38",
- *                      "transducer": "dht22",
- *                      "measure": "temperature",
- *                      "min_acceptable": "10.00000",
- *                      "max_acceptable": "25.00000",
- *                      "min_possible": "-20.00000",
- *                      "max_possible": "50.00000"
- *                  }
- *              ]
+ *              "name": "Zolertia RE-Mote"
  *          }
  *      }
  *  ]
@@ -646,7 +711,7 @@ exports.addBoard = function (req, res) {
  *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
  *          "location": "kitchen",
  *          "mac_addr": "00:19:B9:FB:E2:58",
- *          "created_at": "2018-02-22T15:25:50.000Z",
+ *          "since": "2018-02-22T15:25:50.000Z",
  *          "node_id": "E258"
  *          "BoardModel": {
  *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
@@ -657,6 +722,7 @@ exports.addBoard = function (req, res) {
  *                      "id": "2a2f5839-6b68-41a6-ada7-f9cd4c66cf38",
  *                      "transducer": "dht22",
  *                      "measure": "temperature",
+ *                      "tag": "temp",
  *                      "min_acceptable": "10.00000",
  *                      "max_acceptable": "25.00000",
  *                      "min_possible": "-20.00000",
@@ -667,8 +733,24 @@ exports.addBoard = function (req, res) {
  *      }
  *  ]
  * }
+ * @apiSuccessExample {json} Response example to user:
+ * {
+ *  "boards": [
+ *      {
+ *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
+ *          "location": "kitchen",
+ *          "mac_addr": "00:19:B9:FB:E2:58",
+ *          "since": "2018-02-22T15:25:50.000Z",
+ *          "BoardModel": {
+ *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
+ *              "type": "environmental",
+ *              "name": "Zolertia RE-Mote"
+ *          }
+ *      }
+ *  ]
+ * }
  */
-exports.getBoards = function (req, res) {
+exports.getBoards = (req, res) => {
     if (req.client) {
         business.vitabox.getBoards(req.client.constructor.name === "User", req.client, req.params.id).then(
             data => res.status(200).json({ boards: data }),
@@ -679,10 +761,82 @@ exports.getBoards = function (req, res) {
 }
 
 /**
- * @api {delete} /vitabox/:id/patient 18) Remove Board
+ * @api {put} /vitabox/:id/board/disable 20) Disable Board
+ * @apiGroup Vitabox
+ * @apiName disableBoard
+ * @apiDescription disable board from a specific vitabox if the requester is sponsor of it.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox sponsor
+ * @apiParam {string} :id vitabox unique ID
+ * @apiParam {string} board_id board unique ID
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "board_id": "9f846ccb-e5a0-4bd4-94ac-621847dfa780"
+ *     }
+ * 
+ * @apiSuccess {boolean} result return true if was sucessfuly disabled
+ */
+exports.disableBoard = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        if (req.client.admin) {
+            business.board.disable(req.body.board_id).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        } else {
+            business.vitabox.verifySponsor(req.client, req.params.id).then(
+                () => business.board.disable(req.body.board_id).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg));
+        }
+    } else {
+        res.status(401).send("Unauthorized");
+    }
+}
+
+/**
+ * @api {put} /vitabox/:id/board/enable 21) Disable Board
+ * @apiGroup Vitabox
+ * @apiName enableBoard
+ * @apiDescription disable board from a specific vitabox if the requester is sponsor of it.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox sponsor
+ * @apiParam {string} :id vitabox unique ID
+ * @apiParam {string} board_id board unique ID
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "board_id": "9f846ccb-e5a0-4bd4-94ac-621847dfa780"
+ *     }
+ * 
+ * @apiSuccess {boolean} result return true if was sucessfuly enabled
+ */
+exports.enableBoard = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        if (req.client.admin) {
+            business.board.enable(req.body.board_id).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        } else {
+            business.vitabox.verifySponsor(req.client, req.params.id).then(
+                () => business.board.enable(req.body.board_id).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg));
+        }
+    } else {
+        res.status(401).send("Unauthorized");
+    }
+}
+
+/**
+ * @api {delete} /vitabox/:id/board 22) Remove Board
  * @apiGroup Vitabox
  * @apiName removeBoard
- * @apiDescription remove board from a specific vitabox if the requester is sponsor of it.
+ * @apiDescription remove a board from a specific vitabox if the requester is sponsor of it, all the board records will became unavailable to the users of the vitabox.
  * @apiVersion 1.0.0
  * @apiUse box
  * 
@@ -696,10 +850,14 @@ exports.getBoards = function (req, res) {
  * 
  * @apiSuccess {boolean} result return true if was sucessfuly removed
  */
-exports.removeBoard = function (req, res) {
+exports.removeBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeBoard(req.client, req.params.id, req.body.board_id).then(
-            () => res.status(200).json({ result: true }),
+            () => business.board.removeLocation(req.body.board_id).then(
+                () => business.record.withdrawsAccess('board_id', req.body.board_id).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");

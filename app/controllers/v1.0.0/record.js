@@ -41,7 +41,7 @@ var business = require('../../business/index').v1_0_0;
  *  "error": "some records were discarded by invalid parameters: value, datetime, sensor_id and board_id are required"
  * }
  */
-exports.create = function (req, res) {
+exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         business.record.create(req.body.records).then(
             invalid => {
@@ -55,7 +55,7 @@ exports.create = function (req, res) {
 }
 
 /**
- * @api {post} /record/patient/:id 2) List by Patient
+ * @api {get} /record/patient/:id 2) List by Patient
  * @apiGroup Record
  * @apiName listRecordsByPatient
  * @apiDescription list all records by patient
@@ -90,7 +90,7 @@ exports.create = function (req, res) {
  *  ]
  * }
  */
-exports.listByPatient = function (req, res) {
+exports.listByPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.record.listByPatient(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
@@ -101,7 +101,7 @@ exports.listByPatient = function (req, res) {
 }
 
 /**
- * @api {post} /record/board/:id 3) List by Board
+ * @api {get} /record/board/:id 3) List by Board
  * @apiGroup Record
  * @apiName listRecordsByBoard
  * @apiDescription list all records by board
@@ -136,7 +136,7 @@ exports.listByPatient = function (req, res) {
  *  ]
  * }
  */
-exports.listByBoard = function (req, res) {
+exports.listByBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.record.listByBoard(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),
@@ -147,7 +147,7 @@ exports.listByBoard = function (req, res) {
 }
 
 /**
- * @api {post} /record/sensor/:id 4) List by Sensor
+ * @api {get} /record/sensor/:id 4) List by Sensor
  * @apiGroup Record
  * @apiName listRecordsBySensor
  * @apiDescription list all records by sensor
@@ -182,7 +182,7 @@ exports.listByBoard = function (req, res) {
  *  ]
  * }
  */
-exports.listBySensor = function (req, res) {
+exports.listBySensor = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.record.listBySensor(req.client, req.params.id).then(
             data => res.status(200).json({ records: data }),

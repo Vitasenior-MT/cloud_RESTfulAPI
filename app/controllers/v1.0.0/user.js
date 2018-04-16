@@ -18,7 +18,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiParam {string} password must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
  */
-exports.register = function (req, res) {
+exports.register = (req, res) => {
     business.user.register(req.body.email, req.body.password).then(
         user => {
             business.utils.createToken(user, req.connection.remoteAddress).then(
@@ -39,7 +39,7 @@ exports.register = function (req, res) {
  * @apiParam {string} password must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
  */
-exports.login = function (req, res) {
+exports.login = (req, res) => {
     business.user.login(req.body.email, req.body.password).then(
         user => {
             business.utils.createToken(user, req.connection.remoteAddress).then(
@@ -56,16 +56,52 @@ exports.login = function (req, res) {
  * @apiVersion 1.0.0
  * @apiUse auth
  * @apiHeader Authorization="< token >"
- * @apiParam {string} old_password old password
- * @apiParam {string} new_password new password
+ * @apiParam {string} password new password
  * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
-exports.changePassword = function (req, res) {
+exports.changePassword = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
-        business.user.changePassword(req.client.id, req.body.old_password, req.body.new_password).then(
+        business.user.changePassword(req.client, req.body.password).then(
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
+}
+
+/**
+ * @api {post} /forgot 04) Forgot Password
+ * @apiGroup Authentication
+ * @apiName forgotPassword
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiParam {string} email valid email
+ * @apiSuccess {boolean} result return true if the email was sucessfuly sended
+ */
+exports.forgotPassword = (req, res) => {
+    business.user.findByEmail(req.body.email).then(
+        user => business.user.createRecoverToken(user).then(
+            token => business.user.sendRecoverEmail(user, token).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
+            error => res.status(error.code).send(error.msg)),
+        error => res.status(error.code).send(error.msg));
+}
+
+/**
+ * @api {post} /reset 05) Reset password
+ * @apiGroup Authentication
+ * @apiName resetPassword
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiParam {string} token valid email
+ * @apiParam {string} password new password
+ * @apiSuccess {boolean} result return true if was sucessfuly reseted
+ */
+exports.resetPassword = (req, res) => {
+    business.user.verifyRecoverToken(req.body.token).then(
+        user => business.user.changePassword(user, req.body.password).then(
+            () => res.status(200).json({ result: true }),
+            error => res.status(error.code).send(error.msg)),
+        error => res.status(error.code).send(error.msg));
 }

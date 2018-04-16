@@ -5,7 +5,6 @@ module.exports = (app) => {
     var controllers = require('./controllers/index'),
         versioning = require('express-routes-versioning')();
 
-
     app
         /*________________________________________________check
         *_____________________USERS_______________________
@@ -19,6 +18,12 @@ module.exports = (app) => {
         }))
         .post('/chpass', versioning({
             "1.0.0": controllers.v1_0_0.user.changePassword,
+        }))
+        .post('/forgot', versioning({
+            "1.0.0": controllers.v1_0_0.user.forgotPassword,
+        }))
+        .post('/reset', versioning({
+            "1.0.0": controllers.v1_0_0.user.resetPassword,
         }))
         /*________________________________________________check
         *____________________ VITABOX_____________________
@@ -65,6 +70,12 @@ module.exports = (app) => {
         .get('/vitabox/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getPatients
         }))
+        .put('/vitabox/:id/patient/disable', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.disablePatient
+        }))
+        .put('/vitabox/:id/patient/enable', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.enablePatient
+        }))
         .delete('/vitabox/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removePatient
         }))
@@ -73,6 +84,12 @@ module.exports = (app) => {
         }))
         .get('/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getBoards
+        }))
+        .put('/vitabox/:id/board/disable', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.disableBoard
+        }))
+        .put('/vitabox/:id/board/enable', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.enableBoard
         }))
         .delete('/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removeBoard
@@ -133,6 +150,15 @@ module.exports = (app) => {
         }))
         .get('/record/sensor/:id', versioning({
             "1.0.0": controllers.v1_0_0.record.listBySensor
+        }))
+        /*________________________________________________
+        *_____________________FILES_______________________
+        *_________________________________________________*/
+        .post('/file', versioning({
+            "1.0.0": controllers.v1_0_0.manage.fileUpload
+        }))
+        .get('/file/:id', versioning({
+            "1.0.0": controllers.v1_0_0.manage.fileDownload
         }))
         /*________________________________________________
         *_____________________TRASH_______________________

@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: null,
       validate: {
         notEmpty: {
-          args:true,
+          args: true,
           msg: "address must be defined"
         }
       }

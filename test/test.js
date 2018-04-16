@@ -11,18 +11,10 @@ var board1, board2, sensor1, sensor2, vitabox1, vitabox2, testuser1, testpatient
 describe("Tests", () => {
 
     before((done) => {
-        request.get(base_url, (error, response, body) => {
+        request.get(base_url + "testdb", (error, response, body) => {
             assert.equal(200, response.statusCode);
-            request.get(base_url + "testdb", (error, response, body) => {
-                assert.equal(200, response.statusCode);
-                done();
-            });
+            done();
         });
-
-        // request.get(base_url + "testdb", (error, response, body) => {
-        //     assert.equal(200, response.statusCode);
-        //     done();
-        // });
     });
 
     it("login has admin", (done) => {
@@ -161,30 +153,20 @@ describe("Tests", () => {
             assert.equal(200, response.statusCode); done();
         });
     });
-
-    it("POST /chpass -> refuse new_password:'456RTYfgh' old_password:'123qweZXC'", (done) => {
+    it("POST /chpass -> refuse password:'12345678'", (done) => {
         request.post({
             headers: test2_headers,
             url: base_url + "chpass",
-            form: { new_password: '456RTYfgh', old_password: '123qweZXC' }
+            form: { password: '12345678' }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
     });
-    it("POST /chpass -> refuse new_password:'12345678' old_password:'123qweASD'", (done) => {
+    it("POST /chpass -> accept password:'456RTYfgh'", (done) => {
         request.post({
             headers: test2_headers,
             url: base_url + "chpass",
-            form: { new_password: '12345678', old_password: '123qweASD' }
-        }, (error, response, body) => {
-            assert.equal(500, response.statusCode); done();
-        });
-    });
-    it("POST /chpass -> accept new_password:'456RTYfgh' old_password:'123qweASD'", (done) => {
-        request.post({
-            headers: test2_headers,
-            url: base_url + "chpass",
-            form: { new_password: '456RTYfgh', old_password: '123qweASD' }
+            form: { password: '456RTYfgh' }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
@@ -996,6 +978,44 @@ describe("Tests", () => {
             assert.equal(true, Array.isArray(JSON.parse(body).patients)); done();
         });
     });
+    it("PUT /vitabox/:id/patient/disable -> must refuse a user that is not sponsor or admin to disable a patient from vitabox", (done) => {
+        request.put({
+            headers: test1_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/patient/disable",
+            form: { "patient_id": testpatient1 }
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("PUT /vitabox/:id/patient/disable -> must accept patient disable from sponsor", (done) => {
+        request.put({
+            headers: test2_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/patient/disable",
+            form: { "patient_id": testpatient1 }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("PUT /vitabox/:id/patient/enable -> must refuse a user that is not sponsor or admin to enable a patient from vitabox", (done) => {
+        request.put({
+            headers: test1_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/patient/enable",
+            form: { "patient_id": testpatient1 }
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("PUT /vitabox/:id/patient/enable -> must accept patient enable from sponsor", (done) => {
+        request.put({
+            headers: test2_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/patient/enable",
+            form: { "patient_id": testpatient1 }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
     it("POST /vitabox/:id/board -> must refuse a user that is not sponsor or admin to add a board to vitabox", (done) => {
         request.post({
             headers: test1_headers,
@@ -1052,6 +1072,51 @@ describe("Tests", () => {
             assert.equal(true, Array.isArray(JSON.parse(body).boards)); done();
         });
     });
+    it("PUT /vitabox/:id/board/disable -> must refuse a user that is not sponsor or admin to disable a board from vitabox", (done) => {
+        request.put({
+            headers: test1_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/board/disable",
+            form: { "board_id": testboard1 }
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("PUT /vitabox/:id/board/disable -> must accept board disable from sponsor", (done) => {
+        request.put({
+            headers: test2_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/board/disable",
+            form: { "board_id": testboard1 }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("PUT /vitabox/:id/board/enable -> must refuse a user that is not sponsor or admin to enable a board from vitabox", (done) => {
+        request.put({
+            headers: test1_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/board/enable",
+            form: { "board_id": testboard1 }
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("PUT /vitabox/:id/board/enable -> must accept board enable from sponsor", (done) => {
+        request.put({
+            headers: test2_headers,
+            url: base_url + "vitabox/" + vitabox1.id + "/board/enable",
+            form: { "board_id": testboard1 }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+
+    /**
+     * ______________________________________________________________________________________
+     * ____________________________________RECORD____________________________________________
+     * ______________________________________________________________________________________
+     */
+
     it("POST /record -> must refuse any user to send sensor records", (done) => {
         records.push({
             "value": 10,
@@ -1169,6 +1234,13 @@ describe("Tests", () => {
             assert.equal(true, Array.isArray(JSON.parse(body).records)); done();
         });
     });
+
+    /**
+     * ______________________________________________________________________________________
+     * ____________________________________REMOVE____________________________________________
+     * ______________________________________________________________________________________
+     */
+
     it("DELETE /vitabox/:id/patient -> must refuse a user that is not sponsor or admin to remove a patient from vitabox", (done) => {
         request.delete({
             headers: test1_headers,
@@ -1178,7 +1250,7 @@ describe("Tests", () => {
             assert.equal(401, response.statusCode); done();
         });
     });
-    it("DELETE /vitabox/:id/patient -> must accept patient removal from sponsor", (done) => {
+    it("DELETE /vitabox/:id/patient -> must accept patient remove from sponsor", (done) => {
         request.delete({
             headers: test2_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/patient",
@@ -1186,6 +1258,26 @@ describe("Tests", () => {
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("GET /record/patient/:id -> after removing a patient from a vitabox, the related users can´t access the patient records", (done) => {
+        request.get({
+            headers: test2_headers,
+            url: base_url + "record/patient/" + testpatient1,
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("GET /record/patient/:id -> after removing a patient from a vitabox, the admin can access the old patient records", (done) => {
+        request.get({
+            headers: admin_headers,
+            url: base_url + "record/patient/" + testpatient1,
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode);
+            assert.equal(true, Array.isArray(JSON.parse(body).records));
+            assert.notEqual([], JSON.parse(body).records); done();
         });
     });
     it("DELETE /vitabox/:id/board -> must refuse a user that is not sponsor or admin to remove a board from vitabox", (done) => {
@@ -1197,7 +1289,7 @@ describe("Tests", () => {
             assert.equal(401, response.statusCode); done();
         });
     });
-    it("DELETE /vitabox/:id/board -> must accept board removal from sponsor", (done) => {
+    it("DELETE /vitabox/:id/board -> must accept board remove from sponsor", (done) => {
         request.delete({
             headers: test2_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/board",
@@ -1205,6 +1297,26 @@ describe("Tests", () => {
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("GET /record/board/:id -> after removing a board from a vitabox, the related users can´t access the board records", (done) => {
+        request.get({
+            headers: test2_headers,
+            url: base_url + "record/board/" + testboard1,
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("GET /record/board/:id -> after removing a board from a vitabox, the admin can access the old board records", (done) => {
+        request.get({
+            headers: admin_headers,
+            url: base_url + "record/board/" + testboard1,
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode);
+            assert.equal(true, Array.isArray(JSON.parse(body).records));
+            assert.notEqual([], JSON.parse(body).records); done();
         });
     });
     it("DELETE /vitabox/:id -> must refuse a user that is not admin or sponsor to remove vitabox", (done) => {

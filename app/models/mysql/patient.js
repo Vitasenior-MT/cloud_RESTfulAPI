@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         birthdate: {
             type: DataTypes.DATEONLY,
-            allowNull:false
+            allowNull: false
         },
         name: {
             type: DataTypes.STRING,
@@ -21,15 +21,18 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         gender: {
-            type: DataTypes.ENUM,
-            values: ['undefined', 'male', 'female'],
-            defaultValue: 'undefined',
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: '',
             validate: {
-                isIn: {
-                    args: ['male', 'female', 'undefined'],
-                    msg: "gender must be 'male', 'female' or 'undefined'"
+                notEmpty: {
+                    msg: "patient gender must be defined"
                 }
             }
+        },
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         }
     }, { underscored: true });
 

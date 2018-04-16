@@ -137,8 +137,7 @@ exports.delete = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.sensor.remove(req.params.id).then(
             () => res.status(200).json({ result: true }),
-            error => res.status(500).send(error.msg)
-        );
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }

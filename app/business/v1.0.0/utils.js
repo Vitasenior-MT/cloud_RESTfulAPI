@@ -1,16 +1,23 @@
-var crypto = require("crypto"),
+var db = require('../../models/index'),
+  crypto = require("crypto"),
   fs = require("fs"),
   jwt = require('jsonwebtoken'),
-  db = require('../../models/index');
+  path = require("path"),
+  mime = require('mime-types'),
+  multer = require('multer'),
+  uuidv4 = require('uuid/v4');
 
 exports.encrypt = function (to_encrypt) {
-  return new Promise((resolve, reject) => {
-    to_encrypt.forEach((element, index) => {
-      let cipher = crypto.createCipher(process.env.ALGORITHM, process.env.KEY);
-      return to_encrypt[index] = cipher.update(Buffer.from(element), 'utf8', 'hex') + cipher.final('hex');
-    });
-    resolve(to_encrypt);
-  });
+  try {
+    return {
+      value: to_encrypt.map((element, index) => {
+        let cipher = crypto.createCipher(process.env.ALGORITHM, process.env.KEY);
+        return element = cipher.update(Buffer.from(element), 'utf8', 'hex') + cipher.final('hex');
+      }), error: null
+    };
+  } catch (error) {
+    return { value: null, error: error };
+  }
 }
 
 exports.decrypt = function (to_decrypt) {
@@ -59,10 +66,40 @@ exports.validateToken = function (token, client_address) {
   });
 }
 
-exports.generatePassword = () => {
+exports.generatePassword = (n_char) => {
   let sk = "", i, j, base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  for (i = 0; i < 10; i++) sk += base[Math.floor(Math.random() * 61)];
+  for (i = 0; i < n_char; i++) sk += base[Math.floor(Math.random() * 61)];
   return sk;
+}
+
+exports.upload = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      let obj = multer({
+        storage: multer.diskStorage(
+          {
+            destination: path.resolve(__dirname, '..', '..', '..', 'files'),
+            filename: (req, file, cb) => cb(null, uuidv4() + '.' + mime.extension(file.mimetype))
+          }
+        ),
+        fileFilter: (req, file, cb) => {
+          if (!file.originalname.match(/\.(jpg|jpeg|png|gif|pdf)$/)) return cb(new Error('Only image files are allowed!'), false);
+          cb(null, true);
+        }
+      }).single('file');
+      resolve(obj);
+    } catch (err) { reject({ code: 500, msg: err.message }); }
+  });
+}
+
+exports.download = (filename) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let file = fs.readFileSync(path.resolve(__dirname, '..', '..', '..', 'files', filename));
+      let header = { 'Content-Type': mime.lookup(filename) }
+      resolve({ file: file, header: header });
+    } catch (err) { reject({ code: 500, msg: err.message }); }
+  });
 }
 
 
