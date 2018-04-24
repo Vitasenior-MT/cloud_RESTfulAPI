@@ -43,11 +43,17 @@ var business = require('../../business/index').v1_0_0;
  */
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
-        business.record.create(req.body.records).then(
-            invalid => {
-                if (invalid) res.status(200).json({ result: true, error: "some records were discarded by invalid parameters, value, datetime, sensor_id and board_id are required" });
-                else res.status(200).json({ result: true, error: "" });
-            },
+        console.log(req.body.records);
+        business.vitabox.updateLastCommit(req.client).then(
+            () => business.board.updateLastCommit(req.body.records).then(
+                () => business.sensor.updateLastCommit(req.body.records).then(
+                    () => business.record.create(req.body.records).then(
+                        result => {
+                            if (result.has_invalid) res.status(200).json({ result: true, error: "some records were discarded by invalid parameters, value, datetime, sensor_id and board_id are required" });
+                            else res.status(200).json({ result: true, error: "" });
+                        }, error => res.status(error.code).json(error.msg)),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
@@ -55,7 +61,7 @@ exports.create = (req, res) => {
 }
 
 /**
- * @api {get} /record/patient/:id 2) List by Patient
+ * @api {get} /record/patient/:pid/sensor/:sid/page/:page 2) List by Patient
  * @apiGroup Record
  * @apiName listRecordsByPatient
  * @apiDescription list all records by patient
@@ -63,7 +69,9 @@ exports.create = (req, res) => {
  * @apiUse box
  * 
  * @apiPermission user
- * @apiParam {string} :id patient unique ID
+ * @apiParam {string} :pid patient unique ID
+ * @apiParam {string} :sid sensor unique ID
+ * @apiParam {string} :page each page has 25 records, page must be greater or equal to 1
  * @apiSuccess {array} records records list
  * @apiSuccess {decimal} value value catched
  * @apiSuccess {datetime} datetime moment when the value was catched
@@ -92,7 +100,7 @@ exports.create = (req, res) => {
  */
 exports.listByPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
-        business.record.listByPatient(req.client, req.params.id).then(
+        business.record.listByPatientSensor(req.client, req.params.pid, req.params.sid, req.params.page).then(
             data => res.status(200).json({ records: data }),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -101,7 +109,7 @@ exports.listByPatient = (req, res) => {
 }
 
 /**
- * @api {get} /record/board/:id 3) List by Board
+ * @api {get} /record/board/:bid/sensor/:sid/page/:page 3) List by Board
  * @apiGroup Record
  * @apiName listRecordsByBoard
  * @apiDescription list all records by board
@@ -109,7 +117,9 @@ exports.listByPatient = (req, res) => {
  * @apiUse box
  * 
  * @apiPermission user
- * @apiParam {string} :id board unique ID
+ * @apiParam {string} :bid board unique ID
+ * @apiParam {string} :sid sensor unique ID
+ * @apiParam {string} :page each page has 25 records, page must be greater or equal to 1
  * @apiSuccess {array} records records list
  * @apiSuccess {decimal} value value catched
  * @apiSuccess {datetime} datetime moment when the value was catched
@@ -138,7 +148,7 @@ exports.listByPatient = (req, res) => {
  */
 exports.listByBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
-        business.record.listByBoard(req.client, req.params.id).then(
+        business.record.listByBoardSensor(req.client, req.params.bid, req.params.sid, req.params.page).then(
             data => res.status(200).json({ records: data }),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -147,7 +157,7 @@ exports.listByBoard = (req, res) => {
 }
 
 /**
- * @api {get} /record/sensor/:id 4) List by Sensor
+ * @api {get} /record/sensor/:id/page/:page 4) List by Sensor
  * @apiGroup Record
  * @apiName listRecordsBySensor
  * @apiDescription list all records by sensor
@@ -156,6 +166,7 @@ exports.listByBoard = (req, res) => {
  * 
  * @apiPermission admin
  * @apiParam {string} :id sensor unique ID
+ * @apiParam {string} :page each page has 25 records, page must be greater or equal to 1
  * @apiSuccess {array} records records list
  * @apiSuccess {decimal} value value catched
  * @apiSuccess {datetime} datetime moment when the value was catched
@@ -184,7 +195,7 @@ exports.listByBoard = (req, res) => {
  */
 exports.listBySensor = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.record.listBySensor(req.client, req.params.id).then(
+        business.record.listBySensor(req.client, req.params.id, req.params.page).then(
             data => res.status(200).json({ records: data }),
             error => res.status(error.code).send(error.msg));
     } else {

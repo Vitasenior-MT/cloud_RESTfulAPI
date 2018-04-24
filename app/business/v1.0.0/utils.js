@@ -7,7 +7,7 @@ var db = require('../../models/index'),
   multer = require('multer'),
   uuidv4 = require('uuid/v4');
 
-exports.encrypt = function (to_encrypt) {
+exports.encrypt = (to_encrypt) => {
   try {
     return {
       value: to_encrypt.map((element, index) => {
@@ -20,12 +20,12 @@ exports.encrypt = function (to_encrypt) {
   }
 }
 
-exports.decrypt = function (to_decrypt) {
+exports.decrypt = (to_decrypt) => {
   let decipher = crypto.createDecipher(process.env.ALGORITHM, process.env.KEY);
   return decipher.update(to_decrypt, 'hex', 'utf8') + decipher.final('utf8');
 }
 
-exports.createToken = function (obj, client_address) {
+exports.createToken = (obj, client_address) => {
   return new Promise((resolve, reject) => {
     let private_key = fs.readFileSync(__dirname + '/../../keys/key.pem').toString();
     if (private_key === undefined) reject({ code: 500, msg: "error on load private key" });
@@ -39,14 +39,14 @@ exports.createToken = function (obj, client_address) {
       algorithm: "RS256",
       subject: client_address
     };
-    jwt.sign(payload, private_key, options, function (error, token) {
+    jwt.sign(payload, private_key, options, (error, token) => {
       if (error) reject({ code: 500, msg: error.message });
       resolve(token);
     });
   });
 }
 
-exports.validateToken = function (token, client_address) {
+exports.validateToken = (token, client_address) => {
   return new Promise((resolve, reject) => {
     let public_key = fs.readFileSync(__dirname + '/../../keys/cert.pem').toString();
     if (public_key === undefined) reject("error on load public key");
@@ -56,7 +56,7 @@ exports.validateToken = function (token, client_address) {
       subject: client_address
     };
 
-    jwt.verify(token, public_key, options, function (error, payload) {
+    jwt.verify(token, public_key, options, (error, payload) => {
       if (error) reject({ code: 500, msg: error.message });
       db[payload.role].findById(payload.id).then(
         obj => resolve(obj),
@@ -104,7 +104,7 @@ exports.download = (filename) => {
 
 
 // JUST TO DEVELOPMENT
-exports.deleteAll = function () {
+exports.deleteAll = () => {
   return new Promise((resolve, reject) => {
 
     var options = { raw: true };
@@ -116,11 +116,19 @@ exports.deleteAll = function () {
             db.Boardmodel.truncate().then(() => {
               db.Board.truncate().then(() => {
                 db.Patient.truncate().then(() => {
-                  db.Record.remove({}, () => {
-                    db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options).then(
-                      () => resolve(),
-                      error => reject(error));
-                  });
+                  db.RecordTemp.remove({}, () => {
+                    db.RecordOld.remove({}, () => {
+                      db.RecordCheck.remove({}, () => {
+                        db.Log.remove({}, () => {
+                          db.Warning.remove({}, () => {
+                            db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options).then(
+                              () => resolve(),
+                              error => reject(error));
+                          });
+                        }, error => reject(error));
+                      }, error => reject(error));
+                    }, error => reject(error));
+                  }, error => reject(error));
                 }, error => reject(error));
               }, error => reject(error));
             }, error => reject(error));
@@ -131,7 +139,7 @@ exports.deleteAll = function () {
   });
 }
 
-exports.testSeed = function () {
+exports.testSeed = () => {
   return new Promise((resolve, reject) => {
     require('../../models/seed').testSeed(db).then(
       () => resolve(),

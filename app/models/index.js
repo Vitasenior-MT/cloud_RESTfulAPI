@@ -3,10 +3,10 @@ var mongoose = require('mongoose'),
 
 var mongo_uri = "", mysql_uri = "";
 
-if (process.env.NODE_ENV==="production") {
+if (process.env.NODE_ENV === "production") {
     mongo_uri = 'mongodb://localhost:27017/myproject';
     mysql_uri = 'mysql://api:123qwe@localhost:3306/node';
-}else{
+} else {
     mongo_uri = 'mongodb://localhost:27017/test';
     mysql_uri = 'mysql://api:123qwe@localhost:3306/test';
 }
@@ -62,7 +62,12 @@ const db = {
     'User': require('./mysql/user')(sequelize, Sequelize),
     'Vitabox': require('./mysql/vitabox')(sequelize, Sequelize),
 
-    'Record': require('./mongodb/record')
+    'RecordCheck': require('./mongodb/record_check'),
+    'RecordTemp': require('./mongodb/record_temp'),
+    'RecordOld': require('./mongodb/record_old'),
+    'Log': require('./mongodb/log'),
+    'Error': require('./mongodb/error'),
+    'Warning': require('./mongodb/warning')
 }
 
 Object.keys(db).forEach(modelName => {

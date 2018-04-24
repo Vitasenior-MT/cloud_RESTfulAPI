@@ -1414,7 +1414,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/record/board/:id",
+    "url": "/record/board/:bid/sensor/:sid/page/:page",
     "title": "3) List by Board",
     "group": "Record",
     "name": "listRecordsByBoard",
@@ -1432,8 +1432,22 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": ":id",
+            "field": ":bid",
             "description": "<p>board unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":sid",
+            "description": "<p>sensor unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":page",
+            "description": "<p>each page has 25 records, page must be greater or equal to 1</p>"
           }
         ]
       }
@@ -1545,7 +1559,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/record/patient/:id",
+    "url": "/record/patient/:pid/sensor/:sid/page/:page",
     "title": "2) List by Patient",
     "group": "Record",
     "name": "listRecordsByPatient",
@@ -1563,8 +1577,22 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": ":id",
+            "field": ":pid",
             "description": "<p>patient unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":sid",
+            "description": "<p>sensor unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":page",
+            "description": "<p>each page has 25 records, page must be greater or equal to 1</p>"
           }
         ]
       }
@@ -1676,7 +1704,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/record/sensor/:id",
+    "url": "/record/sensor/:id/page/:page",
     "title": "4) List by Sensor",
     "group": "Record",
     "name": "listRecordsBySensor",
@@ -1696,6 +1724,13 @@ define({ "api": [
             "optional": false,
             "field": ":id",
             "description": "<p>sensor unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":page",
+            "description": "<p>each page has 25 records, page must be greater or equal to 1</p>"
           }
         ]
       }
@@ -2347,10 +2382,10 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "Object",
             "optional": false,
-            "field": "id",
-            "description": "<p>return board id</p>"
+            "field": "board",
+            "description": "<p>return board inserted</p>"
           }
         ]
       }
@@ -3006,7 +3041,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id/board/enable",
-    "title": "21) Disable Board",
+    "title": "21) Enable Board",
     "group": "Vitabox",
     "name": "enableBoard",
     "description": "<p>disable board from a specific vitabox if the requester is sponsor of it.</p>",
@@ -3441,8 +3476,8 @@ define({ "api": [
             "group": "Success 200",
             "type": "datetime",
             "optional": false,
-            "field": "since",
-            "description": "<p>register day to the vitabox</p>"
+            "field": "updated_at",
+            "description": "<p>last update time</p>"
           },
           {
             "group": "Success 200",
@@ -3456,17 +3491,17 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example to admin:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"active\": false,\n         \"since\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"active\": false,\n         \"updated_at\": \"2018-02-22T15:25:50.000Z\",\n         \"Boardmodel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
           "type": "json"
         },
         {
           "title": "Response example to vitabox:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"since\": \"2018-02-22T15:25:50.000Z\",\n         \"node_id\": \"E258\"\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"tag\": \"temp\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"updated_at\": \"2018-02-22T15:25:50.000Z\",\n         \"node_id\": \"E258\"\n         \"Boardmodel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"tag\": \"temp\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
           "type": "json"
         },
         {
           "title": "Response example to user:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"since\": \"2018-02-22T15:25:50.000Z\",\n         \"BoardModel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"updated_at\": \"2018-02-22T15:25:50.000Z\",\n         \"Boardmodel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
           "type": "json"
         }
       ]

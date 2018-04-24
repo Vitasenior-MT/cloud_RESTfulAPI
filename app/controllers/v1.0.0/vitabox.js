@@ -63,10 +63,8 @@ exports.register = (req, res) => {
                         business.vitabox.addUser(req.client, vitabox.id, user.id, true).then(
                             () => res.status(200).json({ result: true }),
                             error => res.status(error.code).send(error.msg));
-                    },
-                    error => res.status(error.code).send(error.msg));
-            },
-            error => res.status(error.code).send(error.msg));
+                    }, error => res.status(error.code).send(error.msg));
+            }, error => res.status(500).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -86,8 +84,8 @@ exports.register = (req, res) => {
  * @apiParam {string} password password generated on creation
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
  */
-exports.connect = (req, res) => {
-    business.vitabox.connect(req.params.id, req.body.password).then(
+exports.requestToken = (req, res) => {
+    business.vitabox.requestToken(req.params.id, req.body.password).then(
         data => {
             business.utils.createToken(data, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token }),
@@ -385,7 +383,7 @@ exports.addUser = (req, res) => {
             user => business.vitabox.addUser(req.client, req.params.id, user.id, flag).then(
                 () => res.status(200).json({ result: true }),
                 error => res.status(error.code).send(error.msg)),
-            error => res.status(error.code).send(error.msg));
+            error => res.status(500).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
     }
@@ -626,7 +624,7 @@ exports.enablePatient = (req, res) => {
 exports.removePatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removePatient(req.client, req.params.id, req.body.patient_id).then(
-            () => business.record.withdrawsAccess('patient_id', req.body.patient_id).then(
+            () => business.record.withdrawsAccess({ 'patient_id': req.body.patient_id }).then(
                 () => res.status(200).json({ result: true }),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
@@ -654,14 +652,14 @@ exports.removePatient = (req, res) => {
  *          "password":"WkN1NNQiRD",
  *          "mac_addr": "00:12:4b:00:06:0d:60:fb"
  *     }
- * @apiSuccess {string} id return board id
+ * @apiSuccess {Object} board return board inserted
  */
 exports.addBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.authenticate(req.body.mac_addr, req.body.password).then(
             board => business.vitabox.addBoard(req.client, req.params.id, board.id).then(
                 () => business.board.setLocation(board, req.body.location ? req.body.location : null).then(
-                    () => res.status(200).json({ id: board.id }),
+                    () => res.status(200).json({ board: board }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
@@ -685,7 +683,7 @@ exports.addBoard = (req, res) => {
  * @apiSuccess {string} location place where the board is located (house division)
  * @apiSuccess {string} mac_addr board MAC address
  * @apiSuccess {boolean} active status of the board, only to admin, the other users will only receive boards with "is_active=true"
- * @apiSuccess {datetime} since register day to the vitabox
+ * @apiSuccess {datetime} updated_at last update time
  * @apiSuccess {json} BoardModel model of each board, contains an id, type and name, the vitabox itself wiil receive the transdutors list of each model
  * @apiSuccessExample {json} Response example to admin:
  * {
@@ -695,8 +693,8 @@ exports.addBoard = (req, res) => {
  *          "location": "kitchen",
  *          "mac_addr": "00:19:B9:FB:E2:58",
  *          "active": false,
- *          "since": "2018-02-22T15:25:50.000Z",
- *          "BoardModel": {
+ *          "updated_at": "2018-02-22T15:25:50.000Z",
+ *          "Boardmodel": {
  *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
  *              "type": "environmental",
  *              "name": "Zolertia RE-Mote"
@@ -711,9 +709,9 @@ exports.addBoard = (req, res) => {
  *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
  *          "location": "kitchen",
  *          "mac_addr": "00:19:B9:FB:E2:58",
- *          "since": "2018-02-22T15:25:50.000Z",
+ *          "updated_at": "2018-02-22T15:25:50.000Z",
  *          "node_id": "E258"
- *          "BoardModel": {
+ *          "Boardmodel": {
  *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
  *              "type": "environmental",
  *              "name": "Zolertia RE-Mote",
@@ -740,8 +738,8 @@ exports.addBoard = (req, res) => {
  *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
  *          "location": "kitchen",
  *          "mac_addr": "00:19:B9:FB:E2:58",
- *          "since": "2018-02-22T15:25:50.000Z",
- *          "BoardModel": {
+ *          "updated_at": "2018-02-22T15:25:50.000Z",
+ *          "Boardmodel": {
  *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
  *              "type": "environmental",
  *              "name": "Zolertia RE-Mote"
@@ -797,7 +795,7 @@ exports.disableBoard = (req, res) => {
 }
 
 /**
- * @api {put} /vitabox/:id/board/enable 21) Disable Board
+ * @api {put} /vitabox/:id/board/enable 21) Enable Board
  * @apiGroup Vitabox
  * @apiName enableBoard
  * @apiDescription disable board from a specific vitabox if the requester is sponsor of it.
@@ -854,7 +852,7 @@ exports.removeBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeBoard(req.client, req.params.id, req.body.board_id).then(
             () => business.board.removeLocation(req.body.board_id).then(
-                () => business.record.withdrawsAccess('board_id', req.body.board_id).then(
+                () => business.record.withdrawsAccess({ 'board_id': req.body.board_id }).then(
                     () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),

@@ -85,7 +85,10 @@ exports.forgotPassword = (req, res) => {
                 () => res.status(200).json({ result: true }),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg)),
-        error => res.status(error.code).send(error.msg));
+        error => {
+            if(error.code===404) res.status(200).json({ result: true })
+            else res.status(error.code).send(error.msg)
+        });
 }
 
 /**

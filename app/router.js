@@ -53,7 +53,7 @@ module.exports = (app) => {
             "1.0.0": controllers.v1_0_0.vitabox.register
         }))
         .post('/vitabox/:id/connect', versioning({
-            "1.0.0": controllers.v1_0_0.vitabox.connect
+            "1.0.0": controllers.v1_0_0.vitabox.requestToken
         }))
         .get('/vitabox/:id/user', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getUsers
@@ -142,13 +142,13 @@ module.exports = (app) => {
         .post('/record', versioning({
             "1.0.0": controllers.v1_0_0.record.create
         }))
-        .get('/record/patient/:id', versioning({
+        .get('/record/patient/:pid/sensor/:sid/page/:page', versioning({
             "1.0.0": controllers.v1_0_0.record.listByPatient
         }))
-        .get('/record/board/:id', versioning({
+        .get('/record/board/:bid/sensor/:sid/page/:page', versioning({
             "1.0.0": controllers.v1_0_0.record.listByBoard
         }))
-        .get('/record/sensor/:id', versioning({
+        .get('/record/sensor/:id/page/:page', versioning({
             "1.0.0": controllers.v1_0_0.record.listBySensor
         }))
         /*________________________________________________

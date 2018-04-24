@@ -13,7 +13,8 @@ exports.createIfNotExists = (attributes) => {
                             else db.Patient.create({
                                 name: encrypted.value[0],
                                 birthdate: attributes.birthdate,
-                                gender: attributes.gender
+                                gender: attributes.gender,
+                                height: attributes.height
                             }).then(
                                 patient => resolve(patient),
                                 error => reject({ code: 500, msg: error.message })

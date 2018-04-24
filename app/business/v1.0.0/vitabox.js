@@ -27,7 +27,7 @@ exports.register = function (vitabox_id, attributes) {
   });
 }
 
-exports.connect = function (vitabox_id, password) {
+exports.requestToken = function (vitabox_id, password) {
   return new Promise((resolve, reject) => {
     let encrypted = utils.encrypt([password]);
     if (!encrypted.error) db.Vitabox.findOne({ where: { password: encrypted.value[0], id: vitabox_id } }).then(
@@ -292,9 +292,8 @@ exports.getBoards = function (is_user, client, vitabox_id) {
   return new Promise((resolve, reject) => {
     if (is_user) if (client.admin)
       db.Board.findAll({
-        where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'active', ['created_at', 'since']], include: [{
-          model: db.Boardmodel, attributes: ['id', 'type', 'name']
-        }]
+        where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'active', 'last_commit', 'updated_at'],
+        include: [{ model: db.Boardmodel, attributes: ['id', 'type', 'name'] }]
       }).then(
         boards => resolve(boards),
         error => reject({ code: 500, msg: error.message }));
@@ -302,9 +301,8 @@ exports.getBoards = function (is_user, client, vitabox_id) {
       vitabox => {
         if (vitabox) _isUser(vitabox, client).then(
           () => db.Board.findAll({
-            where: { vitabox_id: vitabox_id, active: true }, attributes: ['id', 'location', 'mac_addr', ['created_at', 'since']], include: [{
-              model: db.Boardmodel, attributes: ['id', 'type', 'name']
-            }]
+            where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'updated_at'],
+            include: [{ model: db.Boardmodel, attributes: ['id', 'type', 'name'] }]
           }).then(
             boards => resolve(boards),
             error => reject({ code: 500, msg: error.message })),
@@ -312,8 +310,10 @@ exports.getBoards = function (is_user, client, vitabox_id) {
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
     else client.getBoards({
-      where: { active: true }, attributes: ['id', 'location', 'mac_addr', 'node_id', ['created_at', 'since']], include: [{
-        model: db.Boardmodel, attributes: ['id', 'type', 'name'], include: [{
+      where: { active: true }, attributes: ['id', 'location', 'mac_addr', 'node_id', 'updated_at'],
+      include: [{
+        model: db.Boardmodel, attributes: ['id', 'type', 'name'],
+        include: [{
           model: db.Sensor, attributes: { exclude: ['created_at', 'updated_at'] }
         }]
       }],
@@ -353,6 +353,14 @@ exports.verifySponsor = function (current_user, vitabox_id) {
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.updateLastCommit = (vitabox) => {
+  return new Promise((resolve, reject) => {
+    vitabox.update({ last_commit: new Date() }).then(
+      () => resolve(),
+      error => reject({ code: 500, msg: error.message }));
   });
 }
 

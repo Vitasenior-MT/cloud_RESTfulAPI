@@ -74,7 +74,20 @@ module.exports = (sequelize, DataTypes) => {
           msg: "maximum possible value must be defined"
         }
       }
-    }
+    },
+    last_values: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
+    last_commit: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null
+    },
+    deviation_range: {
+      type: DataTypes.DECIMAL(10, 5),
+      defaultValue: 0,
+    },
   }, { underscored: true });
 
   Sensor.associate = function (models) {

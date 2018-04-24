@@ -32,9 +32,13 @@ exports.findByMAC = (mac_addr) => {
 exports.authenticate = (mac_addr, password) => {
   return new Promise((resolve, reject) => {
     let encrypted = utils.encrypt([password]);
-    if (!encrypted.error) db.Board.findOne({ where: { mac_addr: mac_addr, password: encrypted.value[0] } }).then(
+    if (!encrypted.error) db.Board.findOne({
+      where: { mac_addr: mac_addr, password: encrypted.value[0] },
+      attributes: ['id', 'location', 'mac_addr', 'active', ['created_at', 'since']],
+      include: [{ model: db.Boardmodel, attributes: ['id', 'type', 'name'] }, { model: db.Vitabox }]
+    }).then(
       board => {
-        if (board) if (!board.vitabox_id) resolve(board);
+        if (board) if (!board.Vitabox) resolve(board);
         else reject({ code: 500, msg: "board already in use" });
         else reject({ code: 500, msg: "MAC address and password don't match" });
       }, error => reject({ code: 500, msg: error.message }));
@@ -77,5 +81,24 @@ exports.disable = (board_id) => {
         () => resolve(),
         error => reject({ code: 500, msg: error.message })),
       error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.updateLastCommit = (records) => {
+  return new Promise((resolve, reject) => {
+    let promises = [...new Set(records.map(x => x.board_id))].map(x => {
+      return new Promise((resolve, reject) => {
+        db.Board.findById(x).then(
+          board => {
+            if (board) board.update({ last_commit: new Date() }).then(
+              () => resolve(),
+              error => reject({ code: 500, msg: error.message }));
+            else reject({ code: 500, msg: "Board not found" });
+          }, error => reject({ code: 500, msg: error.message }));
+      })
+    });
+    Promise.all(promises).then(
+      () => resolve(),
+      error => reject({ code: 500, msg: error }));
   });
 }

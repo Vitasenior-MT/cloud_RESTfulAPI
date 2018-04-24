@@ -39,3 +39,22 @@ exports.remove = (sensor_id) => {
       }, error => reject({ code: 500, msg: error.message }));
   });
 }
+
+exports.updateLastCommit = (records) => {
+  return new Promise((resolve, reject) => {
+    let promises = [...new Set(records.map(x => x.sensor_id))].map(x => {
+      return new Promise((resolve, reject) => {
+        db.Sensor.findById(x).then(
+          sensor => {
+            if (sensor) sensor.update({ last_commit: new Date() }).then(
+              () => resolve(),
+              error => reject({ code: 500, msg: error.message }));
+            else reject({ code: 500, msg: "Sensor not found" });
+          }, error => reject({ code: 500, msg: error.message }));
+      })
+    });
+    Promise.all(promises).then(
+      () => resolve(),
+      error => reject({ code: 500, msg: error }));
+  });
+}

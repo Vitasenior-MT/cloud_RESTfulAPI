@@ -62,6 +62,15 @@ module.exports = (sequelize, DataTypes) => {
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    connected: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    last_commit: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null
     }
   }, { underscored: true });
 

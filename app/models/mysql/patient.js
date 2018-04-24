@@ -33,6 +33,35 @@ module.exports = (sequelize, DataTypes) => {
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
+        },
+        weight:{
+            type: DataTypes.FLOAT(5, 2),
+            allowNull: true,
+            defaultValue: null,
+            validate: {
+              min: {
+                args: 10,
+                msg: "minimum weight acceptable value is 10kg"
+              },
+              max: {
+                args: 300,
+                msg: "maximum weight acceptable value is 300kg"
+              }
+            }
+        },
+        height:{
+            type: DataTypes.FLOAT(5, 2),
+            allowNull: false,
+            validate: {
+              min: {
+                args: 0.5,
+                msg: "minimum height acceptable value is 0.5m"
+              },
+              max: {
+                args: 3,
+                msg: "maximum height acceptable value is 3m"
+              }
+            }
         }
     }, { underscored: true });
 
