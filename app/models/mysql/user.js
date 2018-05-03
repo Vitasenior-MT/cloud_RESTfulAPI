@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         msg: 'email already registered'
       },
     },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    photo: { type: DataTypes.STRING },
     password: {
       type: DataTypes.STRING,
       allowNull: false

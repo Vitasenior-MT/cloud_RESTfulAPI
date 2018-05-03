@@ -103,3 +103,11 @@ exports.verifyRecoverToken = (token) => {
         else reject({ code: 500, msg: encrypted.error.message });
     });
 }
+
+exports.updatePhoto = (user, filename) => {
+    return new Promise((resolve, reject) => {
+        user.update({ photo: filename }).then(
+            () => resolve(),
+            error => reject({ code: 500, msg: error.message }));
+    });
+}

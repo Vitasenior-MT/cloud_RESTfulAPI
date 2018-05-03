@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
 var mongo_uri = "", mysql_uri = "";
 
 if (process.env.NODE_ENV === "production") {
-    mongo_uri = 'mongodb://localhost:27017/myproject';
-    mysql_uri = 'mysql://api:123qwe@localhost:3306/node';
+    mongo_uri = '<mongo connection string>';
+    mysql_uri = '<mysql connection string>';
 } else {
     mongo_uri = 'mongodb://localhost:27017/test';
     mysql_uri = 'mysql://api:123qwe@localhost:3306/test';

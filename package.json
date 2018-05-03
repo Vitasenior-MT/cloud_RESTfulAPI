@@ -2,7 +2,7 @@
   "name": "vitasenior_mt_api",
   "main": "server.js",
   "scripts": {
-    "start": "node build/bundle.js",
+    "start": "node server.js",
     "test": "mocha --timeout 1000",
     "dev": "NODE_ENV=development node server.js",
     "build": "webpack -p --progress --optimize-minimize",
@@ -25,6 +25,7 @@
     "nodemailer": "^4.6.4",
     "os": "^0.1.1",
     "sequelize": "^4.32.3",
+    "tiny-worker": "^2.1.2",
     "uuid": "^3.2.1"
   },
   "devDependencies": {

@@ -476,7 +476,8 @@ exports.removeUser = (req, res) => {
  *     {
  *          "name": "José António",
  *          "birthdate": "1987-02-28",
- *          "gender": "male"
+ *          "gender": "male",
+ *          "height": 1.72
  *     }
  * @apiSuccess {string} id new patient id
  */

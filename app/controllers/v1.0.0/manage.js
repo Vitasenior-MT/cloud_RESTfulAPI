@@ -4,9 +4,9 @@ var business = require('../../business/index').v1_0_0,
 
 exports.fileUpload = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.utils.upload().then(
+        business.utils.upload('file').then(
             upload => upload(req, res, (err) => {
-                if (err) res.status(500).send("An error occurred when uploading");
+                if (err) res.status(500).send(err.message);
                 else res.status(200).json({ result: true });
             }),
             error => res.status(error.code).send(error.msg));

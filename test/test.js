@@ -41,7 +41,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1', password: '123QWEasd' }
+            form: { email: 'test1', password: '123QWEasd', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -50,7 +50,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1@a.a', password: '123QWEasd' }
+            form: { email: 'test1@a.a', password: '123QWEasd', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -59,7 +59,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: '@ipt.pt', password: '123QWEasd' }
+            form: { email: '@ipt.pt', password: '123QWEasd', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -68,7 +68,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1@ipt.pt', password: '123QWEasd' }
+            form: { email: 'test1@ipt.pt', password: '123QWEasd', name:"User Exemple" }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             test1_headers.Authorization = JSON.parse(body).token;
@@ -80,7 +80,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1@ipt.pt', password: '123QWEasd' }
+            form: { email: 'test1@ipt.pt', password: '123QWEasd', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -90,7 +90,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '' }
+            form: { email: 'test2@ipt.pt', password: '', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -99,7 +99,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '12345678' }
+            form: { email: 'test2@ipt.pt', password: '12345678', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -108,7 +108,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '1Qa' }
+            form: { email: 'test2@ipt.pt', password: '1Qa', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -117,7 +117,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '1234QWER' }
+            form: { email: 'test2@ipt.pt', password: '1234QWER', name:"User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -126,7 +126,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '123qweASD' }
+            form: { email: 'test2@ipt.pt', password: '123qweASD', name:"User Exemple" }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();

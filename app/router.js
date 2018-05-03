@@ -6,7 +6,7 @@ module.exports = (app) => {
         versioning = require('express-routes-versioning')();
 
     app
-        /*________________________________________________check
+        /*________________________________________________
         *_____________________USERS_______________________
         *_________________________________________________*/
         .post('/register', versioning({
@@ -25,7 +25,13 @@ module.exports = (app) => {
         .post('/reset', versioning({
             "1.0.0": controllers.v1_0_0.user.resetPassword,
         }))
-        /*________________________________________________check
+        .get('/photo', versioning({
+            "1.0.0": controllers.v1_0_0.user.getPhoto,
+        }))
+        .post('/photo', versioning({
+            "1.0.0": controllers.v1_0_0.user.setPhoto,
+        }))
+        /*________________________________________________
         *____________________ VITABOX_____________________
         *_________________________________________________*/
         .post('/vitabox', versioning({
@@ -94,7 +100,7 @@ module.exports = (app) => {
         .delete('/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removeBoard
         }))
-        /*________________________________________________check
+        /*________________________________________________
         *__________________ BOARD MODEL___________________
         *_________________________________________________*/
         .post('/boardmodel', versioning({
@@ -121,7 +127,7 @@ module.exports = (app) => {
         .post('/board', versioning({
             "1.0.0": controllers.v1_0_0.board.create
         }))
-        /*________________________________________________check
+        /*________________________________________________
         *_____________________SENSOR______________________
         *_________________________________________________*/
         .post('/sensor', versioning({
@@ -163,12 +169,12 @@ module.exports = (app) => {
         /*________________________________________________
         *_____________________TRASH_______________________
         *_________________________________________________*/
-        .get('/destroy', versioning({
-            "1.0.0": controllers.v1_0_0.manage.destroyAll
-        }))
-        .get('/testdb', versioning({
-            "1.0.0": controllers.v1_0_0.manage.testDb
-        }))
+        // .get('/destroy', versioning({
+        //     "1.0.0": controllers.v1_0_0.manage.destroyAll
+        // }))
+        // .get('/testdb', versioning({
+        //     "1.0.0": controllers.v1_0_0.manage.testDb
+        // }))
 
 
     app.all('*', (req, res) => {

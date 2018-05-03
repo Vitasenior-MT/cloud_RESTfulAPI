@@ -6,13 +6,13 @@ module.exports.seed = (db) => {
     db.User.count({ where: { admin: true } }).then(
       count => {
         if (count < 1) {
-          let encrypted = utils.encrypt(["admin@a.aa", "user1@a.aa", "user2@a.aa", "123qweASD", "passvita", "José António", "Manuela Antonieta"])
+          let encrypted = utils.encrypt(["admin@a.aa", "user1@a.aa", "user2@a.aa", "123qweASD", "passvita", "José António", "Manuela Antonieta", "Administrator Exemple"])
           if (!encrypted.error) {
 
             db.User.bulkCreate([
-              { "email": encrypted.value[0], "admin": true, "password": encrypted.value[3] },
-              { "email": encrypted.value[1], "password": encrypted.value[3] },
-              { "email": encrypted.value[2], "password": encrypted.value[3] }
+              { "email": encrypted.value[0], "admin": true, "password": encrypted.value[3], "name": encrypted.value[7] },
+              { "email": encrypted.value[1], "password": encrypted.value[3], "name": encrypted.value[5] },
+              { "email": encrypted.value[2], "password": encrypted.value[3], "name": encrypted.value[6] }
             ]).then(
               users => db.Vitabox.bulkCreate([
                 { "latitude": "39.6003075", "longitude": "-8.3906627", "address": "Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal", "registered": true, "active": true, "password": encrypted.value[4] },
@@ -33,7 +33,7 @@ module.exports.seed = (db) => {
                       { "vitabox_id": vitabox[0].id, "boardmodel_id": board_models[0].id, "location": "bedroom", "mac_addr": "00:12:4b:00:14:d5:2f:26", "node_id": "2f26", password: encrypted.value[4], active: true }
                     ]).then(
                       boards => db.Sensor.bulkCreate([
-                        { "transducer": "dht22", "measure": "temperature", "tag": "temp", "min_acceptable": "10", "max_acceptable": "25", "min_possible": "-20", "max_possible": "50", "last_commit":"2018-06-18T06:48:48.400Z", "deviation_range":5, "last_values":[21,23,24,22,20] },
+                        { "transducer": "dht22", "measure": "temperature", "tag": "temp", "min_acceptable": "10", "max_acceptable": "25", "min_possible": "-20", "max_possible": "50", "last_commit": "2018-06-18T06:48:48.400Z", "deviation_range": 5, "last_values": [21, 23, 24, 22, 20] },
                         { "transducer": "dht22", "measure": "humidity", "tag": "humi", "min_acceptable": "30", "max_acceptable": "50", "min_possible": "20", "max_possible": "60" },
                         { "transducer": "mq-7", "measure": "monoxide carbon", "tag": "mono", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" }
                       ]).then(
@@ -1042,8 +1042,8 @@ module.exports.seed = (db) => {
                           ], (error, doc) => {
                             if (error) reject(error);
                             else db.Patient.bulkCreate([
-                              { "name": encrypted.value[5], "birthdate": "1987-02-28", "gender": "male", active: true, height:1.73 },
-                              { "name": encrypted.value[6], "birthdate": "1972-02-28", "gender": "female", active: true, height:1.61 }
+                              { "name": encrypted.value[5], "birthdate": "1987-02-28", "gender": "male", active: true, height: 1.73 },
+                              { "name": encrypted.value[6], "birthdate": "1972-02-28", "gender": "female", active: true, height: 1.61 }
                             ]).then(
                               patients => vitabox[0].addPatients(patients).then(
                                 () => resolve(),

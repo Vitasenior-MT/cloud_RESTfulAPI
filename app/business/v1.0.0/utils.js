@@ -72,7 +72,7 @@ exports.generatePassword = (n_char) => {
   return sk;
 }
 
-exports.upload = () => {
+exports.upload = (html_name) => {
   return new Promise((resolve, reject) => {
     try {
       let obj = multer({
@@ -86,7 +86,27 @@ exports.upload = () => {
           if (!file.originalname.match(/\.(jpg|jpeg|png|gif|pdf)$/)) return cb(new Error('Only image files are allowed!'), false);
           cb(null, true);
         }
-      }).single('file');
+      }).single(html_name);
+      resolve(obj);
+    } catch (err) { reject({ code: 500, msg: err.message }); }
+  });
+}
+
+exports.upload = (html_name, filename) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let obj = multer({
+        storage: multer.diskStorage(
+          {
+            destination: path.resolve(__dirname, '..', '..', '..', 'files'),
+            filename: (req, file, cb) => cb(null, filename + '.' + mime.extension(file.mimetype))
+          }
+        ),
+        fileFilter: (req, file, cb) => {
+          if (!file.originalname.match(/\.(jpg|jpeg|png|gif|pdf)$/)) return cb(new Error('Only image files are allowed!'), false);
+          cb(null, true);
+        }
+      }).single(html_name);
       resolve(obj);
     } catch (err) { reject({ code: 500, msg: err.message }); }
   });
