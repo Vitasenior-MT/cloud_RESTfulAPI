@@ -169,12 +169,12 @@ module.exports = (app) => {
         /*________________________________________________
         *_____________________TRASH_______________________
         *_________________________________________________*/
-        // .get('/destroy', versioning({
-        //     "1.0.0": controllers.v1_0_0.manage.destroyAll
-        // }))
-        // .get('/testdb', versioning({
-        //     "1.0.0": controllers.v1_0_0.manage.testDb
-        // }))
+        .get('/destroy', versioning({
+            "1.0.0": controllers.v1_0_0.manage.destroyAll
+        }))
+        .get('/testdb', versioning({
+            "1.0.0": controllers.v1_0_0.manage.testDb
+        }))
 
 
     app.all('*', (req, res) => {

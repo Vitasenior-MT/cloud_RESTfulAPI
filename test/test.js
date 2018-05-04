@@ -29,7 +29,6 @@ describe("Tests", () => {
         });
     });
 
-
     /**
      * ______________________________________________________________________________________
      * ________________________________AUTHENTICATION________________________________________
@@ -41,7 +40,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1', password: '123QWEasd', name:"User Exemple" }
+            form: { email: 'test1', password: '123QWEasd', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -50,7 +49,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1@a.a', password: '123QWEasd', name:"User Exemple" }
+            form: { email: 'test1@a.a', password: '123QWEasd', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -59,7 +58,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: '@ipt.pt', password: '123QWEasd', name:"User Exemple" }
+            form: { email: '@ipt.pt', password: '123QWEasd', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -68,7 +67,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1@ipt.pt', password: '123QWEasd', name:"User Exemple" }
+            form: { email: 'test1@ipt.pt', password: '123QWEasd', name: "User Exemple" }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             test1_headers.Authorization = JSON.parse(body).token;
@@ -80,7 +79,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "register",
-            form: { email: 'test1@ipt.pt', password: '123QWEasd', name:"User Exemple" }
+            form: { email: 'test1@ipt.pt', password: '123QWEasd', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -90,7 +89,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '', name:"User Exemple" }
+            form: { email: 'test2@ipt.pt', password: '', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -99,7 +98,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '12345678', name:"User Exemple" }
+            form: { email: 'test2@ipt.pt', password: '12345678', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -108,7 +107,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '1Qa', name:"User Exemple" }
+            form: { email: 'test2@ipt.pt', password: '1Qa', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -117,7 +116,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '1234QWER', name:"User Exemple" }
+            form: { email: 'test2@ipt.pt', password: '1234QWER', name: "User Exemple" }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -126,7 +125,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "register",
-            form: { email: 'test2@ipt.pt', password: '123qweASD', name:"User Exemple" }
+            form: { email: 'test2@ipt.pt', password: '123qweASD', name: "User Exemple" }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
@@ -1133,6 +1132,688 @@ describe("Tests", () => {
             assert.equal(401, response.statusCode); done();
         });
     });
+    it("POST /record -> must accept vitabox to send a large number of sensor records", (done) => {
+        let recordsTest = [
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },{
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            },
+            {
+                "value": 10,
+                "datetime": "2018-03-02T15:40:23.000Z",
+                "patient_id": testpatient1,
+                "board_id": testboard1,
+                "sensor_id": sensor2
+            }
+        ];
+        request.post({
+            headers: box_headers,
+            url: base_url + "record",
+            form: { "records": recordsTest }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
     it("POST /record -> must refuse empty value, datetime, board_id or sensor_id", (done) => {
         records.push({
             "value": 13,
@@ -1181,7 +1862,7 @@ describe("Tests", () => {
     it("GET /record/patient/:pid/sensor/:sid/page/1 -> must refuse a user not related with vitabox to query records by patient", (done) => {
         request.get({
             headers: test1_headers,
-            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             assert.equal(401, response.statusCode); done();
         });
@@ -1189,7 +1870,7 @@ describe("Tests", () => {
     it("GET /record/patient/:pid/sensor/:sid/page/1 -> must accept any user related with vitabox to query records by patient", (done) => {
         request.get({
             headers: test2_headers,
-            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode);
@@ -1199,7 +1880,7 @@ describe("Tests", () => {
     it("GET /record/board/:bid/sensor/:sid/page/1 -> must refuse a user not related with vitabox to query records by board", (done) => {
         request.get({
             headers: test1_headers,
-            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             assert.equal(401, response.statusCode); done();
         });
@@ -1207,7 +1888,7 @@ describe("Tests", () => {
     it("GET /record/board/:bid/sensor/:sid/page/1 -> must accept any user related with vitabox to query records by board", (done) => {
         request.get({
             headers: test2_headers,
-            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode);
@@ -1217,7 +1898,7 @@ describe("Tests", () => {
     it("GET /record/sensor/:id/page/1 -> must refuse any non admin user to query records by sensor", (done) => {
         request.get({
             headers: test2_headers,
-            url: base_url + "record/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             assert.equal(401, response.statusCode); done();
         });
@@ -1225,7 +1906,7 @@ describe("Tests", () => {
     it("GET /record/sensor/:id/page/1 -> must accept admin to query records by sensor", (done) => {
         request.get({
             headers: admin_headers,
-            url: base_url + "record/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode);
@@ -1261,7 +1942,7 @@ describe("Tests", () => {
     it("GET /record/patient/:pid/sensor/:sid/page/1 -> after removing a patient from a vitabox, the related users can´t access the patient records", (done) => {
         request.get({
             headers: test2_headers,
-            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             if (response.statusCode != 401) console.log(body);
             assert.equal(401, response.statusCode); done();
@@ -1270,7 +1951,7 @@ describe("Tests", () => {
     it("GET /record/patient/pid/sensor/:sid/page/1 -> after removing a patient from a vitabox, the admin can access the old patient records", (done) => {
         request.get({
             headers: admin_headers,
-            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/patient/" + testpatient1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode);
@@ -1300,7 +1981,7 @@ describe("Tests", () => {
     it("GET /record/board/:bid/sensor/:sid/page/1 -> after removing a board from a vitabox, the related users can´t access the board records", (done) => {
         request.get({
             headers: test2_headers,
-            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             if (response.statusCode != 401) console.log(body);
             assert.equal(401, response.statusCode); done();
@@ -1309,7 +1990,7 @@ describe("Tests", () => {
     it("GET /record/board/:bid/sensor/:sid/page/1 -> after removing a board from a vitabox, the admin can access the old board records", (done) => {
         request.get({
             headers: admin_headers,
-            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2+ "/page/1",
+            url: base_url + "record/board/" + testboard1 + "/sensor/" + sensor2 + "/page/1",
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode);

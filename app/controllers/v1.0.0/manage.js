@@ -39,7 +39,7 @@ exports.destroyAll = (req, res) => {
 exports.testDb = (req, res) => {
     business.utils.deleteAll().then(
         () => business.utils.testSeed().then(
-            res.status(200).json({ success: true }),
+            () => res.status(200).json({ success: true }),
             error => res.status(500).send(error.msg)),
         error => res.status(500).send(error.msg));
 }

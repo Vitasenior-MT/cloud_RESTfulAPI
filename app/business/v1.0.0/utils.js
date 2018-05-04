@@ -25,7 +25,7 @@ exports.decrypt = (to_decrypt) => {
   return decipher.update(to_decrypt, 'hex', 'utf8') + decipher.final('utf8');
 }
 
-exports.createToken = (obj, client_address) => {
+exports.createToken = (obj) => {
   return new Promise((resolve, reject) => {
     let private_key = fs.readFileSync(__dirname + '/../../keys/key.pem').toString();
     if (private_key === undefined) reject({ code: 500, msg: "error on load private key" });
@@ -36,8 +36,7 @@ exports.createToken = (obj, client_address) => {
     };
     let options = {
       expiresIn: "8h",
-      algorithm: "RS256",
-      subject: client_address
+      algorithm: "RS256"
     };
     jwt.sign(payload, private_key, options, (error, token) => {
       if (error) reject({ code: 500, msg: error.message });
@@ -46,14 +45,13 @@ exports.createToken = (obj, client_address) => {
   });
 }
 
-exports.validateToken = (token, client_address) => {
+exports.validateToken = (token) => {
   return new Promise((resolve, reject) => {
     let public_key = fs.readFileSync(__dirname + '/../../keys/cert.pem').toString();
     if (public_key === undefined) reject("error on load public key");
 
     let options = {
-      algorithms: ["RS256"],
-      subject: client_address
+      algorithms: ["RS256"]
     };
 
     jwt.verify(token, public_key, options, (error, payload) => {

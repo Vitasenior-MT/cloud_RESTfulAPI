@@ -1,18 +1,19 @@
 var db = require('../../models/index'),
     utils = require('./utils');
 
-exports.register = (email, password) => {
+exports.register = (email, password, name) => {
     return new Promise((resolve, reject) => {
-
-        if (/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d$@$!%*#?&-.]{8,}$/.test(password))
-            if (/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(email)) {
-                let encrypted = utils.encrypt([email, password]);
-                if (!encrypted.error) db.User.create({ email: encrypted.value[0], password: encrypted.value[1] }).then(
-                    new_user => resolve(new_user),
-                    error => reject({ code: 500, msg: error.message }));
-                else reject({ code: 500, msg: encrypted.error.message });
-            } else reject({ code: 500, msg: "invalid email" });
-        else reject({ code: 500, msg: "invalid password, must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters" });
+        if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(name))
+            if (/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d$@$!%*#?&-.]{8,}$/.test(password))
+                if (/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(email)) {
+                    let encrypted = utils.encrypt([email, password, name]);
+                    if (!encrypted.error) db.User.create({ email: encrypted.value[0], password: encrypted.value[1], name: encrypted.value[2] }).then(
+                        new_user => resolve(new_user),
+                        error => reject({ code: 500, msg: error.message }));
+                    else reject({ code: 500, msg: encrypted.error.message });
+                } else reject({ code: 500, msg: "invalid email" });
+            else reject({ code: 500, msg: "invalid password, must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters" });
+        else reject({ code: 500, msg: "invalid name" });
     });
 }
 
