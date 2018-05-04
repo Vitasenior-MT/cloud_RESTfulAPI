@@ -1067,16 +1067,22 @@ module.exports.seed = (db) => {
 
 module.exports.testSeed = (db) => {
   return new Promise((resolve, reject) => {
+    db.User.count({ where: { admin: true } }).then(
+      count => {
+        console.log("will seed");
+        if (count < 1) {
+          let encrypted = utils.encrypt(["admin@a.aa", "123qweASD", "Administrator", "user@a.aa", "User Example"]);
+          if (!encrypted.error) {
 
-    let encrypted = utils.encrypt(["admin@a.aa", "123qweASD", "Administrator", "user@a.aa", "User Example"]);
-    if (!encrypted.error) {
+            db.User.bulkCreate([
+              { "email": encrypted.value[0], "admin": true, "password": encrypted.value[1], "name": encrypted.value[2] },
+              { "email": encrypted.value[3], "password": encrypted.value[1], "name": encrypted.value[4] }
+            ]).then(
+              () => resolve(),
+              error => reject(error));
+          } else reject(encrypted.error);
+        }
+      }, error => reject(error));
 
-      db.User.bulkCreate([
-        { "email": encrypted.value[0], "admin": true, "password": encrypted.value[1], "name": encrypted.value[2] },
-        { "email": encrypted.value[3], "password": encrypted.value[1], "name": encrypted.value[4] }
-      ]).then(
-        () => resolve(),
-        error => reject(error));
-    } else reject(encrypted.error);
   });
 }
