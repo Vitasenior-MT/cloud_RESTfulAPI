@@ -1069,7 +1069,6 @@ module.exports.testSeed = (db) => {
   return new Promise((resolve, reject) => {
     db.User.count({ where: { admin: true } }).then(
       count => {
-        console.log("will seed");
         if (count < 1) {
           let encrypted = utils.encrypt(["admin@a.aa", "123qweASD", "Administrator", "user@a.aa", "User Example"]);
           if (!encrypted.error) {
@@ -1081,8 +1080,7 @@ module.exports.testSeed = (db) => {
               () => resolve(),
               error => reject(error));
           } else reject(encrypted.error);
-        }
+        } else resolve();
       }, error => reject(error));
-
   });
 }
