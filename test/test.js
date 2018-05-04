@@ -1,7 +1,7 @@
 var request = require("request"),
     assert = require('assert'),
     port = process.env.PORT || 8080;
-var base_url = "http://192.168.161.67:8080/";
+var base_url = "http://localhost:8080/";
 var test1_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
 var test2_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
 var admin_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
