@@ -82,7 +82,7 @@ Vagrant.configure("2") do |config|
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123qwe"
     sudo apt-get install -y --allow-unauthenticated mysql-server
     sudo service mysql restart
-    # mysql -u root -p123qwe -h localhost -e "DROP DATABASE node;DROP DATABASE test;CREATE DATABASE IF NOT EXISTS node;CREATE DATABASE IF NOT EXISTS test;CREATE USER IF NOT EXISTS 'api'@'localhost' IDENTIFIED BY '123qwe';GRANT ALL PRIVILEGES ON node.* TO 'api'@'localhost';GRANT ALL PRIVILEGES ON test.* TO 'api'@'localhost'; FLUSH PRIVILEGES;"
+    # mysql -u root -p123qwe -h localhost -e "DROP DATABASE IF EXISTS node;DROP DATABASE IF EXISTS test;DROP USER IF EXISTS 'api'@'localhost';CREATE DATABASE IF NOT EXISTS node;CREATE DATABASE IF NOT EXISTS test;CREATE USER IF NOT EXISTS 'api'@'localhost' IDENTIFIED BY '123qwe';GRANT ALL PRIVILEGES ON node.* TO 'api'@'localhost';GRANT ALL PRIVILEGES ON test.* TO 'api'@'localhost'; FLUSH PRIVILEGES;"
     # mysql -u root -p123qwe -h localhost node < ../../vagrant/db_dump.sql
     
     # to get in mysql terminal

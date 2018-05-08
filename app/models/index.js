@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
 var mongo_uri = "", mysql_uri = "";
 
 if (process.env.NODE_ENV === "production") {
-    mongo_uri = '<mongo connection string>';
-    mysql_uri = '<mysql connection string>';
+    mongo_uri = 'mongodb://admin:MVJVTVJRQVCKVDCP@sl-eu-lon-2-portal.9.dblayer.com:26110,sl-eu-lon-2-portal.10.dblayer.com:26110/compose?authSource=admin&ssl=true';
+    mysql_uri = 'mysql://admin:HVPCEDBOKCKRHXJX@sl-eu-lon-2-portal.9.dblayer.com:26117/compose';
 } else {
     mongo_uri = 'mongodb://localhost:27017/test';
     mysql_uri = 'mysql://api:123qwe@localhost:3306/test';

@@ -30,7 +30,7 @@ exports.disable = (patient_id) => {
     return new Promise((resolve, reject) => {
         db.Patient.findById(patient_id).then(
             patient => patient.update({ active: false }).then(
-                () => resolve(),
+                result => resolve(result),
                 error => reject({ code: 500, msg: error.message })),
             error => reject({ code: 500, msg: error.message }));
     });

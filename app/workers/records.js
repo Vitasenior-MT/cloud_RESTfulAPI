@@ -22,4 +22,9 @@ function mining() {
       });
     } else return 2;
   });
+  
+}
+
+function log(){
+  db.log
 }

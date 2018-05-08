@@ -19,7 +19,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
  */
 exports.register = (req, res) => {
-    business.user.register(req.body.email, req.body.password).then(
+    business.user.register(req.body.email, req.body.password, req.body.name).then(
         user => {
             business.utils.createToken(user, req.connection.remoteAddress).then(
                 token => res.status(200).json({ token: token, user: user.id }),

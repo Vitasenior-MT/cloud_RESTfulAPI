@@ -14,11 +14,10 @@ module.exports = (app) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Accept-Version");
     res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
     res.header('Access-Control-Allow-Credentials', true);
+
     if (process.env.NODE_ENV === "development") console.log("\x1b[36m" + req.method, req.url + "\x1b[0m");
 
-    if (req.method === "OPTIONS") {
-      return res.send(200);
-    }
+    if (req.method === "OPTIONS") { return res.send(200); }
     if (req.headers.authorization) {
       utils.validateToken(req.headers.authorization, req.connection.remoteAddress).then(
         client => {

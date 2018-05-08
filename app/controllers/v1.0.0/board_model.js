@@ -2,7 +2,7 @@ var business = require('../../business/index').v1_0_0;
 
 /**
  * @api {post} /boardmodel 01) Create Model
- * @apiGroup Board
+ * @apiGroup Boardmodel
  * @apiName createBoardModel
  * @apiDescription create a new board model.
  * @apiVersion 1.0.0
@@ -30,7 +30,7 @@ exports.create = (req, res) => {
 
 /**
 * @api {get} /boardmodel 02) List Models
-* @apiGroup Board
+* @apiGroup Boardmodel
 * @apiName listsBoardsModel
 * @apiDescription list all board models. 
 * @apiVersion 1.0.0
@@ -69,7 +69,7 @@ exports.list = (req, res) => {
 
 /**
  * @api {put} /boardmodel/:id 03) Update Model
- * @apiGroup Board
+ * @apiGroup Boardmodel
  * @apiName updateBoardModel
  * @apiDescription update a board model.
  * @apiVersion 1.0.0
@@ -98,7 +98,7 @@ exports.update = (req, res) => {
 
 /**
  * @api {delete} /boardmodel/:id 04) Delete Model
- * @apiGroup Board
+ * @apiGroup Boardmodel
  * @apiName deleteBoardModel
  * @apiDescription remove a board model.
  * @apiVersion 1.0.0
@@ -120,7 +120,7 @@ exports.delete = (req, res) => {
 
 /**
  * @api {post} /boardmodel/:id/sensor 05) Add Sensor
- * @apiGroup Board
+ * @apiGroup Boardmodel
  * @apiName setSensors
  * @apiDescription add sensors to a board model
  * @apiVersion 1.0.0
@@ -146,7 +146,7 @@ exports.setSensor = (req, res) => {
 
 /**
  * @api {get} boardmodel/:id/sensor 06) Get Sensors
- * @apiGroup Board
+ * @apiGroup Boardmodel
  * @apiName getSensors
  * @apiDescription list sensors of a board model
  * @apiVersion 1.0.0
@@ -188,7 +188,7 @@ exports.getSensors = (req, res) => {
 
 /**
  * @api {delete} boardmodel/:id/sensor 07) Remove Sensor
- * @apiGroup Board
+ * @apiGroup Boardmodel
  * @apiName removeSensor
  * @apiDescription remove sensor from a board model 
  * @apiVersion 1.0.0
