@@ -44,17 +44,17 @@ var business = require('../../business/index').v1_0_0;
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         if (req.body.records) {
-            business.vitabox.updateLastCommit(req.client).then(
-                () => business.board.updateLastCommit(req.body.records).then(
-                    () => business.sensor.updateLastCommit(req.body.records).then(
-                        () => business.record.create(req.body.records).then(
-                            result => {
-                                if (result.has_invalid) res.status(200).json({ result: true, error: "some records were discarded by invalid parameters, value, datetime, sensor_id and board_id are required" });
-                                else res.status(200).json({ result: true, error: "" });
-                            }, error => res.status(error.code).json(error.msg)),
-                        error => res.status(error.code).send(error.msg)),
-                    error => res.status(error.code).send(error.msg)),
-                error => res.status(error.code).send(error.msg));
+            // business.vitabox.updateLastCommit(req.client).then(
+            //     () => business.board.updateLastCommit(req.body.records).then(
+            //         () => business.sensor.updateLastCommit(req.body.records).then(
+            () => business.record.create(req.body.records).then(
+                result => {
+                    if (result.has_invalid) res.status(200).json({ result: true, error: "some records were discarded by invalid parameters, value, datetime, sensor_id and board_id are required" });
+                    else res.status(200).json({ result: true, error: "" });
+                }, error => res.status(error.code).json(error.msg));
+            //         error => res.status(error.code).send(error.msg)),
+            //     error => res.status(error.code).send(error.msg)),
+            // error => res.status(error.code).send(error.msg));
         } else { res.status(500).send("No records to introduce"); }
     } else { res.status(401).send("Unauthorized"); }
 }
