@@ -44,7 +44,6 @@ var business = require('../../business/index').v1_0_0;
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         if (req.body.records) {
-            console.log(req.body.records);
             business.vitabox.updateLastCommit(req.client).then(
                 () => business.board.updateLastCommit(req.body.records).then(
                     () => business.sensor.updateLastCommit(req.body.records).then(
@@ -56,10 +55,7 @@ exports.create = (req, res) => {
                         error => res.status(error.code).send(error.msg)),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg));
-        } else {
-            console.log("no records sent")
-            res.status(500).send("No records to introduce"); 
-        }
+        } else { res.status(500).send("No records to introduce"); }
     } else { res.status(401).send("Unauthorized"); }
 }
 
