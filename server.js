@@ -17,8 +17,15 @@ if (cluster.isMaster) {
                 () => {
                     console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with MongoDB and MySQL');
 
-                    let workers = [];
-                    for (var i = 0; i < require('os').cpus().length; i++) workers.push(cluster.fork());
+                    let workers = [], counter = 0;
+                    for (var i = 0; i < require('os').cpus().length; i++) {
+                        let worker = cluster.fork();
+                        workers.push(worker);
+                        // Testing
+                        worker.on('message', function (msg) {
+                            counter++; console.log(counter + " - " + msg.request);
+                        });
+                    }
                     console.log('(PLAIN) Master cluster created ' + workers.length + ' workers...');
 
                     cluster.on('exit', (worker, code, signal) => { console.log('(PLAIN) Worker ' + worker.process.pid + ' died -> Starting a new worker'); cluster.fork(); });
