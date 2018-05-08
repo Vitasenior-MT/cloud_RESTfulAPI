@@ -239,11 +239,27 @@ exports.getPatients = function (is_user, client, vitabox_id) {
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
-    else client.getPatients({ where: { active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
+    else client.getPatients({
+      where: { active: true },
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']],
+      include: [{
+        model: db.Board, attributes: ['id', 'location', 'mac_addr'],
+        include: [{
+          model: db.Boardmodel, attributes: ['id', 'type', 'name'],
+          include: [{
+            model: db.Sensor, attributes: ['id', 'transducer', "measure", "tag"]
+          }]
+        }]
+      }],
+    }).then(
       patients => {
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
-          delete patient.dataValues.VitaboxId;
+          patient.Boards.forEach(
+            board => {
+              delete board.dataValues.PatientBoard;
+              board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor);
+            })
         });
         resolve(patients);
       }, error => reject({ code: 500, msg: error.message }));

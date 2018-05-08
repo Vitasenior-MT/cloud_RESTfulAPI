@@ -7,14 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     transducer: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: '',
-      validate: {
-        notEmpty: {
-          msg: "transducer name must be defined"
-        }
-      }
+      type: DataTypes.STRING
     },
     measure: {
       type: DataTypes.STRING,

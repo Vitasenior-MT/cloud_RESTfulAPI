@@ -4,8 +4,9 @@
   "order": [
     "Authentication",
     "Sensor",
-    "Board",
+    "Boardmodel",
     "Vitabox",
+    "Board",
     "Record"
   ],
   "description": "",
@@ -14,7 +15,7 @@
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-05-03T10:38:03.327Z",
+    "time": "2018-05-07T14:32:47.277Z",
     "url": "http://apidocjs.com",
     "version": "0.17.6"
   }

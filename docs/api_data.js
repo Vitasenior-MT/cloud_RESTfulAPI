@@ -576,15 +576,15 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/boardmodel",
-    "title": "01) Create Model",
+    "url": "/board/:id/patient",
+    "title": "02) Add Patient",
     "group": "Board",
-    "name": "createBoardModel",
-    "description": "<p>create a new board model.</p>",
+    "name": "addPatientToBoard",
+    "description": "<p>Associate a patient with a board</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "admin"
+        "name": "admin sponsor"
       }
     ],
     "parameter": {
@@ -594,22 +594,15 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "name",
-            "description": "<p>board model name</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "type",
-            "description": "<p>board type, must be 'environmental', 'wearable' or 'non-wearable'</p>"
+            "field": "patient_id",
+            "description": "<p>patient id to add</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"name\": \"Zolertia RE-Mote\",\n     \"type\": \"environmental\"\n}",
+          "content": "{\n     \"patient_id\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\"\n}",
           "type": "json"
         }
       ]
@@ -619,15 +612,15 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "booleam",
             "optional": false,
-            "field": "id",
-            "description": "<p>created board model id</p>"
+            "field": "result",
+            "description": "<p>returns true if was successfuly added</p>"
           }
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "app/controllers/v1.0.0/board.js",
     "groupTitle": "Board",
     "header": {
       "fields": {
@@ -680,9 +673,9 @@ define({ "api": [
   {
     "type": "post",
     "url": "/board",
-    "title": "08) Create Board",
+    "title": "01) Create Board",
     "group": "Board",
-    "name": "create_a_new_Board",
+    "name": "createBoard",
     "description": "<p>register a new board on the system</p>",
     "version": "1.0.0",
     "permission": [
@@ -802,10 +795,113 @@ define({ "api": [
     }
   },
   {
+    "type": "post",
+    "url": "/boardmodel",
+    "title": "01) Create Model",
+    "group": "Boardmodel",
+    "name": "createBoardModel",
+    "description": "<p>create a new board model.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>board model name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "type",
+            "description": "<p>board type, must be 'environmental', 'wearable' or 'non-wearable'</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"name\": \"Zolertia RE-Mote\",\n     \"type\": \"environmental\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>created board model id</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/board_model.js",
+    "groupTitle": "Boardmodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "delete",
     "url": "/boardmodel/:id",
     "title": "04) Delete Model",
-    "group": "Board",
+    "group": "Boardmodel",
     "name": "deleteBoardModel",
     "description": "<p>remove a board model.</p>",
     "version": "1.0.0",
@@ -841,7 +937,7 @@ define({ "api": [
       }
     },
     "filename": "app/controllers/v1.0.0/board_model.js",
-    "groupTitle": "Board",
+    "groupTitle": "Boardmodel",
     "header": {
       "fields": {
         "Header": [
@@ -894,7 +990,7 @@ define({ "api": [
     "type": "get",
     "url": "boardmodel/:id/sensor",
     "title": "06) Get Sensors",
-    "group": "Board",
+    "group": "Boardmodel",
     "name": "getSensors",
     "description": "<p>list sensors of a board model</p>",
     "version": "1.0.0",
@@ -979,7 +1075,7 @@ define({ "api": [
       ]
     },
     "filename": "app/controllers/v1.0.0/board_model.js",
-    "groupTitle": "Board",
+    "groupTitle": "Boardmodel",
     "header": {
       "fields": {
         "Header": [
@@ -1032,7 +1128,7 @@ define({ "api": [
     "type": "get",
     "url": "/boardmodel",
     "title": "02) List Models",
-    "group": "Board",
+    "group": "Boardmodel",
     "name": "listsBoardsModel",
     "description": "<p>list all board models.</p>",
     "version": "1.0.0",
@@ -1083,7 +1179,7 @@ define({ "api": [
       ]
     },
     "filename": "app/controllers/v1.0.0/board_model.js",
-    "groupTitle": "Board",
+    "groupTitle": "Boardmodel",
     "header": {
       "fields": {
         "Header": [
@@ -1136,7 +1232,7 @@ define({ "api": [
     "type": "delete",
     "url": "boardmodel/:id/sensor",
     "title": "07) Remove Sensor",
-    "group": "Board",
+    "group": "Boardmodel",
     "name": "removeSensor",
     "description": "<p>remove sensor from a board model</p>",
     "version": "1.0.0",
@@ -1186,7 +1282,7 @@ define({ "api": [
       }
     },
     "filename": "app/controllers/v1.0.0/board_model.js",
-    "groupTitle": "Board",
+    "groupTitle": "Boardmodel",
     "header": {
       "fields": {
         "Header": [
@@ -1239,7 +1335,7 @@ define({ "api": [
     "type": "post",
     "url": "/boardmodel/:id/sensor",
     "title": "05) Add Sensor",
-    "group": "Board",
+    "group": "Boardmodel",
     "name": "setSensors",
     "description": "<p>add sensors to a board model</p>",
     "version": "1.0.0",
@@ -1282,7 +1378,7 @@ define({ "api": [
       }
     },
     "filename": "app/controllers/v1.0.0/board_model.js",
-    "groupTitle": "Board",
+    "groupTitle": "Boardmodel",
     "header": {
       "fields": {
         "Header": [
@@ -1335,7 +1431,7 @@ define({ "api": [
     "type": "put",
     "url": "/boardmodel/:id",
     "title": "03) Update Model",
-    "group": "Board",
+    "group": "Boardmodel",
     "name": "updateBoardModel",
     "description": "<p>update a board model.</p>",
     "version": "1.0.0",
@@ -1392,6 +1488,102 @@ define({ "api": [
       }
     },
     "filename": "app/controllers/v1.0.0/board_model.js",
+    "groupTitle": "Boardmodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "/board/:id/patient",
+    "title": "03) Remove Patient",
+    "group": "Board",
+    "name": "removePatientFromBoard",
+    "description": "<p>Disassociate a patient from a board</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "patient_id",
+            "description": "<p>patient id to add</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"patient_id\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "booleam",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly removed</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/board.js",
     "groupTitle": "Board",
     "header": {
       "fields": {
@@ -3798,8 +3990,13 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Response example:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\"\n     }\n ]\n}",
+          "title": "Response example to users:",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\"\n ]\n}",
+          "type": "json"
+        },
+        {
+          "title": "Response example to vitabox:",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"Boards\": [\n             {\n                 \"id\": \"254536f2-9520-4553-b1b8-b9047195e862\",\n                 \"location\": null,\n                 \"mac_addr\": \"00:12:4b:00:06:0d:b2:1a\",\n                 \"Boardmodel\": {\n                     \"id\": \"369aff29-f63e-434e-a83c-375518a491c3\",\n                     \"type\": \"wearable\",\n                     \"name\": \"Xiaomi Miband\",\n                     \"Sensors\": [\n                         {\n                             \"id\": \"326c8d37-48d3-459b-a955-1b6ab3e038c6\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"heart rate\",\n                             \"tag\": \"hrate\"\n                         },\n                         {\n                             \"id\": \"5865653c-d7e1-4835-8ba1-5c13ea620851\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"pedometer\",\n                             \"tag\": \"pedom\"\n                         }\n                     ]\n                 }\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]

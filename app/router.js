@@ -124,8 +124,17 @@ module.exports = (app) => {
         .delete('/boardmodel/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board_model.removeSensor
         }))
+        /*________________________________________________
+        *_____________________SENSOR______________________
+        *_________________________________________________*/
         .post('/board', versioning({
             "1.0.0": controllers.v1_0_0.board.create
+        }))
+        .post('/board/:id/patient', versioning({
+            "1.0.0": controllers.v1_0_0.board.addPatientToBoard
+        }))
+        .delete('/board/:id/patient', versioning({
+            "1.0.0": controllers.v1_0_0.board.removePatientFromBoard
         }))
         /*________________________________________________
         *_____________________SENSOR______________________

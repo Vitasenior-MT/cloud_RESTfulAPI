@@ -1,5 +1,6 @@
 var db = require('../../models/index'),
-  utils = require('./utils');
+  utils = require('./utils'),
+  vitabox = require('./vitabox');
 
 exports.create = (attributes) => {
   return new Promise((resolve, reject) => {
@@ -100,5 +101,41 @@ exports.updateLastCommit = (records) => {
     Promise.all(promises).then(
       () => resolve(),
       error => reject({ code: 500, msg: error }));
+  });
+}
+
+exports.addPatient = function (current_user, board_id, patient_id) {
+  return new Promise((resolve, reject) => {
+    db.Board.findById(board_id).then(
+      board => {
+        if (board) if (current_user.admin)
+          board.addPatient(patient_id).then(
+            result => resolve(result),
+            error => reject({ code: 500, msg: error.message }));
+        else vitabox.verifySponsor(current_user, board.vitabox_id).then(
+          () => board.addPatient(patient_id).then(
+            () => resolve(),
+            error => reject({ code: 500, msg: error.message })),
+          error => reject(error));
+        else reject({ code: 500, msg: "Board not found" });
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.removePatient = function (current_user, board_id, patient_id) {
+  return new Promise((resolve, reject) => {
+    db.Board.findById(board_id).then(
+      board => {
+        if (board) if (current_user.admin)
+          board.removePatient(patient_id).then(
+            () => resolve(),
+            error => reject({ code: 500, msg: error.message }));
+        else vitabox.verifySponsor(current_user, board.vitabox_id).then(
+          () => board.removePatient(patient_id).then(
+            () => resolve(),
+            error => reject({ code: 500, msg: error.message })),
+          error => reject(error));
+        else reject({ code: 500, msg: "Board not found" });
+      }, error => reject({ code: 500, msg: error.message }));
   });
 }

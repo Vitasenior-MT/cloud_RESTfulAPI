@@ -509,7 +509,7 @@ exports.addPatient = (req, res) => {
  * @apiSuccess {string} name name of each patient
  * @apiSuccess {string} gender patient gender (must be 'male', 'female' or 'undefined')
  * @apiSuccess {datetime} since relationship date with the vitabox 
- * @apiSuccessExample {json} Response example:
+ * @apiSuccessExample {json} Response example to users:
  * {
  *  "patients": [
  *      {
@@ -518,9 +518,47 @@ exports.addPatient = (req, res) => {
  *          "name": "José António",
  *          "gender": "male",
  *          "since": "2018-02-19T14:55:59.000Z"
+ *  ]
+ * }
+ * @apiSuccessExample {json} Response example to vitabox:
+ * {
+ *  "patients": [
+ *      {
+ *          "id": "a77ea0fe-5e34-4189-9702-95cb69b4cd1d",
+ *          "birthdate": "1987-02-28",
+ *          "name": "José António",
+ *          "gender": "male",
+ *          "since": "2018-02-19T14:55:59.000Z",
+ *          "Boards": [
+ *              {
+ *                  "id": "254536f2-9520-4553-b1b8-b9047195e862",
+ *                  "location": null,
+ *                  "mac_addr": "00:12:4b:00:06:0d:b2:1a",
+ *                  "Boardmodel": {
+ *                      "id": "369aff29-f63e-434e-a83c-375518a491c3",
+ *                      "type": "wearable",
+ *                      "name": "Xiaomi Miband",
+ *                      "Sensors": [
+ *                          {
+ *                              "id": "326c8d37-48d3-459b-a955-1b6ab3e038c6",
+ *                              "transducer": null,
+ *                              "measure": "heart rate",
+ *                              "tag": "hrate"
+ *                          },
+ *                          {
+ *                              "id": "5865653c-d7e1-4835-8ba1-5c13ea620851",
+ *                              "transducer": null,
+ *                              "measure": "pedometer",
+ *                              "tag": "pedom"
+ *                          }
+ *                      ]
+ *                  }
+ *              }
+ *          ]
  *      }
  *  ]
  * }
+ * 
  */
 exports.getPatients = (req, res) => {
     if (req.client) {
