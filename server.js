@@ -10,10 +10,10 @@ if (cluster.isMaster) {
     var db = require('./app/models/index');
     db.sequelize.sync().then(
         () => {
-            let seed = null;
-            if (process.env.NODE_ENV === "development") seed = require('./app/models/seed').seed(db);
-            else seed = require('./app/models/seed').testSeed(db);
-            seed.then(
+            // let seed = null;
+            // if (process.env.NODE_ENV === "development") seed = require('./app/models/seed').seed(db);
+            // else seed = require('./app/models/seed').testSeed(db);
+            require('./app/models/seed').seed(db).then(
                 () => {
                     console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with MongoDB and MySQL');
 
@@ -22,7 +22,7 @@ if (cluster.isMaster) {
                     console.log('(PLAIN) Master cluster created ' + workers.length + ' workers...');
 
                     cluster.on('exit', (worker, code, signal) => { console.log('(PLAIN) Worker ' + worker.process.pid + ' died -> Starting a new worker'); cluster.fork(); });
-                }, error => { console.log('Unable to seed Databases.', error.message); process.exit(1); })
+                }, error => { console.log('Unable to seed Databases.', error.message); process.exit(1); });
         }, error => { console.log('Unable to connect to Databases.', error); process.exit(1); });
 } else {
     var express = require('express'),
