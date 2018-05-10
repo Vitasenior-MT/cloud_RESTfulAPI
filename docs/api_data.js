@@ -512,6 +512,13 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
+            "field": "name",
+            "description": "<p>valid name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
             "field": "password",
             "description": "<p>must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters</p>"
           }
@@ -3996,7 +4003,7 @@ define({ "api": [
         },
         {
           "title": "Response example to vitabox:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"Boards\": [\n             {\n                 \"id\": \"254536f2-9520-4553-b1b8-b9047195e862\",\n                 \"location\": null,\n                 \"mac_addr\": \"00:12:4b:00:06:0d:b2:1a\",\n                 \"Boardmodel\": {\n                     \"id\": \"369aff29-f63e-434e-a83c-375518a491c3\",\n                     \"type\": \"wearable\",\n                     \"name\": \"Xiaomi Miband\",\n                     \"Sensors\": [\n                         {\n                             \"id\": \"326c8d37-48d3-459b-a955-1b6ab3e038c6\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"heart rate\",\n                             \"tag\": \"hrate\"\n                         },\n                         {\n                             \"id\": \"5865653c-d7e1-4835-8ba1-5c13ea620851\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"pedometer\",\n                             \"tag\": \"pedom\"\n                         }\n                     ]\n                 }\n             }\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"Boards\": [\n             {\n                 \"id\": \"254536f2-9520-4553-b1b8-b9047195e862\",\n                 \"location\": null,\n                 \"mac_addr\": \"00:12:4b:00:06:0d:b2:1a\",\n                 \"Boardmodel\": {\n                     \"id\": \"369aff29-f63e-434e-a83c-375518a491c3\",\n                     \"type\": \"wearable\",\n                     \"name\": \"Xiaomi Miband\",\n                     \"Sensors\": [\n                         {\n                             \"id\": \"326c8d37-48d3-459b-a955-1b6ab3e038c6\",\n                             \"transducer\": null,\n                             \"measure\": \"heart rate\",\n                             \"tag\": \"hrate\"\n                         },\n                         {\n                             \"id\": \"5865653c-d7e1-4835-8ba1-5c13ea620851\",\n                             \"transducer\": null,\n                             \"measure\": \"pedometer\",\n                             \"tag\": \"pedom\"\n                         }\n                     ]\n                 }\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]

@@ -15,6 +15,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiVersion 1.0.0
  * @apiUse auth
  * @apiParam {string} email valid email
+ * @apiParam {string} name valid name
  * @apiParam {string} password must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
  */
