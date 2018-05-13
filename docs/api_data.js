@@ -802,6 +802,95 @@ define({ "api": [
     }
   },
   {
+    "type": "get",
+    "url": "/board/:id/sensor",
+    "title": "04) Get Sensors",
+    "group": "Board",
+    "name": "getSensors",
+    "description": "<p>Get sensors from a board</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>board id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "booleam",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly removed</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/board.js",
+    "groupTitle": "Board",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "status",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "error",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "post",
     "url": "/boardmodel",
     "title": "01) Create Model",
@@ -1674,20 +1763,6 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "patient_id",
-            "description": "<p>patient unique ID related to the value, may be null or omitted</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "board_id",
-            "description": "<p>board unique ID related to the value</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
             "field": "sensor_id",
             "description": "<p>sensor unique ID related to the value</p>"
           }
@@ -1696,7 +1771,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n \"records\":[\n     {\n         \"value\": 10,\n         \"datetime\": \"2018-03-02T15:40:23.000Z\",\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     },\n     {\n         \"value\": 13,\n         \"datetime\": \"2018-03-02T15:36:26.000Z\",\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     }\n ]\n}",
+          "content": "{\n \"records\":[\n     {\n         \"value\": 10,\n         \"datetime\": \"2018-03-02T15:40:23.000Z\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     },\n     {\n         \"value\": 13,\n         \"datetime\": \"2018-03-02T15:36:26.000Z\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -1780,11 +1855,11 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/record/board/:bid/sensor/:sid/page/:page",
-    "title": "3) List by Board",
+    "url": "/record/sensor/:id/start/:sdate/end/:edate",
+    "title": "3) List (Dates)",
     "group": "Record",
-    "name": "listRecordsByBoard",
-    "description": "<p>list all records by board</p>",
+    "name": "listBetweenDates",
+    "description": "<p>list all records from a sensor between dates</p>",
     "version": "1.0.0",
     "permission": [
       {
@@ -1798,22 +1873,22 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": ":bid",
-            "description": "<p>board unique ID</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":sid",
+            "field": ":id",
             "description": "<p>sensor unique ID</p>"
           },
           {
             "group": "Parameter",
-            "type": "string",
+            "type": "date",
             "optional": false,
-            "field": ":page",
-            "description": "<p>each page has 25 records, page must be greater or equal to 1</p>"
+            "field": ":start_date",
+            "description": "<p>start date in UTC format</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "date",
+            "optional": false,
+            "field": ":end_date",
+            "description": "<p>end date in UTC format</p>"
           }
         ]
       }
@@ -1844,17 +1919,10 @@ define({ "api": [
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "boolean",
             "optional": false,
-            "field": "patient_id",
-            "description": "<p>patient unique ID related to the value</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "board_id",
-            "description": "<p>board unique ID related to the value</p>"
+            "field": "analyzed",
+            "description": "<p>indicate if data was already analyzed</p>"
           },
           {
             "group": "Success 200",
@@ -1868,152 +1936,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"records\": [\n     {\n         \"datetime\": \"2018-03-02T15:40:23.000Z\",\n         \"value\": 10,\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     },\n     {\n         \"datetime\": \"2018-03-02T15:36:26.000Z\",\n         \"value\": 13,\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     }\n ]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "app/controllers/v1.0.0/record.js",
-    "groupTitle": "Record",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "status",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "error",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
-    "url": "/record/patient/:pid/sensor/:sid/page/:page",
-    "title": "2) List by Patient",
-    "group": "Record",
-    "name": "listRecordsByPatient",
-    "description": "<p>list all records by patient</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "user"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":pid",
-            "description": "<p>patient unique ID</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":sid",
-            "description": "<p>sensor unique ID</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":page",
-            "description": "<p>each page has 25 records, page must be greater or equal to 1</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "array",
-            "optional": false,
-            "field": "records",
-            "description": "<p>records list</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "decimal",
-            "optional": false,
-            "field": "value",
-            "description": "<p>value catched</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "datetime",
-            "optional": false,
-            "field": "datetime",
-            "description": "<p>moment when the value was catched</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "patient_id",
-            "description": "<p>patient unique ID related to the value</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "board_id",
-            "description": "<p>board unique ID related to the value</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "sensor_id",
-            "description": "<p>sensor unique ID related to the value</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{\n \"records\": [\n     {\n         \"datetime\": \"2018-03-02T15:40:23.000Z\",\n         \"value\": 10,\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     },\n     {\n         \"datetime\": \"2018-03-02T15:36:26.000Z\",\n         \"value\": 13,\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     }\n ]\n}",
+          "content": "{\n \"records\": [\n     {\n         \"datetime\": \"2018-03-02T15:40:23.000Z\",\n         \"value\": 10,\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n         \"analyzed\": false \n     },\n     {\n         \"datetime\": \"2018-03-02T15:36:26.000Z\",\n         \"value\": 13,\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n         \"analyzed\": true\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -2071,14 +1994,14 @@ define({ "api": [
   {
     "type": "get",
     "url": "/record/sensor/:id/page/:page",
-    "title": "4) List by Sensor",
+    "title": "2) List (Page)",
     "group": "Record",
-    "name": "listRecordsBySensor",
-    "description": "<p>list all records by sensor</p>",
+    "name": "listFromPage",
+    "description": "<p>list all records from a sensor in a page</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "admin"
+        "name": "user"
       }
     ],
     "parameter": {
@@ -2127,17 +2050,10 @@ define({ "api": [
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "boolean",
             "optional": false,
-            "field": "patient_id",
-            "description": "<p>patient unique ID related to the value</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "board_id",
-            "description": "<p>board unique ID related to the value</p>"
+            "field": "analyzed",
+            "description": "<p>indicate if data was already analyzed</p>"
           },
           {
             "group": "Success 200",
@@ -2151,7 +2067,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"records\": [\n     {\n         \"datetime\": \"2018-03-02T15:40:23.000Z\",\n         \"value\": 10,\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     },\n     {\n         \"datetime\": \"2018-03-02T15:36:26.000Z\",\n         \"value\": 13,\n         \"patient_id\": \"7d9db945-d3f4-471a-a0f4-37f69c171dea\",\n         \"board_id\": \"f2340471-23e2-4891-bb89-14888abcc29e\",\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\"\n     }\n ]\n}",
+          "content": "{\n \"records\": [\n     {\n         \"datetime\": \"2018-03-02T15:40:23.000Z\",\n         \"value\": 10,\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n         \"analyzed\": false \n     },\n     {\n         \"datetime\": \"2018-03-02T15:36:26.000Z\",\n         \"value\": 13,\n         \"sensor_id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n         \"analyzed\": true\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -2210,8 +2126,8 @@ define({ "api": [
     "type": "post",
     "url": "/sensor",
     "title": "01) Create",
-    "group": "Sensor",
-    "name": "createSensor",
+    "group": "Sensormodel",
+    "name": "createSensormodel",
     "description": "<p>create a new sensor.</p>",
     "version": "1.0.0",
     "permission": [
@@ -2287,8 +2203,8 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/sensor.js",
-    "groupTitle": "Sensor",
+    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "groupTitle": "Sensormodel",
     "header": {
       "fields": {
         "Header": [
@@ -2341,8 +2257,8 @@ define({ "api": [
     "type": "delete",
     "url": "/sensor/:id",
     "title": "04) Delete",
-    "group": "Sensor",
-    "name": "deleteSensor",
+    "group": "Sensormodel",
+    "name": "deleteSensormodel",
     "description": "<p>remove a sensor</p>",
     "version": "1.0.0",
     "permission": [
@@ -2376,8 +2292,8 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/sensor.js",
-    "groupTitle": "Sensor",
+    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "groupTitle": "Sensormodel",
     "header": {
       "fields": {
         "Header": [
@@ -2430,8 +2346,8 @@ define({ "api": [
     "type": "get",
     "url": "/sensor",
     "title": "02) List",
-    "group": "Sensor",
-    "name": "listSensors",
+    "group": "Sensormodel",
+    "name": "listSensormodels",
     "description": "<p>list all sensors.</p>",
     "version": "1.0.0",
     "permission": [
@@ -2501,8 +2417,8 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/sensor.js",
-    "groupTitle": "Sensor",
+    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "groupTitle": "Sensormodel",
     "header": {
       "fields": {
         "Header": [
@@ -2555,8 +2471,8 @@ define({ "api": [
     "type": "put",
     "url": "/sensor/:id",
     "title": "03) Update",
-    "group": "Sensor",
-    "name": "updateSensor",
+    "group": "Sensormodel",
+    "name": "updateSensormodel",
     "description": "<p>update a sensor.</p>",
     "version": "1.0.0",
     "permission": [
@@ -2639,8 +2555,8 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/sensor.js",
-    "groupTitle": "Sensor",
+    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "groupTitle": "Sensormodel",
     "header": {
       "fields": {
         "Header": [
@@ -3862,12 +3778,12 @@ define({ "api": [
         },
         {
           "title": "Response example to vitabox:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"updated_at\": \"2018-02-22T15:25:50.000Z\",\n         \"node_id\": \"E258\"\n         \"Boardmodel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"Sensors\": [\n                 {\n                     \"id\": \"2a2f5839-6b68-41a6-ada7-f9cd4c66cf38\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"temperature\",\n                     \"tag\": \"temp\",\n                     \"min_acceptable\": \"10.00000\",\n                     \"max_acceptable\": \"25.00000\",\n                     \"min_possible\": \"-20.00000\",\n                     \"max_possible\": \"50.00000\"\n                 }\n             ]\n         }\n     }\n ]\n}",
+          "content": "{\n \"boards\": [\n     {\n         \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n         \"node_id\": \"60c8\",\n         \"updated_at\": \"2018-05-13T14:50:11.000Z\",\n         \"Boardmodel\": {\n             \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"tag\": null\n         },\n         \"Sensors\": [\n             {\n                 \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                 \"last_values\": [ 17, 16, 13, 16, 15 ],\n                 \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                 \"Sensormodel\": {\n                     \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"humidity\",\n                     \"min_acceptable\": \"30.00000\",\n                     \"max_acceptable\": \"50.00000\",\n                     \"min_possible\": \"20.00000\",\n                     \"max_possible\": \"60.00000\"\n                 }\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         },
         {
           "title": "Response example to user:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"updated_at\": \"2018-02-22T15:25:50.000Z\",\n         \"Boardmodel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
+          "content": "{\n  \"boards\": [\n     {\n         \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n         \"location\": \"kitchen\",\n         \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n         \"updated_at\": \"2018-05-13T14:50:11.000Z\",\n         \"active\": true,\n         \"Boardmodel\": {\n             \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         },\n         \"Sensors\": [\n             {\n                 \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                 \"last_values\": [ 17, 16, 13, 16, 15 ],\n                 \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                 \"Sensormodel\": {\n                     \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"humidity\",\n                     \"min_acceptable\": \"30.00000\",\n                     \"max_acceptable\": \"50.00000\",\n                     \"min_possible\": \"20.00000\",\n                     \"max_possible\": \"60.00000\"\n                 }\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -3997,13 +3913,18 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Response example to users:",
+          "title": "Response example to admin:",
           "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\"\n ]\n}",
           "type": "json"
         },
         {
           "title": "Response example to vitabox:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"Boards\": [\n             {\n                 \"id\": \"254536f2-9520-4553-b1b8-b9047195e862\",\n                 \"location\": null,\n                 \"mac_addr\": \"00:12:4b:00:06:0d:b2:1a\",\n                 \"Boardmodel\": {\n                     \"id\": \"369aff29-f63e-434e-a83c-375518a491c3\",\n                     \"type\": \"wearable\",\n                     \"name\": \"Xiaomi Miband\",\n                     \"Sensors\": [\n                         {\n                             \"id\": \"326c8d37-48d3-459b-a955-1b6ab3e038c6\",\n                             \"transducer\": null,\n                             \"measure\": \"heart rate\",\n                             \"tag\": \"hrate\"\n                         },\n                         {\n                             \"id\": \"5865653c-d7e1-4835-8ba1-5c13ea620851\",\n                             \"transducer\": null,\n                             \"measure\": \"pedometer\",\n                             \"tag\": \"pedom\"\n                         }\n                     ]\n                 }\n             }\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"location\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ]\n     }\n ]\n}",
+          "type": "json"
+        },
+        {
+          "title": "Response example to users:",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"location\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]

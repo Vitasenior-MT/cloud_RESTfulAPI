@@ -231,35 +231,44 @@ exports.getPatients = function (is_user, client, vitabox_id) {
     else db.Vitabox.findById(vitabox_id).then(
       vitabox => {
         if (vitabox) _isUser(vitabox, client).then(
-          () => db.Patient.findAll({ where: { vitabox_id: vitabox_id, active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']] }).then(
+          () => vitabox.getPatients({
+            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active'],
+            include: [{
+              model: db.Board, attributes: ['id', 'mac_addr'],
+              include: [
+                { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+                {
+                  model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                  include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+                }]
+            }],
+          }).then(
             patients => {
-              patients.forEach(patient => patient.name = utils.decrypt(patient.name));
+              patients.forEach(patient => {
+                patient.name = utils.decrypt(patient.name);
+                patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
+              });
               resolve(patients);
             }, error => reject({ code: 500, msg: error.message })),
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
     else client.getPatients({
-      where: { active: true },
-      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']],
+      where: { active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']],
       include: [{
         model: db.Board, attributes: ['id', 'location', 'mac_addr'],
-        include: [{
-          model: db.Boardmodel, attributes: ['id', 'type', 'name'],
-          include: [{
-            model: db.Sensor, attributes: ['id', 'transducer', "measure", "tag"]
+        include: [
+          { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+          {
+            model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+            include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
           }]
-        }]
       }],
     }).then(
       patients => {
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
-          patient.Boards.forEach(
-            board => {
-              delete board.dataValues.PatientBoard;
-              board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor);
-            })
+          patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
         });
         resolve(patients);
       }, error => reject({ code: 500, msg: error.message }));
@@ -316,9 +325,14 @@ exports.getBoards = function (is_user, client, vitabox_id) {
     else db.Vitabox.findById(vitabox_id).then(
       vitabox => {
         if (vitabox) _isUser(vitabox, client).then(
-          () => db.Board.findAll({
-            where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'updated_at'],
-            include: [{ model: db.Boardmodel, attributes: ['id', 'type', 'name'] }]
+          () => vitabox.getBoards({
+            attributes: ['id', 'location', 'mac_addr', 'updated_at', 'active'],
+            include: [
+              { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+              {
+                model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'], include:
+                  [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+              }]
           }).then(
             boards => resolve(boards),
             error => reject({ code: 500, msg: error.message })),
@@ -327,17 +341,15 @@ exports.getBoards = function (is_user, client, vitabox_id) {
       }, error => reject({ code: 500, msg: error.message }));
     else client.getBoards({
       where: { active: true }, attributes: ['id', 'location', 'mac_addr', 'node_id', 'updated_at'],
-      include: [{
-        model: db.Boardmodel, attributes: ['id', 'type', 'name'],
-        include: [{
-          model: db.Sensor, attributes: { exclude: ['created_at', 'updated_at'] }
+      include: [
+        { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
+        {
+          model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'], include:
+            [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
         }]
-      }],
     }).then(
-      boards => {
-        boards.forEach(board => board.Boardmodel.Sensors.forEach(sensor => delete sensor.dataValues.BoardSensor));
-        resolve(boards);
-      }, error => reject({ code: 500, msg: error.message }));
+      boards => resolve(boards),
+      error => reject({ code: 500, msg: error.message }));
   });
 }
 

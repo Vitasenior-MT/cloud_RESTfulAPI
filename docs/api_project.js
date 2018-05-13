@@ -3,7 +3,7 @@ define({
   "version": "1.0.0",
   "order": [
     "Authentication",
-    "Sensor",
+    "Sensormodel",
     "Boardmodel",
     "Vitabox",
     "Board",
@@ -15,7 +15,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-05-10T08:13:46.138Z",
+    "time": "2018-05-13T15:29:42.963Z",
     "url": "http://apidocjs.com",
     "version": "0.17.6"
   }

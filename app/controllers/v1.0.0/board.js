@@ -29,11 +29,12 @@ var business = require('../../business/index').v1_0_0;
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.board.create(req.body).then(
-            result => res.status(200).json(result),
-            error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send("Unauthorized");
-    }
+            obj => {
+                business.sensor.create(obj.board.id, req.body.model).then(
+                    () => res.status(200).json({ id: obj.board.id, mac_addr: obj.board.mac_addr, password: obj.password }),
+                    error => res.status(error.code).send(error.msg));
+            }, error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send("Unauthorized"); }
 }
 
 /**
@@ -82,6 +83,28 @@ exports.removePatientFromBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.removePatient(req.client, req.params.id, req.body.patient_id).then(
             () => res.status(200).json({ result: true }),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send("Unauthorized");
+    }
+}
+
+/**
+ * @api {get} /board/:id/sensor 04) Get Sensors
+ * @apiGroup Board
+ * @apiName getSensors
+ * @apiDescription Get sensors from a board
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission user
+ * @apiParam {string} :id board id
+ * @apiSuccess {booleam} result returns true if was successfuly removed
+ */
+exports.GetSensors = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        business.board.getSensors(req.params.id).then(
+            sensors => res.status(200).json({ sensors: sensors }),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");

@@ -125,7 +125,7 @@ module.exports = (app) => {
             "1.0.0": controllers.v1_0_0.board_model.removeSensor
         }))
         /*________________________________________________
-        *_____________________SENSOR______________________
+        *_____________________BOARD_______________________
         *_________________________________________________*/
         .post('/board', versioning({
             "1.0.0": controllers.v1_0_0.board.create
@@ -136,20 +136,23 @@ module.exports = (app) => {
         .delete('/board/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.board.removePatientFromBoard
         }))
+        .get('/board/:id/sensor', versioning({
+            "1.0.0": controllers.v1_0_0.board.getSensors
+        }))
         /*________________________________________________
-        *_____________________SENSOR______________________
+        *__________________SENSOR MODEL___________________
         *_________________________________________________*/
-        .post('/sensor', versioning({
-            "1.0.0": controllers.v1_0_0.sensor.create
+        .post('/sensormodel', versioning({
+            "1.0.0": controllers.v1_0_0.sensor_model.create
         }))
-        .get('/sensor', versioning({
-            "1.0.0": controllers.v1_0_0.sensor.list
+        .get('/sensormodel', versioning({
+            "1.0.0": controllers.v1_0_0.sensor_model.list
         }))
-        .put('/sensor/:id', versioning({
-            "1.0.0": controllers.v1_0_0.sensor.update
+        .put('/sensormodel/:id', versioning({
+            "1.0.0": controllers.v1_0_0.sensor_model.update
         }))
-        .delete('/sensor/:id', versioning({
-            "1.0.0": controllers.v1_0_0.sensor.delete
+        .delete('/sensormodel/:id', versioning({
+            "1.0.0": controllers.v1_0_0.sensor_model.delete
         }))
         /*________________________________________________
         *____________________RECORDS______________________
@@ -157,14 +160,11 @@ module.exports = (app) => {
         .post('/record', versioning({
             "1.0.0": controllers.v1_0_0.record.create
         }))
-        .get('/record/patient/:pid/sensor/:sid/page/:page', versioning({
-            "1.0.0": controllers.v1_0_0.record.listByPatient
-        }))
-        .get('/record/board/:bid/sensor/:sid/page/:page', versioning({
-            "1.0.0": controllers.v1_0_0.record.listByBoard
-        }))
         .get('/record/sensor/:id/page/:page', versioning({
-            "1.0.0": controllers.v1_0_0.record.listBySensor
+            "1.0.0": controllers.v1_0_0.record.listFromPage
+        }))
+        .get('/record/sensor/:id/start/:sdate/end/:edate', versioning({
+            "1.0.0": controllers.v1_0_0.record.listBetweenDates
         }))
         /*________________________________________________
         *_____________________FILES_______________________

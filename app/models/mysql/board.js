@@ -59,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
     models.Board.belongsTo(models.Vitabox);
     models.Board.belongsTo(models.Boardmodel);
     models.Board.belongsToMany(models.Patient, { through: "PatientBoard" });
+    models.Board.hasMany(models.Sensor);
   };
 
   return Board;

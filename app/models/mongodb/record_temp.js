@@ -9,14 +9,6 @@ var schema = new mongoose.Schema({
         required: true,
         default: Date.now()
     },
-    patient_id: {
-        type: String,
-        required: false
-    },
-    board_id: {
-        type: String,
-        required: false
-    },
     sensor_id: {
         type: String,
         required: false

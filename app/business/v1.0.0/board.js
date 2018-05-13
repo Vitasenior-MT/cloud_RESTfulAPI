@@ -13,7 +13,7 @@ exports.create = (attributes) => {
         node_id: attributes.mac_addr.substr(attributes.mac_addr.lastIndexOf(":") - 2).replace(":", "").toLowerCase(),
         password: encrypted.value[0]
       }).then(
-        board => resolve({ id: board.id, mac_addr: board.mac_addr, password: password }),
+        board => resolve({ board, password }),
         error => reject({ code: 500, msg: error.message }));
       else reject({ code: 500, msg: encrypted.error.message });
     } else reject({ code: 500, msg: "MAC address is required" });
@@ -136,6 +136,18 @@ exports.removePatient = function (current_user, board_id, patient_id) {
             error => reject({ code: 500, msg: error.message })),
           error => reject(error));
         else reject({ code: 500, msg: "Board not found" });
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.getSensors = (board_id) => {
+  return new Promise((resolve, reject) => {
+    db.Board.findById(board_id).then(
+      board => {
+        if (board) board.getSensors({ attributes: { exclude: ['created_at', 'updated_at'] } }).then(
+          sensors => resolve(sensors),
+          error => reject({ code: 500, msg: error.message }));
+        else reject({ code: 500, msg: "board model not found" });
       }, error => reject({ code: 500, msg: error.message }));
   });
 }

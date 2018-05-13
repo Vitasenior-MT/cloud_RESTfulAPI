@@ -29,12 +29,20 @@ module.exports = (sequelize, DataTypes) => {
           msg: "board model must be defined"
         }
       }
+    },
+    tag: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: {
+        args: true,
+        msg: 'board tag already registered'
+      }
     }
   }, { underscored: true });
 
   Boardmodel.associate = function (models) {
     models.Boardmodel.hasMany(models.Board);
-    models.Boardmodel.belongsToMany(models.Sensor, { through: "BoardSensor" });
+    models.Boardmodel.belongsToMany(models.Sensormodel, { through: "BoardmodelSensor" });
   };
 
   return Boardmodel;

@@ -509,7 +509,7 @@ exports.addPatient = (req, res) => {
  * @apiSuccess {string} name name of each patient
  * @apiSuccess {string} gender patient gender (must be 'male', 'female' or 'undefined')
  * @apiSuccess {datetime} since relationship date with the vitabox 
- * @apiSuccessExample {json} Response example to users:
+ * @apiSuccessExample {json} Response example to admin:
  * {
  *  "patients": [
  *      {
@@ -531,28 +531,71 @@ exports.addPatient = (req, res) => {
  *          "since": "2018-02-19T14:55:59.000Z",
  *          "Boards": [
  *              {
- *                  "id": "254536f2-9520-4553-b1b8-b9047195e862",
- *                  "location": null,
- *                  "mac_addr": "00:12:4b:00:06:0d:b2:1a",
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
+ *                  "location": "kitchen",
+ *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *                  "Boardmodel": {
- *                      "id": "369aff29-f63e-434e-a83c-375518a491c3",
- *                      "type": "wearable",
- *                      "name": "Xiaomi Miband",
- *                      "Sensors": [
- *                          {
- *                              "id": "326c8d37-48d3-459b-a955-1b6ab3e038c6",
- *                              "transducer": null,
- *                              "measure": "heart rate",
- *                              "tag": "hrate"
- *                          },
- *                          {
- *                              "id": "5865653c-d7e1-4835-8ba1-5c13ea620851",
- *                              "transducer": null,
- *                              "measure": "pedometer",
- *                              "tag": "pedom"
+ *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
+ *                      "type": "environmental",
+ *                      "name": "Zolertia RE-Mote"
+ *                  },
+ *                  "Sensors": [
+ *                      {
+ *                          "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+ *                          "last_values": [ 17, 16, 13, 16, 15 ],
+ *                          "last_commit": "2018-07-23T05:15:27.000Z",
+ *                          "Sensormodel": {
+ *                              "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
+ *                              "transducer": "dht22",
+ *                              "measure": "humidity",
+ *                              "min_acceptable": "30.00000",
+ *                              "max_acceptable": "50.00000",
+ *                              "min_possible": "20.00000",
+ *                              "max_possible": "60.00000"
  *                          }
- *                      ]
- *                  }
+ *                      }
+ *                  ]
+ *              }
+ *          ]
+ *      }
+ *  ]
+ * }
+ * @apiSuccessExample {json} Response example to users:
+ * {
+ *  "patients": [
+ *      {
+ *          "id": "a77ea0fe-5e34-4189-9702-95cb69b4cd1d",
+ *          "birthdate": "1987-02-28",
+ *          "name": "José António",
+ *          "gender": "male",
+ *          "since": "2018-02-19T14:55:59.000Z",
+ *          "active": true,
+ *          "Boards": [
+ *              {
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
+ *                  "location": "kitchen",
+ *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
+ *                  "Boardmodel": {
+ *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
+ *                      "type": "environmental",
+ *                      "name": "Zolertia RE-Mote"
+ *                  },
+ *                  "Sensors": [
+ *                      {
+ *                          "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+ *                          "last_values": [ 17, 16, 13, 16, 15 ],
+ *                          "last_commit": "2018-07-23T05:15:27.000Z",
+ *                          "Sensormodel": {
+ *                              "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
+ *                              "transducer": "dht22",
+ *                              "measure": "humidity",
+ *                              "min_acceptable": "30.00000",
+ *                              "max_acceptable": "50.00000",
+ *                              "min_possible": "20.00000",
+ *                              "max_possible": "60.00000"
+ *                          }
+ *                      }
+ *                  ]
  *              }
  *          ]
  *      }
@@ -696,11 +739,13 @@ exports.removePatient = (req, res) => {
 exports.addBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.authenticate(req.body.mac_addr, req.body.password).then(
-            board => business.vitabox.addBoard(req.client, req.params.id, board.id).then(
+            board => {
+                business.vitabox.addBoard(req.client, req.params.id, board.id).then(
                 () => business.board.setLocation(board, req.body.location ? req.body.location : null).then(
                     () => res.status(200).json({ board: board }),
                     error => res.status(error.code).send(error.msg)),
-                error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg))
+            },
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
@@ -745,44 +790,66 @@ exports.addBoard = (req, res) => {
  * {
  *  "boards": [
  *      {
- *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
+ *          "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
  *          "location": "kitchen",
- *          "mac_addr": "00:19:B9:FB:E2:58",
- *          "updated_at": "2018-02-22T15:25:50.000Z",
- *          "node_id": "E258"
+ *          "mac_addr": "00:12:4b:00:06:0d:60:c8",
+ *          "node_id": "60c8",
+ *          "updated_at": "2018-05-13T14:50:11.000Z",
  *          "Boardmodel": {
- *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
+ *              "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *              "type": "environmental",
  *              "name": "Zolertia RE-Mote",
- *              "Sensors": [
- *                  {
- *                      "id": "2a2f5839-6b68-41a6-ada7-f9cd4c66cf38",
+ *              "tag": null
+ *          },
+ *          "Sensors": [
+ *              {
+ *                  "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+ *                  "last_values": [ 17, 16, 13, 16, 15 ],
+ *                  "last_commit": "2018-07-23T05:15:27.000Z",
+ *                  "Sensormodel": {
+ *                      "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
  *                      "transducer": "dht22",
- *                      "measure": "temperature",
- *                      "tag": "temp",
- *                      "min_acceptable": "10.00000",
- *                      "max_acceptable": "25.00000",
- *                      "min_possible": "-20.00000",
- *                      "max_possible": "50.00000"
+ *                      "measure": "humidity",
+ *                      "min_acceptable": "30.00000",
+ *                      "max_acceptable": "50.00000",
+ *                      "min_possible": "20.00000",
+ *                      "max_possible": "60.00000"
  *                  }
- *              ]
- *          }
+ *              }
+ *          ]
  *      }
  *  ]
  * }
  * @apiSuccessExample {json} Response example to user:
  * {
- *  "boards": [
+ *   "boards": [
  *      {
- *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
+ *          "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
  *          "location": "kitchen",
- *          "mac_addr": "00:19:B9:FB:E2:58",
- *          "updated_at": "2018-02-22T15:25:50.000Z",
+ *          "mac_addr": "00:12:4b:00:06:0d:60:c8",
+ *          "updated_at": "2018-05-13T14:50:11.000Z",
+ *          "active": true,
  *          "Boardmodel": {
- *              "id": "1920ed05-0a24-4611-b822-5da7a58ba8bb",
+ *              "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *              "type": "environmental",
  *              "name": "Zolertia RE-Mote"
- *          }
+ *          },
+ *          "Sensors": [
+ *              {
+ *                  "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+ *                  "last_values": [ 17, 16, 13, 16, 15 ],
+ *                  "last_commit": "2018-07-23T05:15:27.000Z",
+ *                  "Sensormodel": {
+ *                      "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
+ *                      "transducer": "dht22",
+ *                      "measure": "humidity",
+ *                      "min_acceptable": "30.00000",
+ *                      "max_acceptable": "50.00000",
+ *                      "min_possible": "20.00000",
+ *                      "max_possible": "60.00000"
+ *                  }
+ *              }
+ *          ]
  *      }
  *  ]
  * }

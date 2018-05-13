@@ -2,8 +2,8 @@ var business = require('../../business/index').v1_0_0;
 
 /**
  * @api {post} /sensor 01) Create
- * @apiGroup Sensor
- * @apiName createSensor
+ * @apiGroup Sensormodel
+ * @apiName createSensormodel
  * @apiDescription create a new sensor.
  * @apiVersion 1.0.0
  * @apiUse box
@@ -28,7 +28,7 @@ var business = require('../../business/index').v1_0_0;
  */
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.sensor.create(req.body).then(
+        business.sensormodel.create(req.body).then(
             sensor => res.status(200).json({ id: sensor.id }),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -38,8 +38,8 @@ exports.create = (req, res) => {
 
 /**
  * @api {get} /sensor 02) List
- * @apiGroup Sensor
- * @apiName listSensors
+ * @apiGroup Sensormodel
+ * @apiName listSensormodels
  * @apiDescription list all sensors. 
  * @apiVersion 1.0.0
  * @apiUse box
@@ -76,7 +76,7 @@ exports.create = (req, res) => {
  */
 exports.list = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.sensor.list().then(
+        business.sensormodel.list().then(
             sensors => res.status(200).json({ sensors: sensors }),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -86,8 +86,8 @@ exports.list = (req, res) => {
 
 /**
  * @api {put} /sensor/:id 03) Update
- * @apiGroup Sensor
- * @apiName updateSensor
+ * @apiGroup Sensormodel
+ * @apiName updateSensormodel
  * @apiDescription update a sensor.
  * @apiVersion 1.0.0
  * @apiUse box
@@ -113,7 +113,7 @@ exports.list = (req, res) => {
  */
 exports.update = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.sensor.update(req.params.id, req.body).then(
+        business.sensormodel.update(req.params.id, req.body).then(
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -123,8 +123,8 @@ exports.update = (req, res) => {
 
 /**
  * @api {delete} /sensor/:id 04) Delete
- * @apiGroup Sensor
- * @apiName deleteSensor
+ * @apiGroup Sensormodel
+ * @apiName deleteSensormodel
  * @apiDescription remove a sensor
  * @apiVersion 1.0.0
  * @apiUse box
@@ -135,7 +135,7 @@ exports.update = (req, res) => {
  */
 exports.delete = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.sensor.remove(req.params.id).then(
+        business.sensormodel.remove(req.params.id).then(
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {

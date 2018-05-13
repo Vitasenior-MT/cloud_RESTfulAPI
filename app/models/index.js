@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 var mongo_uri = "", mysql_uri = "";
 
 if (process.env.NODE_ENV === "production") {
-    mongo_uri = '<mongo uri>';
+    mongo_uri = '<mongodb uri>';
     mysql_uri = '<mysql uri>';
 } else {
     mongo_uri = 'mongodb://localhost:27017/test';
@@ -57,6 +57,7 @@ const db = {
     'Boardmodel': require('./mysql/board_model')(sequelize, Sequelize),
     'Board': require('./mysql/board')(sequelize, Sequelize),
     'Patient': require('./mysql/patient')(sequelize, Sequelize),
+    'Sensormodel': require('./mysql/sensor_model')(sequelize, Sequelize),
     'Sensor': require('./mysql/sensor')(sequelize, Sequelize),
     'UserVitabox': require('./mysql/user_vitabox')(sequelize, Sequelize),
     'User': require('./mysql/user')(sequelize, Sequelize),
