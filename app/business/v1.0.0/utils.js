@@ -90,26 +90,6 @@ exports.upload = (html_name) => {
   });
 }
 
-exports.upload = (html_name, filename) => {
-  return new Promise((resolve, reject) => {
-    try {
-      let obj = multer({
-        storage: multer.diskStorage(
-          {
-            destination: path.resolve(__dirname, '..', '..', '..', 'files'),
-            filename: (req, file, cb) => cb(null, filename + '.' + mime.extension(file.mimetype))
-          }
-        ),
-        fileFilter: (req, file, cb) => {
-          if (!file.originalname.match(/\.(jpg|jpeg|png|gif|pdf)$/)) return cb(new Error('Only image files are allowed!'), false);
-          cb(null, true);
-        }
-      }).single(html_name);
-      resolve(obj);
-    } catch (err) { reject({ code: 500, msg: err.message }); }
-  });
-}
-
 exports.download = (filename) => {
   return new Promise((resolve, reject) => {
     try {
@@ -132,17 +112,21 @@ exports.deleteAll = () => {
         db.User.truncate().then(() => {
           db.Vitabox.truncate().then(() => {
             db.Boardmodel.truncate().then(() => {
-              db.Board.truncate().then(() => {
-                db.Patient.truncate().then(() => {
-                  db.RecordTemp.remove({}, () => {
-                    db.RecordOld.remove({}, () => {
-                      db.RecordCheck.remove({}, () => {
-                        db.Log.remove({}, () => {
-                          db.Warning.remove({}, () => {
-                            db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options).then(
-                              () => resolve(),
-                              error => reject(error));
-                          });
+              db.Sensormodel.truncate().then(() => {
+                db.Sensor.truncate().then(() => {
+                  db.Board.truncate().then(() => {
+                    db.Patient.truncate().then(() => {
+                      db.RecordTemp.remove({}, () => {
+                        db.RecordOld.remove({}, () => {
+                          db.RecordCheck.remove({}, () => {
+                            db.Log.remove({}, () => {
+                              db.Warning.remove({}, () => {
+                                db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options).then(
+                                  () => resolve(),
+                                  error => reject(error));
+                              });
+                            }, error => reject(error));
+                          }, error => reject(error));
                         }, error => reject(error));
                       }, error => reject(error));
                     }, error => reject(error));

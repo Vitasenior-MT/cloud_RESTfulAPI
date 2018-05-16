@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    location: {
+    description: {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: null
@@ -42,16 +42,6 @@ module.exports = (sequelize, DataTypes) => {
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
-    },
-    last_commit: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: null
-    },
-    last_error: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: null
     }
   }, { underscored: true });
 

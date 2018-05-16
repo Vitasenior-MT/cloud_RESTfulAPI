@@ -130,6 +130,9 @@ module.exports = (app) => {
         .post('/board', versioning({
             "1.0.0": controllers.v1_0_0.board.create
         }))
+        .get('/board/:id', versioning({
+            "1.0.0": controllers.v1_0_0.board.getById
+        }))
         .post('/board/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.board.addPatientToBoard
         }))
@@ -137,7 +140,13 @@ module.exports = (app) => {
             "1.0.0": controllers.v1_0_0.board.removePatientFromBoard
         }))
         .get('/board/:id/sensor', versioning({
-            "1.0.0": controllers.v1_0_0.board.getSensors
+            "1.0.0": controllers.v1_0_0.board.getSensorsFromBoard
+        }))
+        /*________________________________________________
+        *____________________PATIENT______________________
+        *_________________________________________________*/
+        .get('/patient/:id/board', versioning({
+            "1.0.0": controllers.v1_0_0.patient.getBoardsFromPatient
         }))
         /*________________________________________________
         *__________________SENSOR MODEL___________________
@@ -175,16 +184,15 @@ module.exports = (app) => {
         .get('/file/:id', versioning({
             "1.0.0": controllers.v1_0_0.manage.fileDownload
         }))
-        /*________________________________________________
-        *_____________________TRASH_______________________
-        *_________________________________________________*/
-        .get('/destroy', versioning({
-            "1.0.0": controllers.v1_0_0.manage.destroyAll
-        }))
-        .get('/testdb', versioning({
-            "1.0.0": controllers.v1_0_0.manage.testDb
-        }))
-
+    /*________________________________________________
+    *_____________________TRASH_______________________
+    *_________________________________________________*/
+    .get('/destroy', versioning({
+        "1.0.0": controllers.v1_0_0.manage.destroyAll
+    }))
+    .get('/testdb', versioning({
+        "1.0.0": controllers.v1_0_0.manage.testDb
+    }))
 
     app.all('*', (req, res) => {
         res.status(404).json({ 'message': 'Route could not be found' });

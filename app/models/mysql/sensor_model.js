@@ -67,6 +67,14 @@ module.exports = (sequelize, DataTypes) => {
           msg: "maximum possible value must be defined"
         }
       }
+    },
+    tag: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: {
+        args: true,
+        msg: 'board tag already registered'
+      }
     }
   }, { underscored: true });
 

@@ -43,6 +43,7 @@
       "Boardmodel",
       "Vitabox",
       "Board",
+      "Patient",
       "Record"
     ]
   }

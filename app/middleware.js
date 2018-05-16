@@ -2,9 +2,7 @@
 // =============================================================================
 module.exports = (app) => {
   var bodyParser = require('body-parser'),
-    utils = require('./business/index').v1_0_0.utils,
-    multer = require('multer');
-  var upload = multer({ dest: require("path").resolve(__dirname, '..', 'files') });
+    utils = require('./business/index').v1_0_0.utils;
 
   // middleware to use for all requests
   app.use(bodyParser.urlencoded({ extended: true }));

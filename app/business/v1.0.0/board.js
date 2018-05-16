@@ -20,6 +20,22 @@ exports.create = (attributes) => {
   });
 }
 
+exports.get = (id) => {
+  return new Promise((resolve, reject) => {
+    db.Board.findById(id, {
+      attributes: ['id', 'mac_addr'],
+      include: [
+        { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+        {
+          model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+          include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+        }]
+    }).then(
+      board => resolve(board),
+      error => reject({ code: 500, msg: error.message }));
+  });
+}
+
 exports.findByMAC = (mac_addr) => {
   return new Promise((resolve, reject) => {
     db.Board.findOne({ where: { mac_addr: mac_addr } }).then(
@@ -35,7 +51,7 @@ exports.authenticate = (mac_addr, password) => {
     let encrypted = utils.encrypt([password]);
     if (!encrypted.error) db.Board.findOne({
       where: { mac_addr: mac_addr, password: encrypted.value[0] },
-      attributes: ['id', 'location', 'mac_addr', 'active', ['created_at', 'since']],
+      attributes: ['id', 'description', 'mac_addr', 'active', ['created_at', 'since']],
       include: [{ model: db.Boardmodel, attributes: ['id', 'type', 'name'] }, { model: db.Vitabox }]
     }).then(
       board => {
@@ -47,18 +63,18 @@ exports.authenticate = (mac_addr, password) => {
   });
 }
 
-exports.setLocation = (board, location) => {
+exports.setDescription = (board, description) => {
   return new Promise((resolve, reject) => {
-    board.update({ location: location, active: true }).then(
+    board.update({ description: description, active: true }).then(
       () => resolve(),
       error => reject({ code: 500, msg: error.message }));
   });
 }
 
-exports.removeLocation = (board_id) => {
+exports.removeDescription = (board_id) => {
   return new Promise((resolve, reject) => {
     db.Board.findById(board_id).then(
-      board => board.update({ location: null, active: false }).then(
+      board => board.update({ description: null, active: false }).then(
         () => resolve(),
         error => reject({ code: 500, msg: error.message })),
       error => reject({ code: 500, msg: error.message }))
@@ -85,35 +101,56 @@ exports.disable = (board_id) => {
   });
 }
 
-exports.updateLastCommit = (records) => {
-  return new Promise((resolve, reject) => {
-    let promises = [...new Set(records.map(x => x.board_id))].map(x => {
-      return new Promise((resolve, reject) => {
-        db.Board.findById(x).then(
-          board => {
-            if (board) board.update({ last_commit: new Date() }).then(
-              () => resolve(),
-              error => reject({ code: 500, msg: error.message }));
-            else reject({ code: 500, msg: "Board not found" });
-          }, error => reject({ code: 500, msg: error.message }));
-      })
-    });
-    Promise.all(promises).then(
-      () => resolve(),
-      error => reject({ code: 500, msg: error }));
-  });
-}
-
 exports.addPatient = function (current_user, board_id, patient_id) {
   return new Promise((resolve, reject) => {
     db.Board.findById(board_id).then(
       board => {
         if (board) if (current_user.admin)
           board.addPatient(patient_id).then(
-            result => resolve(result),
+            () => resolve(),
             error => reject({ code: 500, msg: error.message }));
         else vitabox.verifySponsor(current_user, board.vitabox_id).then(
           () => board.addPatient(patient_id).then(
+            () => resolve(),
+            error => reject({ code: 500, msg: error.message })),
+          error => reject(error));
+        else reject({ code: 500, msg: "Board not found" });
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.getPatients = function (current_user, board_id) {
+  return new Promise((resolve, reject) => {
+    db.Board.findById(board_id).then(
+      board => {
+        if (board) if (current_user.admin)
+          board.getPatients({
+            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active'],
+            include: [{
+              model: db.Board, attributes: ['id', 'mac_addr'],
+              include: [
+                { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+                {
+                  model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                  include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+                }]
+            }],
+          }).then(
+            result => resolve(result),
+            error => reject({ code: 500, msg: error.message }));
+        else vitabox.verifySponsor(current_user, board.vitabox_id).then(
+          () => board.getPatients({
+            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active'],
+            include: [{
+              model: db.Board, attributes: ['id', 'mac_addr'],
+              include: [
+                { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+                {
+                  model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                  include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+                }]
+            }],
+          }).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message })),
           error => reject(error));
@@ -144,7 +181,10 @@ exports.getSensors = (board_id) => {
   return new Promise((resolve, reject) => {
     db.Board.findById(board_id).then(
       board => {
-        if (board) board.getSensors({ attributes: { exclude: ['created_at', 'updated_at'] } }).then(
+        if (board) board.getSensors({
+          attributes: ['id', 'last_commit', 'last_values'],
+          include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at', 'tag'] } }]
+        }).then(
           sensors => resolve(sensors),
           error => reject({ code: 500, msg: error.message }));
         else reject({ code: 500, msg: "board model not found" });

@@ -6,8 +6,9 @@ exports.fileUpload = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.utils.upload('file').then(
             upload => upload(req, res, (err) => {
+                let path=req.file.path.split('/');
                 if (err) res.status(500).send(err.message);
-                else res.status(200).json({ result: true });
+                else res.status(200).json({ filename: path[path.length-1] });
             }),
             error => res.status(error.code).send(error.msg));
     } else {

@@ -517,6 +517,7 @@ exports.addPatient = (req, res) => {
  *          "birthdate": "1987-02-28",
  *          "name": "José António",
  *          "gender": "male",
+ *          "active": true,
  *          "since": "2018-02-19T14:55:59.000Z"
  *  ]
  * }
@@ -532,12 +533,13 @@ exports.addPatient = (req, res) => {
  *          "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
- *                  "location": "kitchen",
+ *                  "description": "kitchen",
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *                      "type": "environmental",
- *                      "name": "Zolertia RE-Mote"
+ *                      "name": "Zolertia RE-Mote",
+ *                      "tag": "zolertiaremote"
  *                  },
  *                  "Sensors": [
  *                      {
@@ -551,7 +553,8 @@ exports.addPatient = (req, res) => {
  *                              "min_acceptable": "30.00000",
  *                              "max_acceptable": "50.00000",
  *                              "min_possible": "20.00000",
- *                              "max_possible": "60.00000"
+ *                              "max_possible": "60.00000",
+ *                              "tag": "humi"
  *                          }
  *                      }
  *                  ]
@@ -573,7 +576,7 @@ exports.addPatient = (req, res) => {
  *          "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
- *                  "location": "kitchen",
+ *                  "description": "kitchen",
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
@@ -725,12 +728,12 @@ exports.removePatient = (req, res) => {
  * 
  * @apiPermission vitabox sponsor
  * @apiParam {string} :id vitabox unique ID
- * @apiParam {string} location place where the board is located, if wearable is null
+ * @apiParam {string} description description to identify the board
  * @apiParam {string} password board password
  * @apiParam {string} mac_address board MAC address
  * @apiParamExample {json} Request example:
  *     {
- *          "location": "kitchen",
+ *          "description": "kitchen",
  *          "password":"WkN1NNQiRD",
  *          "mac_addr": "00:12:4b:00:06:0d:60:fb"
  *     }
@@ -741,7 +744,7 @@ exports.addBoard = (req, res) => {
         business.board.authenticate(req.body.mac_addr, req.body.password).then(
             board => {
                 business.vitabox.addBoard(req.client, req.params.id, board.id).then(
-                () => business.board.setLocation(board, req.body.location ? req.body.location : null).then(
+                () => business.board.setDescription(board, req.body.description ? req.body.description : null).then(
                     () => res.status(200).json({ board: board }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg))
@@ -764,7 +767,7 @@ exports.addBoard = (req, res) => {
  * @apiParam {string} :id vitabox unique ID
  * @apiSuccess {array} boards vitabox boards list
  * @apiSuccess {string} id id of each board
- * @apiSuccess {string} location place where the board is located (house division)
+ * @apiSuccess {string} description  description to identify the board
  * @apiSuccess {string} mac_addr board MAC address
  * @apiSuccess {boolean} active status of the board, only to admin, the other users will only receive boards with "is_active=true"
  * @apiSuccess {datetime} updated_at last update time
@@ -774,7 +777,7 @@ exports.addBoard = (req, res) => {
  *  "boards": [
  *      {
  *          "id": "983227e9-e1dc-410e-829d-1636627397ba",
- *          "location": "kitchen",
+ *          "description": "kitchen",
  *          "mac_addr": "00:19:B9:FB:E2:58",
  *          "active": false,
  *          "updated_at": "2018-02-22T15:25:50.000Z",
@@ -791,7 +794,7 @@ exports.addBoard = (req, res) => {
  *  "boards": [
  *      {
  *          "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
- *          "location": "kitchen",
+ *          "description": "kitchen",
  *          "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *          "node_id": "60c8",
  *          "updated_at": "2018-05-13T14:50:11.000Z",
@@ -813,7 +816,8 @@ exports.addBoard = (req, res) => {
  *                      "min_acceptable": "30.00000",
  *                      "max_acceptable": "50.00000",
  *                      "min_possible": "20.00000",
- *                      "max_possible": "60.00000"
+ *                      "max_possible": "60.00000".
+ *                      "tag": "humid"
  *                  }
  *              }
  *          ]
@@ -825,7 +829,7 @@ exports.addBoard = (req, res) => {
  *   "boards": [
  *      {
  *          "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
- *          "location": "kitchen",
+ *          "description": "kitchen",
  *          "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *          "updated_at": "2018-05-13T14:50:11.000Z",
  *          "active": true,
@@ -957,7 +961,7 @@ exports.enableBoard = (req, res) => {
 exports.removeBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeBoard(req.client, req.params.id, req.body.board_id).then(
-            () => business.board.removeLocation(req.body.board_id).then(
+            () => business.board.removeDescription(req.body.board_id).then(
                 () => business.record.withdrawsAccess({ 'board_id': req.body.board_id }).then(
                     () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg)),

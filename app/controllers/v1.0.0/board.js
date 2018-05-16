@@ -38,7 +38,54 @@ exports.create = (req, res) => {
 }
 
 /**
- * @api {post} /board/:id/patient 02) Add Patient
+ * @api {get} /board/:id 02) Get Board
+ * @apiGroup Board
+ * @apiName getBoardById
+ * @apiDescription get Board
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin
+ * @apiParam {string} :id model id of the board
+ * @apiSuccessExample {json} Response example:
+ * {
+    "board": {
+        "id": "6b6899af-89bf-453b-a0ce-52523bb6aefd",
+        "mac_addr": "45:44:54:65:65:16:51:31",
+        "Boardmodel": {
+            "id": "c5e10ee8-9d80-43e0-af6c-29e95a0ca66e",
+            "type": "non-wearable",
+            "name": "MySignals Blood Pressure"
+        },
+        "Sensors": [
+            {
+                "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+                "last_commit": "2018-07-23T05:15:27.000Z",
+                "last_values": [  17, 16, 13, 16, 15 ],
+                "Sensormodel": {
+                    "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
+                    "transducer": "dht22",
+                    "measure": "humidity",
+                    "min_acceptable": "30.00000",
+                    "max_acceptable": "50.00000",
+                    "min_possible": "20.00000",
+                    "max_possible": "60.00000"
+                }
+            }
+        ]
+    }
+  }
+ */
+exports.getById = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        business.board.get(req.params.id).then(
+            obj => res.status(200).json({ board: obj }),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send("Unauthorized"); }
+}
+
+/**
+ * @api {post} /board/:id/patient 03) Add Patient
  * @apiGroup Board
  * @apiName addPatientToBoard
  * @apiDescription Associate a patient with a board
@@ -56,7 +103,7 @@ exports.create = (req, res) => {
 exports.addPatientToBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.addPatient(req.client, req.params.id, req.body.patient_id).then(
-            result => res.status(200).json({ result: result }),
+            () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send("Unauthorized");
@@ -64,7 +111,7 @@ exports.addPatientToBoard = (req, res) => {
 }
 
 /**
- * @api {delete} /board/:id/patient 03) Remove Patient
+ * @api {delete} /board/:id/patient 04) Remove Patient
  * @apiGroup Board
  * @apiName removePatientFromBoard
  * @apiDescription Disassociate a patient from a board
@@ -90,18 +137,36 @@ exports.removePatientFromBoard = (req, res) => {
 }
 
 /**
- * @api {get} /board/:id/sensor 04) Get Sensors
+ * @api {get} /board/:id/sensor 05) Get Sensors
  * @apiGroup Board
- * @apiName getSensors
+ * @apiName getSensorsFromBoard
  * @apiDescription Get sensors from a board
  * @apiVersion 1.0.0
  * @apiUse box
  * 
  * @apiPermission user
  * @apiParam {string} :id board id
- * @apiSuccess {booleam} result returns true if was successfuly removed
+ * @apiSuccessExample {json} Response example:
+ * {
+    "sensors": [
+        {
+            "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+            "last_commit": "2018-07-23T05:15:27.000Z",
+            "last_values": [  17, 16, 13, 16, 15 ],
+            "Sensormodel": {
+                "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
+                "transducer": "dht22",
+                "measure": "humidity",
+                "min_acceptable": "30.00000",
+                "max_acceptable": "50.00000",
+                "min_possible": "20.00000",
+                "max_possible": "60.00000"
+            }
+        }
+    ]
+}
  */
-exports.GetSensors = (req, res) => {
+exports.getSensorsFromBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.getSensors(req.params.id).then(
             sensors => res.status(200).json({ sensors: sensors }),

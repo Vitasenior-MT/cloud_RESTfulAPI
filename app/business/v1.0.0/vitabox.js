@@ -256,9 +256,9 @@ exports.getPatients = function (is_user, client, vitabox_id) {
     else client.getPatients({
       where: { active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']],
       include: [{
-        model: db.Board, attributes: ['id', 'location', 'mac_addr'],
+        model: db.Board, attributes: ['id', 'description', 'mac_addr'],
         include: [
-          { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+          { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
           {
             model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
             include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
@@ -317,7 +317,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
   return new Promise((resolve, reject) => {
     if (is_user) if (client.admin)
       db.Board.findAll({
-        where: { vitabox_id: vitabox_id }, attributes: ['id', 'location', 'mac_addr', 'active', 'last_commit', 'updated_at'],
+        where: { vitabox_id: vitabox_id }, attributes: ['id', 'description', 'mac_addr', 'active', 'updated_at'],
         include: [{ model: db.Boardmodel, attributes: ['id', 'type', 'name'] }]
       }).then(
         boards => resolve(boards),
@@ -326,7 +326,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
       vitabox => {
         if (vitabox) _isUser(vitabox, client).then(
           () => vitabox.getBoards({
-            attributes: ['id', 'location', 'mac_addr', 'updated_at', 'active'],
+            attributes: ['id', 'description', 'mac_addr', 'updated_at', 'active'],
             include: [
               { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
               {
@@ -340,7 +340,7 @@ exports.getBoards = function (is_user, client, vitabox_id) {
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
     else client.getBoards({
-      where: { active: true }, attributes: ['id', 'location', 'mac_addr', 'node_id', 'updated_at'],
+      where: { active: true }, attributes: ['id', 'description', 'mac_addr', 'node_id', 'updated_at'],
       include: [
         { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
         {

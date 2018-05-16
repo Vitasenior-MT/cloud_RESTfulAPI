@@ -2,7 +2,7 @@ var db = require('../../models/index');
 
 exports.create = (attributes) => {
     return new Promise((resolve, reject) => {
-        db.Boardmodel.create({ type: attributes.type, name: attributes.name }).then(
+        db.Boardmodel.create({ type: attributes.type, name: attributes.name, tag: attributes.tag }).then(
             model => resolve(model),
             error => reject({ code: 500, msg: error.message }));
     });

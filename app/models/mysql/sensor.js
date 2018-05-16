@@ -7,7 +7,16 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     last_values: { type: DataTypes.JSON },
-    last_commit: { type: DataTypes.DATE }
+    last_commit: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null
+    },
+    last_error: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null
+    }
   }, { underscored: true });
 
   Sensor.associate = function (models) {

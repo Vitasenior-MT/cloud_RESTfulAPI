@@ -7,6 +7,7 @@
     "Boardmodel",
     "Vitabox",
     "Board",
+    "Patient",
     "Record"
   ],
   "description": "",
@@ -15,7 +16,7 @@
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-05-13T15:29:42.963Z",
+    "time": "2018-05-16T15:15:22.231Z",
     "url": "http://apidocjs.com",
     "version": "0.17.6"
   }

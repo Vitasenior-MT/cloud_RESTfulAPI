@@ -45,3 +45,37 @@ exports.enable = (patient_id) => {
             error => reject({ code: 500, msg: error.message }));
     });
 }
+
+exports.getBoards = function (current_user, patient_id) {
+    return new Promise((resolve, reject) => {
+        db.Patient.findById(patient_id).then(
+            patient => {
+                if (patient) if (current_user.admin)
+                    patient.getBoards({
+                        attributes: ['id', 'mac_addr'],
+                        include: [
+                            { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+                            {
+                                model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                                include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+                            }]
+                    }).then(
+                        result => resolve(result),
+                        error => reject({ code: 500, msg: error.message }));
+                else vitabox.verifySponsor(current_user, patient.vitabox_id).then(
+                    () => patient.getBoards({
+                        attributes: ['id', 'mac_addr'],
+                        include: [
+                            { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+                            {
+                                model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                                include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+                            }]
+                    }).then(
+                        () => resolve(),
+                        error => reject({ code: 500, msg: error.message })),
+                    error => reject(error));
+                else reject({ code: 500, msg: "Patient not found" });
+            }, error => reject({ code: 500, msg: error.message }));
+    });
+}

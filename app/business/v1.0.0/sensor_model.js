@@ -2,7 +2,7 @@ var db = require('../../models/index');
 
 exports.create = (attributes) => {
   return new Promise((resolve, reject) => {
-    db.Sensormodel.create({ transducer: attributes.transducer, measure: attributes.measure, tag: attributes.measure.substr(0, 4), min_acceptable: attributes.min_acceptable, max_acceptable: attributes.max_acceptable, min_possible: attributes.min_possible, max_possible: attributes.max_possible }).then(
+    db.Sensormodel.create({ transducer: attributes.transducer, measure: attributes.measure, tag: attributes.tag, min_acceptable: attributes.min_acceptable, max_acceptable: attributes.max_acceptable, min_possible: attributes.min_possible, max_possible: attributes.max_possible }).then(
       model => resolve(model),
       error => reject({ code: 500, msg: error.message }));
   });
