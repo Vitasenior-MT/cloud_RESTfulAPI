@@ -223,7 +223,7 @@ exports.addPatient = function (current_user, vitabox_id, patient_id) {
 exports.getPatients = function (is_user, client, vitabox_id) {
   return new Promise((resolve, reject) => {
     if (is_user) if (client.admin)
-      db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'active', 'name', 'gender', ['created_at', 'since']] }).then(
+      db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'active', 'name', 'gender', ['created_at', 'since'], 'weight', 'height'] }).then(
         patients => {
           patients.forEach(patient => patient.name = utils.decrypt(patient.name));
           resolve(patients);
@@ -232,7 +232,7 @@ exports.getPatients = function (is_user, client, vitabox_id) {
       vitabox => {
         if (vitabox) _isUser(vitabox, client).then(
           () => vitabox.getPatients({
-            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active'],
+            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height'],
             include: [{
               model: db.Board, attributes: ['id', 'mac_addr'],
               include: [
@@ -254,7 +254,7 @@ exports.getPatients = function (is_user, client, vitabox_id) {
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
     else client.getPatients({
-      where: { active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since']],
+      where: { active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'weight', 'height'],
       include: [{
         model: db.Board, attributes: ['id', 'description', 'mac_addr'],
         include: [

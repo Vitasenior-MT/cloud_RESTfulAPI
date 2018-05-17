@@ -519,6 +519,8 @@ exports.addPatient = (req, res) => {
  *          "gender": "male",
  *          "active": true,
  *          "since": "2018-02-19T14:55:59.000Z"
+ *          "weight": 79.6,
+ *          "height": 1.74,
  *  ]
  * }
  * @apiSuccessExample {json} Response example to vitabox:
@@ -530,6 +532,8 @@ exports.addPatient = (req, res) => {
  *          "name": "José António",
  *          "gender": "male",
  *          "since": "2018-02-19T14:55:59.000Z",
+ *          "weight": 79.6,
+ *          "height": 1.74,
  *          "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
@@ -573,6 +577,8 @@ exports.addPatient = (req, res) => {
  *          "gender": "male",
  *          "since": "2018-02-19T14:55:59.000Z",
  *          "active": true,
+ *          "weight": 79.6,
+ *          "height": 1.74,
  *          "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",

@@ -16,6 +16,10 @@ var schema = new mongoose.Schema({
     analyzed: {
         type: Boolean,
         default: true
+    },
+    patient_id: {
+        type: String,
+        required: false
     }
 }, { versionKey: false });
 

@@ -175,6 +175,12 @@ module.exports = (app) => {
         .get('/record/sensor/:id/start/:sdate/end/:edate', versioning({
             "1.0.0": controllers.v1_0_0.record.listBetweenDates
         }))
+        .get('/record/sensor/:sid/patient/:pid/page/:page', versioning({
+            "1.0.0": controllers.v1_0_0.record.listFromPageByPatient
+        }))
+        .get('/record/sensor/:sid/patient/:pid/start/:sdate/end/:edate', versioning({
+            "1.0.0": controllers.v1_0_0.record.listBetweenDatesByPatient
+        }))
         /*________________________________________________
         *_____________________FILES_______________________
         *_________________________________________________*/
