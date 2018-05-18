@@ -17,7 +17,7 @@ module.exports = (app) => {
 
     if (req.method === "OPTIONS") { return res.send(200); }
     if (req.headers.authorization) {
-      utils.validateToken(req.headers.authorization, req.connection.remoteAddress).then(
+      utils.validateToken(req.headers.authorization).then(
         client => {
           if (client) req.client = client;
           else req.client = null;

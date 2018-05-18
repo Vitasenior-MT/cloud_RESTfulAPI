@@ -24,14 +24,14 @@ module.exports.seed = (db) => {
                     board_models => db.Sensormodel.bulkCreate([
                       { "transducer": "dht22", "measure": "temperatura (ºC)", "tag": "temp", "min_acceptable": "10", "max_acceptable": "25", "min_possible": "-20", "max_possible": "50", "last_commit": "2018-06-18T06:48:48.400Z", "deviation_range": 5, "last_values": [21, 23, 24, 22, 20] },
                       { "transducer": "dht22", "measure": "humidade (%)", "tag": "humi", "min_acceptable": "30", "max_acceptable": "50", "min_possible": "20", "max_possible": "60" },
-                      { "transducer": "medidor", "measure": "monoxido de carbono (ppm)", "tag": "mono", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" },
-                      { "transducer": "medidor", "measure": "oximetria de pulso (%)", "tag": "spo2", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" },
-                      { "transducer": "medidor", "measure": "pulsação arterial (bpm)", "tag": "pulse", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" },
-                      { "transducer": "medidor", "measure": "tensão Arterial diastólica", "tag": "diastolic", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" },
-                      { "transducer": "medidor", "measure": "tensão Arterial sistólica", "tag": "systolic", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" },
-                      { "transducer": "medidor", "measure": "peso (Kg)", "tag": "weight", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" },
-                      { "transducer": "medidor", "measure": "passos", "tag": "steps", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" },
-                      { "transducer": "medidor", "measure": "frequência cardíaca", "tag": "heartrate", "min_acceptable": "2", "max_acceptable": "10", "min_possible": "10", "max_possible": "500" }
+                      { "transducer": "medidor", "measure": "monox. carbono (ppm)", "tag": "mono", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                      { "transducer": "medidor", "measure": "oximetria de pulso (%)", "tag": "spo2", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                      { "transducer": "medidor", "measure": "puls. arterial (bpm)", "tag": "pulse", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                      { "transducer": "medidor", "measure": "tensão art. diastólica", "tag": "diastolic", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                      { "transducer": "medidor", "measure": "tensão art. sistólica", "tag": "systolic", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                      { "transducer": "medidor", "measure": "peso (Kg)", "tag": "weight", "min_acceptable": "2", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                      { "transducer": "medidor", "measure": "passos", "tag": "steps", "min_acceptable": "2", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                      { "transducer": "medidor", "measure": "freq. cardíaca", "tag": "heartrate", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" }
                     ]).then(
                       sensor_models => board_models[0].addSensormodels([sensor_models[0].id, sensor_models[1].id, sensor_models[2].id]).then(
                         () => board_models[1].addSensormodels([sensor_models[8].id, sensor_models[9].id]).then(
@@ -45,7 +45,8 @@ module.exports.seed = (db) => {
                                   { "vitabox_id": vitabox.id, "boardmodel_id": board_models[4].id, "mac_addr": "8c:de:52:97:c0:34", "node_id": "c034", password: encrypted.value[4], active: true },
                                   { "vitabox_id": vitabox.id, "boardmodel_id": board_models[0].id, "description": "Cozinha", "mac_addr": "00:12:4b:00:06:0d:60:c8", "node_id": "60c8", password: encrypted.value[4], active: true },
                                   { "vitabox_id": vitabox.id, "boardmodel_id": board_models[0].id, "description": "Cozinha", "mac_addr": "00:12:4b:00:06:0d:b2:1a", "node_id": "b21a", password: encrypted.value[4], active: true },
-                                  { "vitabox_id": vitabox.id, "boardmodel_id": board_models[0].id, "description": "Quarto", "mac_addr": "00:12:4b:00:06:0d:60:fb", "node_id": "60fb", password: encrypted.value[4], active: true }
+                                  { "vitabox_id": vitabox.id, "boardmodel_id": board_models[0].id, "description": "Quarto", "mac_addr": "00:12:4b:00:06:0d:d9:99", "node_id": "d999", password: encrypted.value[4], active: true },
+                                  { "vitabox_id": vitabox.id, "boardmodel_id": board_models[0].id, "description": "Quarto", "mac_addr": "00:12:4b:00:06:0d:2f:26", "node_id": "2f26", password: encrypted.value[4], active: true }
                                 ]).then(
                                   boards => db.Sensor.bulkCreate([
                                     { "board_id": boards[0].id, sensormodel_id: sensor_models[8].id },
@@ -65,6 +66,9 @@ module.exports.seed = (db) => {
                                     { "board_id": boards[6].id, sensormodel_id: sensor_models[0].id },
                                     { "board_id": boards[6].id, sensormodel_id: sensor_models[1].id },
                                     { "board_id": boards[6].id, sensormodel_id: sensor_models[2].id },
+                                    { "board_id": boards[7].id, sensormodel_id: sensor_models[0].id },
+                                    { "board_id": boards[7].id, sensormodel_id: sensor_models[1].id },
+                                    { "board_id": boards[7].id, sensormodel_id: sensor_models[2].id }
                                   ]).then(
                                     sensors => db.Patient.bulkCreate([
                                       { "name": encrypted.value[5], "birthdate": "1987-02-28", "gender": "male", active: true, height: 1.73 }
