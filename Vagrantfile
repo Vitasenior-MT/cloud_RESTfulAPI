@@ -91,6 +91,9 @@ Vagrant.configure("2") do |config|
     # if: protocol error, symlink '../semver/bin/semver' -> '/vagrant/node_modules/.bin/semver'
     # sudo npm install --save --no-bin-links
 
+    # kill process at port 8080
+    #  kill -9 $(lsof -i:8080 -t)
+
 
   SHELL
 end

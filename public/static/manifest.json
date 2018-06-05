@@ -1,6 +1,6 @@
 {
-  "name": "backoffice",
-  "short_name": "backoffice",
+  "name": "vitaseniordev",
+  "short_name": "vitadev",
   "icons": [
     {
       "src": "/static/img/icons/android-chrome-192x192.png",

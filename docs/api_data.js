@@ -68,14 +68,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -144,77 +144,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
-    "url": "/photo",
-    "title": "06) Get photo",
-    "group": "Authentication",
-    "name": "getPhotoToUser",
-    "version": "1.0.0",
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "file",
-            "optional": false,
-            "field": "image",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "filename": "app/controllers/v1.0.0/user.js",
-    "groupTitle": "Authentication",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "status",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -290,14 +227,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -307,7 +244,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/photo",
-    "title": "07) Update photo",
+    "title": "06) Update photo",
     "group": "Authentication",
     "name": "setPhotoFromUser",
     "version": "1.0.0",
@@ -366,14 +303,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -437,13 +374,27 @@ define({ "api": [
             "optional": false,
             "field": "email",
             "description": "<p>user email</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "is_admin",
+            "description": "<p>flag indicating if is admin</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "photo",
+            "description": "<p>user photo</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true\n}",
+          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\"\n}",
           "type": "json"
         }
       ]
@@ -477,14 +428,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -534,9 +485,51 @@ define({ "api": [
             "optional": false,
             "field": "token",
             "description": "<p>jwt valid for 8 hours and must be placed at &quot;Authorization&quot; header</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>user id</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>user name</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "email",
+            "description": "<p>user email</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "is_admin",
+            "description": "<p>flag indicating if is admin</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "photo",
+            "description": "<p>user photo</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\"\n}",
+          "type": "json"
+        }
+      ]
     },
     "filename": "app/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
@@ -567,14 +560,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -663,14 +656,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -787,14 +780,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -872,14 +865,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -957,14 +950,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1060,14 +1053,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1149,14 +1142,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1287,14 +1280,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1391,14 +1384,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1494,14 +1487,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1590,14 +1583,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1700,14 +1693,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1796,14 +1789,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -1811,8 +1804,51 @@ define({ "api": [
     }
   },
   {
-    "type": "post",
-    "url": "/board/:id/patient",
+    "type": "get",
+    "url": "/file/:id",
+    "title": "01) Download",
+    "group": "Files",
+    "name": "fileDownload",
+    "version": "1.0.0",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>filename</p>"
+          }
+        ]
+      }
+    },
+    "filename": "app/controllers/v1.0.0/manage.js",
+    "groupTitle": "Files"
+  },
+  {
+    "type": "get",
+    "url": "/patient/:id/board",
     "title": "01) Get Boards",
     "group": "Patient",
     "name": "getBoardsFromPatient",
@@ -1820,21 +1856,10 @@ define({ "api": [
     "version": "1.0.0",
     "permission": [
       {
-        "name": "admin sponsor"
+        "name": "user"
       }
     ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "patient_id",
-            "description": "<p>patient id to add</p>"
-          }
-        ]
-      },
+    "success": {
       "examples": [
         {
           "title": "Request example:",
@@ -1879,14 +1904,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2010,14 +2035,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2155,14 +2180,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2307,14 +2332,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2445,14 +2470,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2590,14 +2615,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2721,14 +2746,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2810,14 +2835,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -2935,14 +2960,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3073,14 +3098,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3190,14 +3215,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3307,14 +3332,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3410,14 +3435,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3493,14 +3518,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3582,14 +3607,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3685,14 +3710,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3788,14 +3813,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3891,14 +3916,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -3994,14 +4019,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -4158,14 +4183,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -4306,14 +4331,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -4447,14 +4472,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -4530,14 +4555,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -4654,14 +4679,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -4812,14 +4837,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -4915,14 +4940,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -5018,14 +5043,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -5121,14 +5146,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -5217,14 +5242,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -5346,14 +5371,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
@@ -5547,14 +5572,14 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "number",
             "optional": false,
-            "field": "status",
+            "field": "statusCode",
             "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
           },
           {
             "group": "Error 4xx",
             "type": "string",
             "optional": false,
-            "field": "error",
+            "field": "statusMessage",
             "description": "<p>error description</p>"
           }
         ]
