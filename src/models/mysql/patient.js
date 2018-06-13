@@ -36,8 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         weight:{
             type: DataTypes.FLOAT(5, 2),
-            allowNull: true,
-            defaultValue: null,
+            allowNull: false,
             validate: {
               min: {
                 args: 10,
@@ -66,8 +65,10 @@ module.exports = (sequelize, DataTypes) => {
     }, { underscored: true });
 
     Patient.associate = function (models) {
+        models.Patient.hasMany(models.Profile);
         models.Patient.belongsTo(models.Vitabox);
         models.Patient.belongsToMany(models.Board, { through: "PatientBoard" });
+        models.Patient.belongsToMany(models.User, { through: "DoctorPatient" });
     };
 
     return Patient;

@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
+
 var schema = new mongoose.Schema({
   datetime: {
     type: Date,
-    required: true,
-    default: Date.now()
+    required: true
   },
   message: {
     type: String,
@@ -11,19 +11,39 @@ var schema = new mongoose.Schema({
   },
   vitabox_id: {
     type: String,
-    required: false
+    required: true
   },
-  seen: {
+  is_board: {
     type: Boolean,
     required: true,
     default: false
   },
-  reported: {
+  is_patient: {
     type: Boolean,
     required: true,
     default: false
+  },
+  object_id: {
+    type: Number,
+    required: true
+  },
+  seen_date: {
+    type: Date,
+    default: null
+  },
+  seen_user: {
+    type: String,
+    default: null
   }
-
-}, { versionKey: false });
+}, {
+    versionKey: false,
+    toJSON: {
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret._id;
+        return ret;
+      }
+    }
+  });
 
 module.exports = mongoose.model('Warning', schema);

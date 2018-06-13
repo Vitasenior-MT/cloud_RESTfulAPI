@@ -59,7 +59,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
     "error": {
       "fields": {
@@ -115,7 +115,71 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "Authentication",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/doctor",
+    "title": "07) Get patients",
+    "group": "Authentication",
+    "name": "getPatientsAsDoctor",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "doctor"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ]\n         \"Vitabox\": {\n             \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n             \"latitude\": \"51.5058372\",\n             \"longitude\": \"-0.1899126\",\n             \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\"\n         }\n     }\n ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
     "header": {
       "fields": {
@@ -198,7 +262,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
     "header": {
       "fields": {
@@ -274,7 +338,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
     "header": {
       "fields": {
@@ -377,10 +441,17 @@ define({ "api": [
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "boolean",
             "optional": false,
             "field": "is_admin",
             "description": "<p>flag indicating if is admin</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "is_doctor",
+            "description": "<p>flag indicating if is doctor</p>"
           },
           {
             "group": "Success 200",
@@ -394,12 +465,12 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\"\n}",
+          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"is_doctor\": false,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\"\n}",
           "type": "json"
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
     "header": {
       "fields": {
@@ -509,10 +580,17 @@ define({ "api": [
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "boolean",
             "optional": false,
             "field": "is_admin",
             "description": "<p>flag indicating if is admin</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "is_doctor",
+            "description": "<p>flag indicating if is doctor</p>"
           },
           {
             "group": "Success 200",
@@ -526,12 +604,12 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\"\n}",
+          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"is_doctor\": false,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\"\n}",
           "type": "json"
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
     "header": {
       "fields": {
@@ -620,7 +698,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board.js",
+    "filename": "src/controllers/v1.0.0/board.js",
     "groupTitle": "Board",
     "header": {
       "fields": {
@@ -744,7 +822,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/board.js",
+    "filename": "src/controllers/v1.0.0/board.js",
     "groupTitle": "Board",
     "header": {
       "fields": {
@@ -829,7 +907,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/board.js",
+    "filename": "src/controllers/v1.0.0/board.js",
     "groupTitle": "Board",
     "header": {
       "fields": {
@@ -914,7 +992,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/board.js",
+    "filename": "src/controllers/v1.0.0/board.js",
     "groupTitle": "Board",
     "header": {
       "fields": {
@@ -967,7 +1045,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/boardmodel",
-    "title": "01) Create Model",
+    "title": "01) Create",
     "group": "Boardmodel",
     "name": "createBoardModel",
     "description": "<p>create a new board model.</p>",
@@ -1017,7 +1095,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "src/controllers/v1.0.0/board_model.js",
     "groupTitle": "Boardmodel",
     "header": {
       "fields": {
@@ -1070,7 +1148,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/boardmodel/:id",
-    "title": "04) Delete Model",
+    "title": "04) Delete",
     "group": "Boardmodel",
     "name": "deleteBoardModel",
     "description": "<p>remove a board model.</p>",
@@ -1106,7 +1184,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "src/controllers/v1.0.0/board_model.js",
     "groupTitle": "Boardmodel",
     "header": {
       "fields": {
@@ -1244,7 +1322,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "src/controllers/v1.0.0/board_model.js",
     "groupTitle": "Boardmodel",
     "header": {
       "fields": {
@@ -1297,7 +1375,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/boardmodel",
-    "title": "02) List Models",
+    "title": "02) List",
     "group": "Boardmodel",
     "name": "listsBoardsModel",
     "description": "<p>list all board models.</p>",
@@ -1348,7 +1426,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "src/controllers/v1.0.0/board_model.js",
     "groupTitle": "Boardmodel",
     "header": {
       "fields": {
@@ -1451,7 +1529,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "src/controllers/v1.0.0/board_model.js",
     "groupTitle": "Boardmodel",
     "header": {
       "fields": {
@@ -1547,7 +1625,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "src/controllers/v1.0.0/board_model.js",
     "groupTitle": "Boardmodel",
     "header": {
       "fields": {
@@ -1600,7 +1678,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/boardmodel/:id",
-    "title": "03) Update Model",
+    "title": "03) Update",
     "group": "Boardmodel",
     "name": "updateBoardModel",
     "description": "<p>update a board model.</p>",
@@ -1657,7 +1735,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board_model.js",
+    "filename": "src/controllers/v1.0.0/board_model.js",
     "groupTitle": "Boardmodel",
     "header": {
       "fields": {
@@ -1753,7 +1831,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/board.js",
+    "filename": "src/controllers/v1.0.0/board.js",
     "groupTitle": "Board",
     "header": {
       "fields": {
@@ -1843,20 +1921,123 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/manage.js",
+    "filename": "src/controllers/v1.0.0/manage.js",
     "groupTitle": "Files"
+  },
+  {
+    "type": "post",
+    "url": "/patient/:id/doctor",
+    "title": "04) Add Doctor",
+    "group": "Patient",
+    "name": "addDoctor",
+    "description": "<p>add doctor to a specific patient if the requester is sponsor of him.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "email",
+            "description": "<p>email of the user to add</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"email\": \"user-example@some.thing\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly added</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
   },
   {
     "type": "get",
     "url": "/patient/:id/board",
-    "title": "01) Get Boards",
+    "title": "07) Get Boards",
     "group": "Patient",
     "name": "getBoardsFromPatient",
     "description": "<p>Get boards from a patient</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "user"
+        "name": "admin"
       }
     ],
     "success": {
@@ -1868,8 +2049,1088 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/patient.js",
+    "filename": "src/controllers/v1.0.0/patient.js",
     "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/patient/:id/doctor",
+    "title": "05) Get Doctors",
+    "group": "Patient",
+    "name": "getDoctors",
+    "description": "<p>get doctors list from a patient if the requester is sponsor of him.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient unique ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "doctors",
+            "description": "<p>patient doctors list</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>id of each user</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "email",
+            "description": "<p>email of each user</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>name of each user</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "datetime",
+            "optional": false,
+            "field": "since",
+            "description": "<p>relationship date with the patient</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"doctors\": [\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"email\": \"donaldtrump@usa.com\",\n         \"name\": \"Donald Trump\",\n         \"since\": \"2018-02-19T14:41:13.000Z\"\n     },\n     {\n         \"id\": \"78007a69-baa2-4b24-b936-234883811b6a\",\n         \"email\": \"queenelizabeth@majesty.uk\",\n         \"name\": \"Queen Elizabeth\",\n         \"since\": \"2018-02-19T14:40:14.000Z\"\n     }\n ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "/patient/:id/doctor",
+    "title": "06) Remove Doctor",
+    "group": "Patient",
+    "name": "removeDoctor",
+    "description": "<p>remove doctor from a patient if the requester is sponsor of him.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "doctor_id",
+            "description": "<p>doctor unique ID</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"doctor_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly removed</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "patient/:paid/profile/:prid",
+    "title": "03) Remove profile",
+    "group": "Patient",
+    "name": "removeProfilesToPatient",
+    "description": "<p>remove profile from patient.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":paid",
+            "description": "<p>patient id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":prid",
+            "description": "<p>profile id to remove</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly removed</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "patient/:id/profile",
+    "title": "01) Add profiles",
+    "group": "Patient",
+    "name": "setProfilesToPatient",
+    "description": "<p>add profiles to patient.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "profiles",
+            "description": "<p>profiles array to add</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "measure",
+            "description": "<p>sensor model measure</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "tag",
+            "description": "<p>sensor model tag</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "min",
+            "description": "<p>minimum value acceptable</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "max",
+            "description": "<p>maximum value acceptable</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "object",
+            "optional": false,
+            "field": "profiles",
+            "description": "<p>created profiles</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\nprofiles: [\n {  \n     tag: 'bodyfat',\n        min: '19',\n        max: '25',\n        measure: 'body fat',\n        patient_id: '61795ea7-4cca-4658-ab98-e913d465ea74',\n        id: 'ac115530-b06c-42b0-a897-06fe5a088d2b',\n        created_at: 2018-06-12T14:59:43.679Z,\n        updated_at: 2018-06-12T14:59:43.679Z \n    },\n    { \n        tag: 'bodyfat',\n        min: '19',\n        max: '25',\n        measure: 'body fat',\n        patient_id: '61795ea7-4cca-4658-ab98-e913d465ea74',\n        id: 'ac115530-b06c-42b0-a897-06fe5a043354',\n        created_at: 2018-06-12T14:59:43.679Z,\n        updated_at: 2018-06-12T14:59:43.679Z \n    }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "patient/:paid/profile/:prid",
+    "title": "02) Update profile",
+    "group": "Patient",
+    "name": "updateProfilesToPatient",
+    "description": "<p>update profile from patient.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":paid",
+            "description": "<p>patient id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":prid",
+            "description": "<p>profile id to update</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "measure",
+            "description": "<p>sensor model measure</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "tag",
+            "description": "<p>sensor model tag</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "min",
+            "description": "<p>minimum value acceptable</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "max",
+            "description": "<p>maximum value acceptable</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/profilemodel",
+    "title": "01) Create",
+    "group": "Profilemodel",
+    "name": "createProfileModel",
+    "description": "<p>create a new profile model.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>profile model name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "measures",
+            "description": "<p>profile measures, each measure needs a min and max thresholds, the measure name and the relative sensor model tag</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"name\": \"MySignals Balance\",\n     \"measures\": [\n         {\"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n         {\"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n     ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>created profile model id</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/profile_model.js",
+    "groupTitle": "Profilemodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/profilemodel/:id",
+    "title": "03) Find",
+    "group": "Profilemodel",
+    "name": "findProfileModel",
+    "description": "<p>get details of a profile models.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>profile model id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>profile name</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "measures",
+            "description": "<p>profile measures list</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/profile_model.js",
+    "groupTitle": "Profilemodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/profilemodel",
+    "title": "02) List",
+    "group": "Profilemodel",
+    "name": "listProfileModel",
+    "description": "<p>list all profile models.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "profiles",
+            "description": "<p>list of profile models</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>id of each profile model</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>profile name</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "measures",
+            "description": "<p>measures list of each profile</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/profile_model.js",
+    "groupTitle": "Profilemodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/profilemodel/:id",
+    "title": "04) Update",
+    "group": "Profilemodel",
+    "name": "listProfileModel",
+    "description": "<p>list all profile models.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>profile id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>profile name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "measures",
+            "description": "<p>profile measures list</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/profile_model.js",
+    "groupTitle": "Profilemodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "/profilemodel/:id",
+    "title": "05) Remove",
+    "group": "Profilemodel",
+    "name": "removeProfileModel",
+    "description": "<p>remove a profile model.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>profile model id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly removed</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/profile_model.js",
+    "groupTitle": "Profilemodel",
     "header": {
       "fields": {
         "Header": [
@@ -1999,7 +3260,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/record.js",
+    "filename": "src/controllers/v1.0.0/record.js",
     "groupTitle": "Record",
     "header": {
       "fields": {
@@ -2144,7 +3405,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/record.js",
+    "filename": "src/controllers/v1.0.0/record.js",
     "groupTitle": "Record",
     "header": {
       "fields": {
@@ -2296,7 +3557,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/record.js",
+    "filename": "src/controllers/v1.0.0/record.js",
     "groupTitle": "Record",
     "header": {
       "fields": {
@@ -2434,7 +3695,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/record.js",
+    "filename": "src/controllers/v1.0.0/record.js",
     "groupTitle": "Record",
     "header": {
       "fields": {
@@ -2579,7 +3840,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/record.js",
+    "filename": "src/controllers/v1.0.0/record.js",
     "groupTitle": "Record",
     "header": {
       "fields": {
@@ -2692,7 +3953,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"transducer\": \"dht22\",\n     \"measure\":\"temperature\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\"\n}",
+          "content": "{\n     \"transducer\": \"dht22\",\n     \"measure\":\"temperature\",\n     \"tag\": \"temp\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\"\n}",
           "type": "json"
         }
       ]
@@ -2710,7 +3971,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "filename": "src/controllers/v1.0.0/sensor_model.js",
     "groupTitle": "Sensormodel",
     "header": {
       "fields": {
@@ -2799,7 +4060,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "filename": "src/controllers/v1.0.0/sensor_model.js",
     "groupTitle": "Sensormodel",
     "header": {
       "fields": {
@@ -2919,12 +4180,12 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"sensors\": [\n     {\n         \"transducer\": \"dht22\",\n         \"measure\":\"temperature\",\n         \"min_acceptable\": \"10\",\n         \"max_acceptable\": \"25\",\n         \"min_possible\": \"-20\",\n         \"max_possible\": \"50\"\n     },\n     {\n         \"transducer\": \"mq-7\",\n         \"measure\":\"carbon_monoxide\",\n         \"min_acceptable\": \"2\",\n         \"max_acceptable\": \"10\",\n         \"min_possible\": \"10\",\n         \"max_possible\": \"500\"\n     }\n ]\n}",
+          "content": "{\n \"sensors\": [\n     {\n         \"transducer\": \"dht22\",\n         \"measure\":\"temperature\",\n         \"tag\": \"temp\",\n         \"min_acceptable\": \"10\",\n         \"max_acceptable\": \"25\",\n         \"min_possible\": \"-20\",\n         \"max_possible\": \"50\"\n     },\n     {\n         \"transducer\": \"mq-7\",\n         \"measure\":\"carbon_monoxide\",\n         \"tag\": \"mono\",\n         \"min_acceptable\": \"2\",\n         \"max_acceptable\": \"10\",\n         \"min_possible\": \"10\",\n         \"max_possible\": \"500\"\n     }\n ]\n}",
           "type": "json"
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "filename": "src/controllers/v1.0.0/sensor_model.js",
     "groupTitle": "Sensormodel",
     "header": {
       "fields": {
@@ -3044,7 +4305,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"transducer\": \"dht22\",\n     \"measure\":\"temperature\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\"\n}",
+          "content": "{\n     \"transducer\": \"dht22\",\n     \"measure\":\"temperature\",\n     \"tag\": \"temp\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\"\n}",
           "type": "json"
         }
       ]
@@ -3062,7 +4323,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/sensor_model.js",
+    "filename": "src/controllers/v1.0.0/sensor_model.js",
     "groupTitle": "Sensormodel",
     "header": {
       "fields": {
@@ -3140,7 +4401,7 @@ define({ "api": [
             "type": "string",
             "optional": false,
             "field": "description",
-            "description": "<p>description to identify the board</p>"
+            "description": "<p>(optional) description to identify the board</p>"
           },
           {
             "group": "Parameter",
@@ -3179,7 +4440,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3278,7 +4539,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"name\": \"José António\",\n     \"birthdate\": \"1987-02-28\",\n     \"gender\": \"male\",\n     \"height\": 1.72\n}",
+          "content": "{\n     \"name\": \"José António\",\n     \"birthdate\": \"1987-02-28\",\n     \"gender\": \"male\",\n     \"height\": 1.72,\n     \"weight\": 78.2\n}",
           "type": "json"
         }
       ]
@@ -3296,7 +4557,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3375,13 +4636,20 @@ define({ "api": [
             "optional": false,
             "field": "email",
             "description": "<p>email of the user to add</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": false,
+            "field": "sponsor",
+            "description": "<p>(optional) flag to give the permission as sponsor of the vitabox</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"email\": \"user-example@some.thing\"\n}",
+          "content": "{\n     \"email\": \"user-example@some.thing\",\n     \"sponsor\": false\n}",
           "type": "json"
         }
       ]
@@ -3399,7 +4667,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3482,7 +4750,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3571,7 +4839,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3674,7 +4942,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3777,7 +5045,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3880,7 +5148,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -3983,7 +5251,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -4147,7 +5415,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -4295,7 +5563,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -4426,17 +5694,17 @@ define({ "api": [
         },
         {
           "title": "Response example to vitabox:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ]\n     }\n ]\n}",
           "type": "json"
         },
         {
           "title": "Response example to users:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -4519,7 +5787,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -4638,12 +5906,12 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"users\": [\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"email\": \"donaldtrump@usa.com\",\n         \"since\": \"2018-02-19T14:41:13.000Z\",\n         \"sponsor\": false\n     },\n     {\n         \"id\": \"78007a69-baa2-4b24-b936-234883811b6a\",\n         \"email\": \"queenelizabeth@majesty.uk\",\n         \"since\": \"2018-02-19T14:40:14.000Z\",\n         \"sponsor\": true\n     }\n ]\n}",
+          "content": "{\n \"users\": [\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"email\": \"donaldtrump@usa.com\",\n         \"name\": \"Donald Trump\",\n         \"since\": \"2018-02-19T14:41:13.000Z\",\n         \"sponsor\": false\n     },\n     {\n         \"id\": \"78007a69-baa2-4b24-b936-234883811b6a\",\n         \"email\": \"queenelizabeth@majesty.uk\",\n         \"name\": \"Queen Elizabeth\",\n         \"since\": \"2018-02-19T14:40:14.000Z\",\n         \"sponsor\": true\n     }\n ]\n}",
           "type": "json"
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -4801,7 +6069,7 @@ define({ "api": [
         }
       ]
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -4904,7 +6172,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -5007,7 +6275,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -5110,7 +6378,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -5206,7 +6474,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -5335,7 +6603,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {
@@ -5459,7 +6727,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox"
   },
   {
@@ -5536,7 +6804,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "app/controllers/v1.0.0/vitabox.js",
+    "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox",
     "header": {
       "fields": {

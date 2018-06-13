@@ -19,6 +19,7 @@ var business = require('../../business/index').v1_0_0;
  *      {
  *           "transducer": "dht22",
  *           "measure":"temperature",
+ *           "tag": "temp",
  *           "min_acceptable": "10",
  *           "max_acceptable": "25",
  *           "min_possible": "-20",
@@ -58,6 +59,7 @@ exports.create = (req, res) => {
  *      {
  *          "transducer": "dht22",
  *          "measure":"temperature",
+ *          "tag": "temp",
  *          "min_acceptable": "10",
  *          "max_acceptable": "25",
  *          "min_possible": "-20",
@@ -66,6 +68,7 @@ exports.create = (req, res) => {
  *      {
  *          "transducer": "mq-7",
  *          "measure":"carbon_monoxide",
+ *          "tag": "mono",
  *          "min_acceptable": "2",
  *          "max_acceptable": "10",
  *          "min_possible": "10",
@@ -104,6 +107,7 @@ exports.list = (req, res) => {
  *      {
  *           "transducer": "dht22",
  *           "measure":"temperature",
+ *           "tag": "temp",
  *           "min_acceptable": "10",
  *           "max_acceptable": "25",
  *           "min_possible": "-20",

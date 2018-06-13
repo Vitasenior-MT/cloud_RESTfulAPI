@@ -1,17 +1,17 @@
 var mongoose = require('mongoose');
+
 var schema = new mongoose.Schema({
   datetime: {
     type: Date,
-    required: true,
-    default: Date.now()
+    required: true
+  },
+  title: {
+    type: String,
+    required: false
   },
   message: {
     type: String,
     required: false
-  },
-  object_id: {
-    type: Number,
-    required: true
   },
   is_vitabox: {
     type: Boolean,
@@ -27,7 +27,29 @@ var schema = new mongoose.Schema({
     type: Boolean,
     required: true,
     default: false
-  }
-}, { versionKey: false });
+  },
+  object_id: {
+    type: Number,
+    required: true
+  },
+  seen_date: {
+    type: Date,
+    default: null
+  },
+  seen_user: {
+    type: String,
+    default: null
+  },
+}, {
+    versionKey: false,
+    toJSON: {
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret._id;
+        return ret;
+      }
+    }
+  });
+
 
 module.exports = mongoose.model('Error', schema);

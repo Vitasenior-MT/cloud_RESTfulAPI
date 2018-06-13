@@ -22,11 +22,9 @@ module.exports = (sequelize, DataTypes) => {
     tag: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: '',
-      validate: {
-        notEmpty: {
-          msg: "measure tag must be defined"
-        }
+      unique: {
+        args: true,
+        msg: 'board tag already registered'
       }
     },
     min_acceptable: {
@@ -66,14 +64,6 @@ module.exports = (sequelize, DataTypes) => {
           args: true,
           msg: "maximum possible value must be defined"
         }
-      }
-    },
-    tag: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      unique: {
-        args: true,
-        msg: 'board tag already registered'
       }
     }
   }, { underscored: true });

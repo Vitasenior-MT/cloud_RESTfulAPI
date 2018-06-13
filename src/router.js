@@ -31,6 +31,9 @@ module.exports = (app) => {
         .post('/photo', versioning({
             "1.0.0": controllers.v1_0_0.user.setPhoto,
         }))
+        .get('/doctor', versioning({
+            "1.0.0": controllers.v1_0_0.user.getPatients,
+        }))
         /*________________________________________________
         *____________________ VITABOX_____________________
         *_________________________________________________*/
@@ -148,6 +151,24 @@ module.exports = (app) => {
         .get('/patient/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.patient.getBoardsFromPatient
         }))
+        .post('/patient/:id/profile', versioning({
+            "1.0.0": controllers.v1_0_0.patient.setProfiles
+        }))
+        .put('/patient/:paid/profile/:prid', versioning({
+            "1.0.0": controllers.v1_0_0.patient.updateProfile
+        }))
+        .delete('/patient/:paid/profile/:prid', versioning({
+            "1.0.0": controllers.v1_0_0.patient.removeProfile
+        }))
+        .post('/patient/:id/doctor', versioning({
+            "1.0.0": controllers.v1_0_0.patient.addDoctor
+        }))
+        .get('/patient/:id/doctor', versioning({
+            "1.0.0": controllers.v1_0_0.patient.getDoctor
+        }))
+        .delete('/patient/:id/doctor', versioning({
+            "1.0.0": controllers.v1_0_0.patient.removeDoctor
+        }))
         /*________________________________________________
         *__________________SENSOR MODEL___________________
         *_________________________________________________*/
@@ -189,6 +210,24 @@ module.exports = (app) => {
         }))
         .get('/file/:id', versioning({
             "1.0.0": controllers.v1_0_0.manage.fileDownload
+        }))
+        /*________________________________________________
+        *_________________PROFILE MODEL___________________
+        *_________________________________________________*/
+        .post('/profilemodel', versioning({
+            "1.0.0": controllers.v1_0_0.profile_model.create
+        }))
+        .get('/profilemodel', versioning({
+            "1.0.0": controllers.v1_0_0.profile_model.list
+        }))
+        .get('/profilemodel/:id', versioning({
+            "1.0.0": controllers.v1_0_0.profile_model.find
+        }))
+        .put('/profilemodel/:id', versioning({
+            "1.0.0": controllers.v1_0_0.profile_model.update
+        }))
+        .delete('/profilemodel/:id', versioning({
+            "1.0.0": controllers.v1_0_0.profile_model.remove
         }))
         /*________________________________________________
         *_____________________TRASH_______________________

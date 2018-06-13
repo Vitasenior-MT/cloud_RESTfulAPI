@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    doctor: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     resetPasswordToken: { type: DataTypes.STRING },
     resetPasswordExpires: { type: DataTypes.DATE },
   }, {
@@ -38,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = function (models) {
     models.User.belongsToMany(models.Vitabox, { through: models.UserVitabox });
+    models.User.belongsToMany(models.Patient, { through: "DoctorPatient" });
   };
 
   return User;

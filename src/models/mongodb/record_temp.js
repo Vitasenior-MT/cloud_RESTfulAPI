@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+
 var schema = new mongoose.Schema({
     value: {
         type: Number,
@@ -6,8 +7,7 @@ var schema = new mongoose.Schema({
     },
     datetime: {
         type: Date,
-        required: true,
-        default: Date.now()
+        required: true
     },
     sensor_id: {
         type: String,
@@ -21,6 +21,15 @@ var schema = new mongoose.Schema({
         type: String,
         required: false
     }
-}, { versionKey: false });
+}, {
+    versionKey: false, 
+    toJSON: {
+        transform: (doc, ret) => {
+            ret.id = ret._id;
+            delete ret._id;
+            return ret;
+        }
+    }
+});
 
 module.exports = mongoose.model('RecordTemp', schema);

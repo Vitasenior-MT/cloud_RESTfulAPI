@@ -87,7 +87,7 @@ exports.register = (req, res) => {
 exports.requestToken = (req, res) => {
     business.vitabox.requestToken(req.params.id, req.body.password).then(
         data => {
-            business.utils.createToken(data, req.connection.remoteAddress).then(
+            business.utils.createToken(data).then(
                 token => res.status(200).json({ token: token }),
                 error => res.status(500).send({ error: error.msg }));
         },
@@ -370,9 +370,11 @@ exports.delete = (req, res) => {
  * @apiPermission vitabox sponsor
  * @apiParam {string} :id vitabox unique ID
  * @apiParam {string} email email of the user to add
+ * @apiParam {boolean} sponsor (optional) flag to give the permission as sponsor of the vitabox
  * @apiParamExample {json} Request example:
  *     {
- *          "email": "user-example@some.thing"
+ *          "email": "user-example@some.thing",
+ *          "sponsor": false
  *     }
  * @apiSuccess {boolean} result return true if was sucessfuly added
  */
@@ -410,12 +412,14 @@ exports.addUser = (req, res) => {
  *      {
  *          "id": "585402ef-68dd-44a4-a44b-04152e659d11",
  *          "email": "donaldtrump@usa.com",
+ *          "name": "Donald Trump",
  *          "since": "2018-02-19T14:41:13.000Z",
  *          "sponsor": false
  *      },
  *      {
  *          "id": "78007a69-baa2-4b24-b936-234883811b6a",
  *          "email": "queenelizabeth@majesty.uk",
+ *          "name": "Queen Elizabeth",
  *          "since": "2018-02-19T14:40:14.000Z",
  *          "sponsor": true
  *      }
@@ -477,7 +481,8 @@ exports.removeUser = (req, res) => {
  *          "name": "José António",
  *          "birthdate": "1987-02-28",
  *          "gender": "male",
- *          "height": 1.72
+ *          "height": 1.72,
+ *          "weight": 78.2
  *     }
  * @apiSuccess {string} id new patient id
  */
@@ -563,6 +568,10 @@ exports.addPatient = (req, res) => {
  *                      }
  *                  ]
  *              }
+ *          ],
+ *          "Profiles":[
+ *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25},
+ *              {"id": "32443b5e-28cd-ab43-b86b-a423442401b8", "measure": "weight", "tag": "weight", "min": 58, "max": 64}
  *          ]
  *      }
  *  ]
@@ -606,6 +615,10 @@ exports.addPatient = (req, res) => {
  *                      }
  *                  ]
  *              }
+ *          ],
+ *          "Profiles":[
+ *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25},
+ *              {"id": "32443b5e-28cd-ab43-b86b-a423442401b8", "measure": "weight", "tag": "weight", "min": 58, "max": 64}
  *          ]
  *      }
  *  ]
@@ -734,7 +747,7 @@ exports.removePatient = (req, res) => {
  * 
  * @apiPermission vitabox sponsor
  * @apiParam {string} :id vitabox unique ID
- * @apiParam {string} description description to identify the board
+ * @apiParam {string} description (optional) description to identify the board
  * @apiParam {string} password board password
  * @apiParam {string} mac_address board MAC address
  * @apiParamExample {json} Request example:

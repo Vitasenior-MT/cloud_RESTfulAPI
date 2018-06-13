@@ -2,12 +2,12 @@
   "name": "vitasenior_mt_api",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "NODE_ENV=production node server.js",
     "test": "mocha --timeout 1000",
     "dev": "NODE_ENV=development nodemon server.js",
     "testapp": "NODE_ENV=test nodemon server.js",
     "build": "webpack -p --progress --optimize-minimize",
-    "doc": "apidoc -i app/ -f .js -o docs/"
+    "doc": "apidoc -i src/ -f .js -o docs/"
   },
   "author": "Diogo Mendes",
   "license": "ISC",
@@ -27,6 +27,7 @@
     "nodemailer": "^4.6.4",
     "os": "^0.1.1",
     "sequelize": "^4.32.3",
+    "url": "^0.11.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
@@ -44,6 +45,7 @@
       "Authentication",
       "Sensormodel",
       "Boardmodel",
+      "Profilemodel",
       "Vitabox",
       "Board",
       "Patient",

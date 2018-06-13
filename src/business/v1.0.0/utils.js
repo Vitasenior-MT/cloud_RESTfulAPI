@@ -116,15 +116,21 @@ exports.deleteAll = () => {
                 db.Sensor.truncate().then(() => {
                   db.Board.truncate().then(() => {
                     db.Patient.truncate().then(() => {
-                      db.RecordTemp.remove({}, () => {
-                        db.RecordOld.remove({}, () => {
-                          db.RecordCheck.remove({}, () => {
-                            db.Log.remove({}, () => {
-                              db.Warning.remove({}, () => {
-                                db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options).then(
-                                  () => resolve(),
-                                  error => reject(error));
-                              });
+                      db.Profile.truncate().then(() => {
+                        db.RecordTemp.remove({}, () => {
+                          db.RecordOld.remove({}, () => {
+                            db.RecordCheck.remove({}, () => {
+                              db.Log.remove({}, () => {
+                                db.Warning.remove({}, () => {
+                                  db.Profilemeasure.remove({}, () => {
+                                    db.Profilemodel.remove({}, () => {
+                                      db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options).then(
+                                        () => resolve(),
+                                        error => reject(error));
+                                    });
+                                  }, error => reject(error));
+                                }, error => reject(error));
+                              }, error => reject(error));
                             }, error => reject(error));
                           }, error => reject(error));
                         }, error => reject(error));

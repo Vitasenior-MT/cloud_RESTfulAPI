@@ -1,7 +1,7 @@
 var business = require('../../business/index').v1_0_0;
 
 /**
- * @api {post} /boardmodel 01) Create Model
+ * @api {post} /boardmodel 01) Create
  * @apiGroup Boardmodel
  * @apiName createBoardModel
  * @apiDescription create a new board model.
@@ -29,7 +29,7 @@ exports.create = (req, res) => {
 }
 
 /**
-* @api {get} /boardmodel 02) List Models
+* @api {get} /boardmodel 02) List
 * @apiGroup Boardmodel
 * @apiName listsBoardsModel
 * @apiDescription list all board models. 
@@ -68,7 +68,7 @@ exports.list = (req, res) => {
 }
 
 /**
- * @api {put} /boardmodel/:id 03) Update Model
+ * @api {put} /boardmodel/:id 03) Update
  * @apiGroup Boardmodel
  * @apiName updateBoardModel
  * @apiDescription update a board model.
@@ -97,7 +97,7 @@ exports.update = (req, res) => {
 }
 
 /**
- * @api {delete} /boardmodel/:id 04) Delete Model
+ * @api {delete} /boardmodel/:id 04) Delete
  * @apiGroup Boardmodel
  * @apiName deleteBoardModel
  * @apiDescription remove a board model.

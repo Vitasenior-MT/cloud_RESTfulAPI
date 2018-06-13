@@ -18,9 +18,15 @@ exports.register = (vitabox_id, attributes) => {
   return new Promise((resolve, reject) => {
     if (attributes.address) db.Vitabox.findOne({ where: { id: vitabox_id, registered: false } }).then(
       vitabox => {
-        if (vitabox) vitabox.update({ registered: true, address: attributes.address, longitude: attributes.longitude, latitude: attributes.latitude }).then(
-          () => resolve(vitabox),
-          error => reject({ code: 500, msg: error.message }));
+        if (vitabox) {
+          let encrypted = utils.encrypt([attributes.address]);
+          vitabox.update({ registered: true, address: encrypted.value[0], longitude: attributes.longitude, latitude: attributes.latitude }).then(
+            vitabox => {
+              vitabox.address = attributes.address;
+              resolve(vitabox);
+            },
+            error => reject({ code: 500, msg: error.message }));
+        }
         else reject({ code: 500, msg: "Vitabox already registered or doesn´t exist" });
       }, error => reject({ code: 500, msg: error.message }));
     else reject({ code: 500, msg: "Vitabox address must be defined" });
@@ -32,11 +38,11 @@ exports.requestToken = (vitabox_id, password) => {
     let encrypted = utils.encrypt([password]);
     if (!encrypted.error) db.Vitabox.findOne({ where: { password: encrypted.value[0], id: vitabox_id } }).then(
       vitabox => {
-        if (vitabox) if (vitabox.registered)
-          if (!vitabox.active) vitabox.update({ active: true }).then(
+        if (vitabox) if (vitabox.registered) if (!vitabox.active)
+          vitabox.update({ active: true }).then(
             vitabox => resolve(vitabox),
             error => reject({ code: 500, msg: error.message }));
-          else resolve(vitabox);
+        else resolve(vitabox);
         else reject({ code: 401, msg: "vitabox not registered" });
         else reject({ code: 401, msg: "invalid credentials" });
       }, error => reject({ code: 500, msg: error.message }));
@@ -53,6 +59,7 @@ exports.list = (current_user) => {
     else current_user.getVitaboxes({ attributes: ['id', 'latitude', 'longitude', 'address'], where: { active: true } }).then(
       list => {
         list.forEach(element => {
+          element.dataValues.address = utils.decrypt(element.dataValues.address);
           element.dataValues.sponsor = element.dataValues.UserVitabox.dataValues.sponsor;
           delete element.dataValues.UserVitabox;
         })
@@ -66,7 +73,10 @@ exports.find = (current_user, vitabox_id) => {
     if (current_user.admin)
       db.Vitabox.findById(vitabox_id, { attributes: { exclude: ['password'] } }).then(
         vitabox => {
-          if (vitabox) resolve(vitabox);
+          if (vitabox) {
+            vitabox.dataValues.address = utils.decrypt(vitabox.dataValues.address);
+            resolve(vitabox);
+          }
           else reject({ code: 500, msg: "Vitabox not found" });
         }, error => reject({ code: 500, msg: error.message }));
     else current_user.getVitaboxes({
@@ -74,6 +84,7 @@ exports.find = (current_user, vitabox_id) => {
       where: { id: vitabox_id, active: true }
     }).then(vitabox => {
       if (vitabox.length > 0) {
+        vitabox[0].dataValues.address = utils.decrypt(vitabox[0].dataValues.address);
         vitabox[0].dataValues.sponsor = vitabox[0].dataValues.UserVitabox.dataValues.sponsor;
         delete vitabox[0].dataValues.UserVitabox;
         resolve(vitabox[0]);
@@ -141,10 +152,11 @@ exports.getUsers = (is_user, client, vitabox_id) => {
     if (is_user) db.Vitabox.findById(vitabox_id).then(
       vitabox => {
         if (vitabox) if (client.admin)
-          vitabox.getUsers({ attributes: ['id', 'email'] }).then(
+          vitabox.getUsers({ attributes: ['id', 'email', 'name'] }).then(
             users => {
               users.forEach(user => {
                 user.email = utils.decrypt(user.email);
+                user.name = utils.decrypt(user.name);
                 user.dataValues.since = user.dataValues.UserVitabox.dataValues.created_at;
                 user.dataValues.sponsor = user.dataValues.UserVitabox.dataValues.sponsor;
                 delete user.dataValues.UserVitabox;
@@ -153,10 +165,11 @@ exports.getUsers = (is_user, client, vitabox_id) => {
             },
             error => reject({ code: 500, msg: error.message }));
         else _isUser(vitabox, client).then(
-          () => vitabox.getUsers({ attributes: ['id', 'email'] }).then(
+          () => vitabox.getUsers({ attributes: ['id', 'email', 'name'] }).then(
             users => {
               users.forEach(user => {
                 user.email = utils.decrypt(user.email);
+                user.name = utils.decrypt(user.name);
                 user.dataValues.since = user.dataValues.UserVitabox.dataValues.created_at;
                 user.dataValues.sponsor = user.dataValues.UserVitabox.dataValues.sponsor;
                 delete user.dataValues.UserVitabox;
@@ -167,10 +180,11 @@ exports.getUsers = (is_user, client, vitabox_id) => {
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
-    else client.getUsers({ attributes: ['id', 'email'] }).then(
+    else client.getUsers({ attributes: ['id', 'email', 'name'] }).then(
       users => {
         users.forEach(user => {
           user.email = utils.decrypt(user.email);
+          user.name = utils.decrypt(user.name);
           user.dataValues.since = user.dataValues.UserVitabox.dataValues.created_at;
           user.dataValues.sponsor = user.dataValues.UserVitabox.dataValues.sponsor;
           delete user.dataValues.UserVitabox;
@@ -241,7 +255,8 @@ exports.getPatients = (is_user, client, vitabox_id) => {
                   model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
                   include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
                 }]
-            }],
+            },
+            { model: db.Profile }],
           }).then(
             patients => {
               patients.forEach(patient => {
@@ -263,7 +278,8 @@ exports.getPatients = (is_user, client, vitabox_id) => {
             model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
             include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
           }]
-      }],
+      },
+      { model: db.Profile }],
     }).then(
       patients => {
         patients.forEach(patient => {
@@ -377,6 +393,18 @@ exports.verifySponsor = (current_user, vitabox_id) => {
     db.Vitabox.findById(vitabox_id).then(
       vitabox => {
         if (vitabox) _isSponsor(vitabox, current_user).then(
+          () => resolve(),
+          error => reject(error));
+        else reject({ code: 500, msg: "Vitabox not found" });
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.verifyUser = (current_user, vitabox_id) => {
+  return new Promise((resolve, reject) => {
+    db.Vitabox.findById(vitabox_id).then(
+      vitabox => {
+        if (vitabox) _isUser(vitabox, current_user).then(
           () => resolve(),
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });

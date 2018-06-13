@@ -7,8 +7,8 @@ if (process.env.NODE_ENV === "production") {
     mongo_uri = 'mongodb://admin:MVJVTVJRQVCKVDCP@sl-eu-lon-2-portal.9.dblayer.com:26110,sl-eu-lon-2-portal.10.dblayer.com:26110/compose?authSource=admin&ssl=true';
     mysql_uri = 'mysql://admin:ZJBQRDMEHMADJHUQ@sl-eu-lon-2-portal.11.dblayer.com:26392/compose';
 } else {
-    mongo_uri = 'mongodb://localhost:27017/test';
-    mysql_uri = 'mysql://api:123qwe@localhost:3306/test';
+    mongo_uri = 'mongodb://192.168.161.53:27017/test';
+    mysql_uri = 'mysql://api:123qwe@192.168.161.53:3306/test';
 }
 
 const operatorsAliases = {
@@ -57,17 +57,20 @@ const db = {
     'Boardmodel': require('./mysql/board_model')(sequelize, Sequelize),
     'Board': require('./mysql/board')(sequelize, Sequelize),
     'Patient': require('./mysql/patient')(sequelize, Sequelize),
+    'Profile': require('./mysql/profile')(sequelize, Sequelize),
     'Sensormodel': require('./mysql/sensor_model')(sequelize, Sequelize),
     'Sensor': require('./mysql/sensor')(sequelize, Sequelize),
     'UserVitabox': require('./mysql/user_vitabox')(sequelize, Sequelize),
     'User': require('./mysql/user')(sequelize, Sequelize),
     'Vitabox': require('./mysql/vitabox')(sequelize, Sequelize),
 
-    'RecordCheck': require('./mongodb/record_check'),
-    'RecordTemp': require('./mongodb/record_temp'),
-    'RecordOld': require('./mongodb/record_old'),
-    'Log': require('./mongodb/log'),
     'Error': require('./mongodb/error'),
+    'Log': require('./mongodb/log'),
+    'Profilemeasure': require('./mongodb/profile_measure'),
+    'Profilemodel': require('./mongodb/profile_model'),
+    'RecordCheck': require('./mongodb/record_check'),
+    'RecordOld': require('./mongodb/record_old'),
+    'RecordTemp': require('./mongodb/record_temp'),
     'Warning': require('./mongodb/warning')
 }
 

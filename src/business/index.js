@@ -2,6 +2,8 @@ module.exports.v1_0_0 = {
     'boardmodel': require('./v1.0.0/board_model'),
     'board': require('./v1.0.0/board'),
     'patient': require('./v1.0.0/patient'),
+    'profilemodel': require('./v1.0.0/profile_model'),
+    'profile': require('./v1.0.0/profile'),
     'record': require('./v1.0.0/record'),
     'sensormodel': require('./v1.0.0/sensor_model'),
     'sensor': require('./v1.0.0/sensor'),

@@ -15,7 +15,7 @@ module.exports.seed = (db) => {
                 { "email": encrypted.value[0], "admin": true, "password": encrypted.value[3], "name": encrypted.value[6] },
                 { "email": encrypted.value[1], "password": encrypted.value[3], "name": encrypted.value[5] }
               ]).then(
-                users => db.Vitabox.create({ "latitude": "39.6003075", "longitude": "-8.3906627", "address": "Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal", "registered": true, "active": true, "password": encrypted.value[4] }).then(
+                users => db.Vitabox.create({ "latitude": "39.6003075", "longitude": "-8.3906627", "address": "f9bbee048f63bde52792a1ce009d0951ae52c1bc8033cfd5fbce839607f7f88c72e0e08fd4b363ac6dc2ef24185565a6", "registered": true, "active": true, "password": encrypted.value[4] }).then(
                   vitabox => vitabox.addUser(users[1].id).then(
                     () => db.Boardmodel.bulkCreate([
                       { "name": "Zolertia RE-Mote", "type": "environmental", "tag": "zolertiaremote" },

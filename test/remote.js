@@ -6,12 +6,13 @@ var test1_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/js
 var test2_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
 var admin_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
 var box_headers = { "Accept-Version": "1.0.0", "Content-Type": "application/json" };
-var board1, board2, sensormodel1, sensormodel2, vitabox1, vitabox2, testuser1, testpatient1, testboard1, testboard1_mac, testboard1_pass, records = [], sensor1;
+var board1, board2, sensormodel1, sensormodel2, vitabox1, vitabox2, testuser1, testpatient1, testboard1, testboard1_mac, testboard1_pass, records = [], sensor1, profilemodel1, profile1;
 
 describe("Tests", () => {
 
     before((done) => {
         request.get(base_url + "testdb", (error, response, body) => {
+            console.log("body", body);
             assert.equal(200, response.statusCode);
             done();
         });
@@ -174,7 +175,7 @@ describe("Tests", () => {
 
     /**
      * ______________________________________________________________________________________
-     * ____________________________________SENSORS___________________________________________
+     * __________________________________SENSOR MODEL________________________________________
      * ______________________________________________________________________________________
      */
 
@@ -183,7 +184,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "sensormodel",
-            form: { transducer: "dht22", measure: "temperature", min_acceptable: "10", max_acceptable: "25", min_possible: "-20", max_possible: "50" }
+            form: { transducer: "dht22", measure: "temperature", tag: "temp", min_acceptable: 10, max_acceptable: 25, min_possible: -20, max_possible: 50 }
         }, (error, response, body) => {
             assert.equal(401, response.statusCode); done();
         });
@@ -192,7 +193,7 @@ describe("Tests", () => {
         request.post({
             headers: admin_headers,
             url: base_url + "sensormodel",
-            form: { transducer: "dht22", measure: "temperature", min_acceptable: "10", max_acceptable: "25", min_possible: "-20", max_possible: "50" }
+            form: { transducer: "dht22", measure: "temperature", tag: "temp", min_acceptable: 10, max_acceptable: 25, min_possible: -20, max_possible: 50 }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode);
@@ -201,29 +202,29 @@ describe("Tests", () => {
             done();
         });
     });
-    it("POST /sensormodel -> must refuse transducer:'mq-7' measure:'carbon_monoxide' min_acceptable:'' max_acceptable:'' min_possible:'' max_possible:''", (done) => {
+    it("POST /sensormodel -> must refuse transducer:'mq-7', tag:'mono', measure:'carbon_monoxide' min_acceptable:'' max_acceptable:'' min_possible:'' max_possible:''", (done) => {
         request.post({
             headers: admin_headers,
             url: base_url + "sensormodel",
-            form: { transducer: 'mq-7', measure: 'carbon_monoxide', min_acceptable: '', max_acceptable: '', min_possible: '', max_possible: '' }
+            form: { transducer: 'mq-7', measure: 'carbon_monoxide', tag: "mono", min_acceptable: '', max_acceptable: '', min_possible: '', max_possible: '' }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
     });
-    it("POST /sensormodel -> must refuse transducer:'' measure:'' min_acceptable:'2' max_acceptable:'10' min_possible:'10' max_possible:'500'", (done) => {
+    it("POST /sensormodel -> must refuse transducer:'' measure:'', tag'', min_acceptable:2 max_acceptable:10 min_possible:10 max_possible:500", (done) => {
         request.post({
             headers: admin_headers,
             url: base_url + "sensormodel",
-            form: { transducer: '', measure: '', min_acceptable: '2', max_acceptable: '10', min_possible: '10', max_possible: '500' }
+            form: { transducer: '', measure: '', tag: "", min_acceptable: 2, max_acceptable: 10, min_possible: 10, max_possible: 500 }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
     });
-    it("POST /sensormodel -> must accept transducer:'mq-7' measure:'carbon_monoxide' min_acceptable:'2' max_acceptable:'10' min_possible:'10' max_possible:'500'", (done) => {
+    it("POST /sensormodel -> must accept transducer:'mq-7' measure:'carbon_monoxide', tag: 'mono', min_acceptable:2 max_acceptable:10 min_possible:10 max_possible:500", (done) => {
         request.post({
             headers: admin_headers,
             url: base_url + "sensormodel",
-            form: { transducer: 'mq-7', measure: 'carbon_monoxide', min_acceptable: '2', max_acceptable: '10', min_possible: '10', max_possible: '500' }
+            form: { transducer: 'mq-7', measure: 'carbon_monoxide', tag: "mono", min_acceptable: 2, max_acceptable: 10, min_possible: 10, max_possible: 500 }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             sensormodel2 = JSON.parse(body).id;
@@ -253,7 +254,7 @@ describe("Tests", () => {
         request.put({
             headers: test2_headers,
             url: base_url + "sensormodel/" + sensormodel1,
-            form: { transducer: "dht22", measure: "temperature", min_acceptable: "10", max_acceptable: "27", min_possible: "-15", max_possible: "50" }
+            form: { transducer: "dht22", measure: "temperature", tag: "temp", min_acceptable: 10, max_acceptable: 27, min_possible: -15, max_possible: 50 }
         }, (error, response, body) => {
             assert.equal(401, response.statusCode); done();
         });
@@ -262,7 +263,7 @@ describe("Tests", () => {
         request.put({
             headers: admin_headers,
             url: base_url + "sensormodel/" + sensormodel1,
-            form: { transducer: "dht22", measure: "temperature", min_acceptable: "10", max_acceptable: "27", min_possible: "-15", max_possible: "50" }
+            form: { transducer: "dht22", measure: "temperature", tag: "temp", min_acceptable: 10, max_acceptable: 27, min_possible: -15, max_possible: 50 }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
@@ -289,7 +290,7 @@ describe("Tests", () => {
         request.post({
             headers: admin_headers,
             url: base_url + "sensormodel",
-            form: { transducer: "dht22", measure: "temperature", min_acceptable: "10", max_acceptable: "25", min_possible: "-20", max_possible: "50" }
+            form: { transducer: "dht22", measure: "temperature", tag: "temp", min_acceptable: 10, max_acceptable: 25, min_possible: -20, max_possible: 50 }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode);
@@ -298,9 +299,10 @@ describe("Tests", () => {
         });
     });
 
+
     /**
      * ______________________________________________________________________________________
-     * _____________________________________BOARDS___________________________________________
+     * __________________________________BOARD MODEL_________________________________________
      * ______________________________________________________________________________________
      */
 
@@ -573,6 +575,113 @@ describe("Tests", () => {
         });
     });
 
+    /**
+    * ______________________________________________________________________________________
+    * _________________________________PROFILE MODEL________________________________________
+    * ______________________________________________________________________________________
+    */
+
+    it("POST /profilemodel -> must refuse user:test2@ipt.pt", (done) => {
+        request.post({
+            headers: test2_headers,
+            url: base_url + "profilemodel",
+            form: {
+                "name": "MySignals Balance",
+                "measures": [
+                    { "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25 },
+                    { "measure": "weight", "tag": "weight", "min": 58, "max": 64 }
+                ]
+            }
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("POST /profilemodel -> must accept user:admin@a.aa and must receive the ID", (done) => {
+        request.post({
+            headers: admin_headers,
+            url: base_url + "profilemodel",
+            form: {
+                "name": "MySignals Balance",
+                "measures": [
+                    { "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25 },
+                    { "measure": "weight", "tag": "weight", "min": 58, "max": 64 }
+                ]
+            }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            profilemodel1 = JSON.parse(body).id;
+            assert.equal(200, response.statusCode);
+            done();
+        });
+    });
+    it("GET /profilemodel -> must accept user:test2@ipt.pt", (done) => {
+        request.get({
+            headers: test2_headers,
+            url: base_url + "profilemodel"
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("GET /profilemodel/:id -> must accept user:test2@ipt.pt", (done) => {
+        request.get({
+            headers: test2_headers,
+            url: base_url + "profilemodel/" + profilemodel1
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("PUT /profilemodel/:id -> must refuse user:test2@ipt.pt", (done) => {
+        request.put({
+            headers: test2_headers,
+            url: base_url + "profilemodel/" + profilemodel1,
+            form: {
+                "name": "MySignals Balance",
+                "measures": [
+                    { "measure": "body fat", "tag": "bodyfat", "min": 20, "max": 25 },
+                    { "measure": "weight", "tag": "weight", "min": 58, "max": 69 }
+                ]
+            }
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("PUT /profilemodel/:id -> must accept user:admin@a.aa", (done) => {
+        request.put({
+            headers: admin_headers,
+            url: base_url + "profilemodel/" + profilemodel1,
+            form: {
+                "name": "MySignals Balance",
+                "measures": [
+                    { "measure": "body fat", "tag": "bodyfat", "min": 20, "max": 25 },
+                    { "measure": "weight", "tag": "weight", "min": 58, "max": 69 }
+                ]
+            }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode);
+            done();
+        });
+    });
+    it("DELETE /profilemodel/:id -> must refuse user:test2@ipt.pt", (done) => {
+        request.delete({
+            headers: test2_headers,
+            url: base_url + "profilemodel/" + profilemodel1
+        }, (error, response, body) => {
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("DELETE /profilemodel/:id -> must accept user:admin@a.aa", (done) => {
+        request.delete({
+            headers: admin_headers,
+            url: base_url + "profilemodel/" + profilemodel1
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode);
+            done();
+        });
+    });
 
     /**
      * ______________________________________________________________________________________
@@ -926,7 +1035,7 @@ describe("Tests", () => {
         request.post({
             headers: test1_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/patient",
-            form: { "name": "José António", "birthdate": "1987-02-28", "gender": "male", "height": 1.71 }
+            form: { "name": "José António", "birthdate": "1987-02-28", "gender": "male", "height": 1.71, "weight": 71.2 }
         }, (error, response, body) => {
             assert.equal(401, response.statusCode); done();
         });
@@ -935,7 +1044,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/patient",
-            form: { "name": "José António 123", "birthdate": "1987-02-28", "gender": "male", "height": 1.71 }
+            form: { "name": "José António 123", "birthdate": "1987-02-28", "gender": "male", "height": 1.71, "weight": 71.2 }
         }, (error, response, body) => {
             assert.equal(500, response.statusCode); done();
         });
@@ -944,7 +1053,7 @@ describe("Tests", () => {
         request.post({
             headers: test2_headers,
             url: base_url + "vitabox/" + vitabox1.id + "/patient",
-            form: { "name": "José António", "birthdate": "1987-02-28", "gender": "male", "height": 1.71 }
+            form: { "name": "José António", "birthdate": "1987-02-28", "gender": "male", "height": 1.71, "weight": 71.2 }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
@@ -1112,6 +1221,13 @@ describe("Tests", () => {
             assert.equal(200, response.statusCode); done();
         });
     });
+
+    /**
+     * ______________________________________________________________________________________
+     * _____________________________________BOARD____________________________________________
+     * ______________________________________________________________________________________
+     */
+
     it("POST /board/:id/patient -> must refuse a user that is not sponsor or admin to add a patient to board", (done) => {
         request.post({
             headers: test1_headers,
@@ -1131,7 +1247,7 @@ describe("Tests", () => {
             assert.equal(500, response.statusCode); done();
         });
     });
-    it("POST /vitabox/:id/board/enable -> must accept add patient to board by sponsor", (done) => {
+    it("POST board/:id/patient -> must accept add patient to board by sponsor", (done) => {
         request.post({
             headers: test2_headers,
             url: base_url + "board/" + testboard1 + "/patient",
@@ -1155,6 +1271,148 @@ describe("Tests", () => {
             headers: test2_headers,
             url: base_url + "board/" + testboard1 + "/patient",
             form: { "patient_id": testpatient1 }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+
+    /**
+     * ______________________________________________________________________________________
+     * ___________________________________PROFILE____________________________________________
+     * ______________________________________________________________________________________
+     */
+
+    it("POST /patient/:id/profile -> must refuse a user that is not sponsor to add a profile to patient", (done) => {
+        request.post({
+            headers: test1_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile",
+            form: {
+                "profiles": [
+                    { "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25 },
+                    { "measure": "weight", "tag": "weight", "min": 58, "max": 64 }
+                ]
+            }
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("POST /patient/:paid/profile/ -> must accept sponsor to set the patient profiles", (done) => {
+        request.post({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile",
+            form: {
+                "profiles": [
+                    { "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25 },
+                    { "measure": "weight", "tag": "weight", "min": 58, "max": 64 }
+                ]
+            }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            profile1 = JSON.parse(body).profiles[0].id;
+            assert.equal(200, response.statusCode);
+            done();
+        });
+    });
+    it("PUT /patient/:paid/profile/:prid -> must refuse a user that is not sponsor to update a profile to board", (done) => {
+        request.put({
+            headers: test1_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1,
+            form: { "measure": "body fat", "tag": "bodyfat", "min": 20, "max": 26 }
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("PUT /patient/:paid/profile/:prid -> must accept sponsor to update the patient profiles", (done) => {
+        request.put({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1,
+            form: { "measure": "body fat", "tag": "bodyfat", "min": 20, "max": 26 }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("DELETE /patient/:paid/profile/:prid -> must refuse a user that is not sponsor to update a profile to board", (done) => {
+        request.delete({
+            headers: test1_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("DELETE /patient/:paid/profile/:prid -> must accept sponsor to update the patient profiles", (done) => {
+        request.delete({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+
+    /**
+     * ______________________________________________________________________________________
+     * ____________________________________DOCTOR____________________________________________
+     * ______________________________________________________________________________________
+     */
+
+    it("POST /patient/:id/doctor -> must refuse a user that is not sponsor to add a doctor to patient", (done) => {
+        request.post({
+            headers: test1_headers,
+            url: base_url + "patient/" + testpatient1 + "/doctor",
+            form: { "email": "test2@ipt.pt" }
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("POST /patient/:paid/doctor -> must accept sponsor to add a doctor to the patient", (done) => {
+        request.post({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/doctor",
+            form: { "email": "test1@ipt.pt" }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("GET /patient/:id/doctor -> must refuse a user that is not related to the vitabox to get the patient doctors", (done) => {
+        request.get({
+            headers: test1_headers,
+            url: base_url + "patient/" + testpatient1 + "/doctor"
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("GET /patient/:id/doctor -> must accept sponsor to get the patient doctors", (done) => {
+        request.get({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/doctor"
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+    it("DELETE /patient/:id/doctor -> must refuse a user that is not sponsor to update a profile to board", (done) => {
+        request.delete({
+            headers: test1_headers,
+            url: base_url + "patient/" + testpatient1 + "/doctor",
+            form: { "doctor_id": testuser1 }
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("DELETE /patient/:paid/profile/:prid -> must accept sponsor to remove the doctor from ", (done) => {
+        request.delete({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/doctor",
+            form: { "doctor_id": testuser1 }
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();

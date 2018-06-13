@@ -1,17 +1,21 @@
 var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
-  user_id: {
+  measure: {
+    type: String,
+    required: true
+  },
+  tag: {
+    type: String,
+    required: true
+  },
+  min: {
     type: Number,
     required: true
   },
-  datetime: {
-    type: Date,
+  max: {
+    type: Number,
     required: true
-  },
-  message: {
-    type: String,
-    required: false
   }
 }, {
     versionKey: false,
@@ -24,4 +28,4 @@ var schema = new mongoose.Schema({
     }
   });
 
-module.exports = mongoose.model('Log', schema);
+module.exports = mongoose.model('Profilemeasure', schema);

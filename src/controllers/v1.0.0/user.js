@@ -21,7 +21,8 @@ var business = require('../../business/index').v1_0_0;
  * @apiSuccess {string} id user id
  * @apiSuccess {string} name user name
  * @apiSuccess {string} email user email
- * @apiSuccess {string} is_admin flag indicating if is admin
+ * @apiSuccess {boolean} is_admin flag indicating if is admin
+ * @apiSuccess {boolean} is_doctor flag indicating if is doctor
  * @apiSuccess {string} photo user photo
  * @apiSuccessExample {json} Response example:
  * {
@@ -30,6 +31,7 @@ var business = require('../../business/index').v1_0_0;
  *      "name": "Administrator Exemple",
  *      "email": "admin@some.thing",
  *      "is_admin": true,
+ *      "is_doctor": false,
  *      "photo": "8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg"
  * }
  */
@@ -43,6 +45,7 @@ exports.register = (req, res) => {
                     name: business.utils.decrypt(user.name),
                     email: business.utils.decrypt(user.email),
                     is_admin: user.admin,
+                    is_doctor: user.doctor,
                     photo: user.photo
                 }),
                 error => res.status(error.code).send(error.msg));
@@ -63,7 +66,8 @@ exports.register = (req, res) => {
  * @apiSuccess {string} id user id
  * @apiSuccess {string} name user name
  * @apiSuccess {string} email user email
- * @apiSuccess {string} is_admin flag indicating if is admin
+ * @apiSuccess {boolean} is_admin flag indicating if is admin
+ * @apiSuccess {boolean} is_doctor flag indicating if is doctor
  * @apiSuccess {string} photo user photo
  * @apiSuccessExample {json} Response example:
  * {
@@ -72,6 +76,7 @@ exports.register = (req, res) => {
  *      "name": "Administrator Exemple",
  *      "email": "admin@some.thing",
  *      "is_admin": true,
+ *      "is_doctor": false,
  *      "photo": "8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg"
  * }
  */
@@ -85,6 +90,7 @@ exports.login = (req, res) => {
                     name: business.utils.decrypt(user.name),
                     email: business.utils.decrypt(user.email),
                     is_admin: user.admin,
+                    is_doctor: user.doctor,
                     photo: user.photo
                 }),
                 error => res.status(error.code).send(error.msg));
@@ -170,6 +176,75 @@ exports.setPhoto = (req, res) => {
                     () => res.status(200).json({ filename: req.file.filename }),
                     error => res.status(error.code).send(error.msg));
             }),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send("Unauthorized"); }
+}
+
+/**
+ * @api {get} /doctor 07) Get patients
+ * @apiGroup Authentication
+ * @apiName getPatientsAsDoctor
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiPermission doctor
+ * @apiSuccessExample {json} Response example:
+ * {
+ *  "patients": [
+ *      {
+ *          "id": "a77ea0fe-5e34-4189-9702-95cb69b4cd1d",
+ *          "birthdate": "1987-02-28",
+ *          "name": "José António",
+ *          "gender": "male",
+ *          "since": "2018-02-19T14:55:59.000Z",
+ *          "active": true,
+ *          "weight": 79.6,
+ *          "height": 1.74,
+ *          "Boards": [
+ *              {
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
+ *                  "description": "kitchen",
+ *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
+ *                  "Boardmodel": {
+ *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
+ *                      "type": "environmental",
+ *                      "name": "Zolertia RE-Mote"
+ *                  },
+ *                  "Sensors": [
+ *                      {
+ *                          "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+ *                          "last_values": [ 17, 16, 13, 16, 15 ],
+ *                          "last_commit": "2018-07-23T05:15:27.000Z",
+ *                          "Sensormodel": {
+ *                              "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
+ *                              "transducer": "dht22",
+ *                              "measure": "humidity",
+ *                              "min_acceptable": "30.00000",
+ *                              "max_acceptable": "50.00000",
+ *                              "min_possible": "20.00000",
+ *                              "max_possible": "60.00000"
+ *                          }
+ *                      }
+ *                  ]
+ *              }
+ *          ],
+ *          "Profiles":[
+ *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25},
+ *              {"id": "32443b5e-28cd-ab43-b86b-a423442401b8", "measure": "weight", "tag": "weight", "min": 58, "max": 64}
+ *          ]
+ *          "Vitabox": {
+ *              "id": "a6abfa76-68f0-4325-b3ab-6c540a800284",
+ *              "latitude": "51.5058372",
+ *              "longitude": "-0.1899126",
+ *              "address": "Kensington Gardens, London W8 4PX, Reino Unido"
+ *          }
+ *      }
+ *  ]
+ * }
+ */
+exports.getPatients = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
+        business.user.getPatients(req.client).then(
+            patients => res.status(200).json({ patients: patients }),
             error => res.status(error.code).send(error.msg));
     } else { res.status(401).send("Unauthorized"); }
 }
