@@ -24,7 +24,7 @@ exports.create = (req, res) => {
             model => res.status(200).json({ id: model.id }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -63,7 +63,7 @@ exports.list = (req, res) => {
             models => res.status(200).json({ models: models }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -92,7 +92,7 @@ exports.update = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -114,7 +114,7 @@ exports.delete = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -140,7 +140,7 @@ exports.setSensor = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -182,7 +182,7 @@ exports.getSensors = (req, res) => {
             sensors => res.status(200).json({ sensors: sensors }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -209,6 +209,6 @@ exports.removeSensor = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }

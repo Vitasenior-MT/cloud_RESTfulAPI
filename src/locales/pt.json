@@ -1,0 +1,7 @@
+{
+  "unauthorized": "Não autorizado",
+  "invalid_thresholds": "Não foi possivel validar os limites do sensor",
+  "cannot_insert": "Não foi possível inserir registos do sensor",
+  "up_limit": "o valor de %s está acima do esperado",
+  "down_limit": "o valor de %s está abaixo do esperado"
+}

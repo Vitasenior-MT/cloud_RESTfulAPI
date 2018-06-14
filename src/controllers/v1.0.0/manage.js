@@ -41,7 +41,7 @@ exports.destroyAll = (req, res) => {
             error => res.status(500).send(error.msg)
         );
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 

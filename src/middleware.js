@@ -2,11 +2,25 @@
 // =============================================================================
 module.exports = (app) => {
   var bodyParser = require('body-parser'),
+    i18n = require("i18n"),
     utils = require('./business/index').v1_0_0.utils;
 
-  // middleware to use for all requests
+  i18n.configure({
+    locales: ['pt', 'en'],
+    defaultLocale: 'pt',
+    register: global,
+    directory: __dirname + '/locales',
+    api: {
+      '__': 't',  //now req.__ becomes req.t
+      '__n': 'tn' //and req.__n can be called as req.tn
+    }
+  });
+
+  app.use(i18n.init);
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
+
+  // middleware to use for all requests
   app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Accept-Version");

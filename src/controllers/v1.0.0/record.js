@@ -45,7 +45,7 @@ exports.create = (req, res) => {
                     else res.status(200).json({ result: true, error: "" });
                 }, error => res.status(error.code).json(error.msg));
         } else { res.status(500).send("No records to introduce"); }
-    } else { res.status(401).send("Unauthorized"); }
+    } else { res.status(401).send(req.t("unauthorized")); }
 }
 
 /**
@@ -91,7 +91,7 @@ exports.listFromPage = (req, res) => {
             data => res.status(200).json({ records: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -139,7 +139,7 @@ exports.listFromPageByPatient = (req, res) => {
             data => res.status(200).json({ records: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -187,7 +187,7 @@ exports.listBetweenDates = (req, res) => {
             data => res.status(200).json({ records: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -236,6 +236,6 @@ exports.listBetweenDatesByPatient = (req, res) => {
             data => res.status(200).json({ records: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }

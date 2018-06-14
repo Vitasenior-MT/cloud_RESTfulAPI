@@ -33,7 +33,7 @@ exports.create = (req, res) => {
             sensor => res.status(200).json({ id: sensor.id }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -83,7 +83,7 @@ exports.list = (req, res) => {
             sensors => res.status(200).json({ sensors: sensors }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -121,7 +121,7 @@ exports.update = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -143,6 +143,6 @@ exports.delete = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }

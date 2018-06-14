@@ -5,6 +5,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiHeader Accept-Version="1.0.0"
  * @apiHeader Content-Type="application/json"
  * @apiHeader Authorization="< token >"
+ * @apiHeader Accept-Language="pt"
  * @apiError {number} statusCode http status code: 500 to business logic errors and 401 to unauthorized
  * @apiError {string} statusMessage error description
  */
@@ -27,7 +28,7 @@ exports.create = (req, res) => {
             data => res.status(200).json(data),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -66,7 +67,7 @@ exports.register = (req, res) => {
                     }, error => res.status(error.code).send(error.msg));
             }, error => res.status(500).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -176,7 +177,7 @@ exports.list = (req, res) => {
             data => res.status(200).json({ vitaboxes: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -233,7 +234,7 @@ exports.find = (req, res) => {
             data => res.status(200).json({ vitabox: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -260,7 +261,7 @@ exports.getSettings = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         res.status(200).json({ settings: req.client.settings })
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -290,7 +291,7 @@ exports.setSettings = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -333,7 +334,7 @@ exports.update = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -354,9 +355,7 @@ exports.delete = (req, res) => {
         business.vitabox.delete(req.client, req.params.id).then(
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send("Unauthorized");
-    }
+    } else { res.status(401).send(req.t("unauthorized")); }
 }
 
 /**
@@ -387,7 +386,7 @@ exports.addUser = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(500).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -432,7 +431,7 @@ exports.getUsers = (req, res) => {
             data => res.status(200).json({ users: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -459,7 +458,7 @@ exports.removeUser = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -494,7 +493,7 @@ exports.addPatient = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -631,7 +630,7 @@ exports.getPatients = (req, res) => {
             data => res.status(200).json({ patients: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -667,7 +666,7 @@ exports.disablePatient = (req, res) => {
                 error => res.status(error.code).send(error.msg));
         }
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -703,7 +702,7 @@ exports.enablePatient = (req, res) => {
                 error => res.status(error.code).send(error.msg));
         }
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -733,7 +732,7 @@ exports.removePatient = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -770,7 +769,7 @@ exports.addBoard = (req, res) => {
             },
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -883,7 +882,7 @@ exports.getBoards = (req, res) => {
             data => res.status(200).json({ boards: data }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -919,7 +918,7 @@ exports.disableBoard = (req, res) => {
                 error => res.status(error.code).send(error.msg));
         }
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -955,7 +954,7 @@ exports.enableBoard = (req, res) => {
                 error => res.status(error.code).send(error.msg));
         }
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -987,6 +986,6 @@ exports.removeBoard = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }

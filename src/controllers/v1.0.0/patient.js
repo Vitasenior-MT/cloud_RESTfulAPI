@@ -56,7 +56,7 @@ exports.setProfiles = (req, res) => {
                 }, error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -87,7 +87,7 @@ exports.updateProfile = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -114,7 +114,7 @@ exports.removeProfile = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -149,7 +149,7 @@ exports.addDoctor = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -198,10 +198,10 @@ exports.getDoctor = (req, res) => {
                 else if (patient.vitabox_id === req.client.id) business.patient.getDoctors(patient).then(
                     doctors => res.status(200).json({ doctors: doctors }),
                     error => res.status(error.code).send(error.msg));
-                else res.status(401).send("Unauthorized");
+                else res.status(401).send(req.t("unauthorized"));
             }, error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -234,7 +234,7 @@ exports.removeDoctor = (req, res) => {
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -285,6 +285,6 @@ exports.getBoardsFromPatient = (req, res) => {
             result => res.status(200).json({ boards: result }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }

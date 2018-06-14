@@ -29,7 +29,7 @@ exports.create = (req, res) => {
         error => res.status(error.code).send(error.msg)),
       error => res.status(error.code).send(error.msg));
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send(req.t("unauthorized"));
   }
 }
 
@@ -55,7 +55,7 @@ exports.list = (req, res) => {
       models => res.status(200).json({ profiles: models }),
       error => res.status(error.code).send(error.msg));
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send(req.t("unauthorized"));
   }
 }
 
@@ -80,7 +80,7 @@ exports.find = (req, res) => {
       model => res.status(200).json({ profile: model }),
       error => res.status(error.code).send(error.msg));
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send(req.t("unauthorized"));
   }
 }
 
@@ -107,7 +107,7 @@ exports.update = (req, res) => {
         error => res.status(error.code).send(error.msg)),
       error => res.status(error.code).send("Cannot update measures"));
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send(req.t("unauthorized"));
   }
 }
 
@@ -129,6 +129,6 @@ exports.remove = (req, res) => {
       () => res.status(200).json({ result: true }),
       error => res.status(error.code).send(error.msg));
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send(req.t("unauthorized"));
   }
 }

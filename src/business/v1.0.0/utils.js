@@ -10,7 +10,7 @@ var db = require('../../models/index'),
 exports.encrypt = (to_encrypt) => {
   try {
     return {
-      value: to_encrypt.map((element, index) => {
+      value: to_encrypt.map(element => {
         let cipher = crypto.createCipher(process.env.ALGORITHM, process.env.KEY);
         return element = cipher.update(Buffer.from(element), 'utf8', 'hex') + cipher.final('hex');
       }), error: null

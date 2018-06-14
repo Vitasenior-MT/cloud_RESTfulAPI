@@ -54,15 +54,17 @@ exports.list = (current_user) => {
   return new Promise((resolve, reject) => {
     if (current_user.admin)
       db.Vitabox.findAll({ attributes: { exclude: ['password'] } }).then(
-        list => resolve(list),
-        error => reject({ code: 500, msg: error.message }));
+        list => {
+          list.forEach(element => element.address = utils.decrypt(element.address));
+          resolve(list);
+        }, error => reject({ code: 500, msg: error.message }));
     else current_user.getVitaboxes({ attributes: ['id', 'latitude', 'longitude', 'address'], where: { active: true } }).then(
       list => {
         list.forEach(element => {
-          element.dataValues.address = utils.decrypt(element.dataValues.address);
-          element.dataValues.sponsor = element.dataValues.UserVitabox.dataValues.sponsor;
+          element.address = utils.decrypt(element.address);
+          element.dataValues.sponsor = element.UserVitabox.sponsor;
           delete element.dataValues.UserVitabox;
-        })
+        });
         resolve(list);
       }, error => reject({ code: 500, msg: error.message }));
   });
@@ -74,7 +76,7 @@ exports.find = (current_user, vitabox_id) => {
       db.Vitabox.findById(vitabox_id, { attributes: { exclude: ['password'] } }).then(
         vitabox => {
           if (vitabox) {
-            vitabox.dataValues.address = utils.decrypt(vitabox.dataValues.address);
+            vitabox.address = utils.decrypt(vitabox.address);
             resolve(vitabox);
           }
           else reject({ code: 500, msg: "Vitabox not found" });
@@ -84,8 +86,8 @@ exports.find = (current_user, vitabox_id) => {
       where: { id: vitabox_id, active: true }
     }).then(vitabox => {
       if (vitabox.length > 0) {
-        vitabox[0].dataValues.address = utils.decrypt(vitabox[0].dataValues.address);
-        vitabox[0].dataValues.sponsor = vitabox[0].dataValues.UserVitabox.dataValues.sponsor;
+        vitabox[0].address = utils.decrypt(vitabox[0].address);
+        vitabox[0].dataValues.sponsor = vitabox[0].UserVitabox.sponsor;
         delete vitabox[0].dataValues.UserVitabox;
         resolve(vitabox[0]);
       } else reject({ code: 500, msg: "Vitabox not found" });

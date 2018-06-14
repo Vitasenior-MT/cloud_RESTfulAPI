@@ -3,6 +3,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiDefine auth
  * 
  * @apiHeader Accept-Version="1.0.0"
+ * @apiHeader Accept-Language="pt"
  * @apiHeader Content-Type="application/json"
  * @apiError {number} statusCode http status code: 500 to business logic errors and 401 to unauthorized
  * @apiError {string} statusMessage error description
@@ -83,6 +84,7 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
     business.user.login(req.body.email, req.body.password).then(
         user => {
+            console.log(req.t('Hello', "mundo"));
             business.utils.createToken(user, req.connection.remoteAddress).then(
                 token => res.status(200).json({
                     token: token,
@@ -92,10 +94,8 @@ exports.login = (req, res) => {
                     is_admin: user.admin,
                     is_doctor: user.doctor,
                     photo: user.photo
-                }),
-                error => res.status(error.code).send(error.msg));
-        },
-        error => res.status(error.code).send(error.msg));
+                }), error => res.status(error.code).send(error.msg));
+        }, error => res.status(error.code).send(error.msg));
 }
 
 /**
@@ -113,9 +113,7 @@ exports.changePassword = (req, res) => {
         business.user.changePassword(req.client, req.body.password).then(
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send("Unauthorized");
-    }
+    } else { res.status(401).send(req.t("unauthorized")); }
 }
 
 /**
@@ -177,7 +175,7 @@ exports.setPhoto = (req, res) => {
                     error => res.status(error.code).send(error.msg));
             }),
             error => res.status(error.code).send(error.msg));
-    } else { res.status(401).send("Unauthorized"); }
+    } else { res.status(401).send(req.t("unauthorized")); }
 }
 
 /**
@@ -246,5 +244,5 @@ exports.getPatients = (req, res) => {
         business.user.getPatients(req.client).then(
             patients => res.status(200).json({ patients: patients }),
             error => res.status(error.code).send(error.msg));
-    } else { res.status(401).send("Unauthorized"); }
+    } else { res.status(401).send(req.t("unauthorized")); }
 }

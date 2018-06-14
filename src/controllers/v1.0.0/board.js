@@ -81,7 +81,7 @@ exports.getById = (req, res) => {
         business.board.get(req.params.id).then(
             obj => res.status(200).json({ board: obj }),
             error => res.status(error.code).send(error.msg));
-    } else { res.status(401).send("Unauthorized"); }
+    } else { res.status(401).send(req.t("unauthorized")); }
 }
 
 /**
@@ -106,7 +106,7 @@ exports.addPatientToBoard = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -132,7 +132,7 @@ exports.removePatientFromBoard = (req, res) => {
             () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
 
@@ -172,6 +172,6 @@ exports.getSensorsFromBoard = (req, res) => {
             sensors => res.status(200).json({ sensors: sensors }),
             error => res.status(error.code).send(error.msg));
     } else {
-        res.status(401).send("Unauthorized");
+        res.status(401).send(req.t("unauthorized"));
     }
 }
