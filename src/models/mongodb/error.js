@@ -13,24 +13,20 @@ var schema = new mongoose.Schema({
     type: String,
     required: false
   },
-  is_vitabox: {
-    type: Boolean,
+  vitabox_id: {
+    type: String,
     required: true,
     default: false
   },
-  is_board: {
-    type: Boolean,
+  board_id: {
+    type: String,
     required: true,
     default: false
   },
-  is_sensor: {
-    type: Boolean,
+  sensor_id: {
+    type: String,
     required: true,
     default: false
-  },
-  object_id: {
-    type: Number,
-    required: true
   },
   seen_date: {
     type: Date,

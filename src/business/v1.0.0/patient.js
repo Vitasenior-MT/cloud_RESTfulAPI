@@ -31,7 +31,7 @@ exports.find = function (patient_id) {
     return new Promise((resolve, reject) => {
         db.Patient.findById(patient_id).then(
             patient => {
-                if (patient) resolve(patient)
+                if (patient) resolve(patient);
                 else reject({ code: 500, msg: "Patient not found" });
             }, error => reject({ code: 500, msg: error.message }));
     });
@@ -106,5 +106,30 @@ exports.removeDoctor = (patient, doctor_id) => {
         patient.removeUser(doctor_id).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+exports.verifyDoctor = (current_user, patient_id) => {
+    return new Promise((resolve, reject) => {
+        db.Patient.findById(patient_id).then(
+            patient => {
+                if (patient) _isDoctor(patient, current_user).then(
+                    () => resolve(),
+                    error => reject(error));
+                else reject({ code: 500, msg: "Patient not found" });
+            }, error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+// ________________________________________________________________________
+// Private
+// ________________________________________________________________________
+_isDoctor = (patient, user) => {
+    return new Promise((resolve, reject) => {
+        patient.getUsers({ where: { id: user.id } }).then(
+            users => {
+                if (users.length > 0) resolve();
+                else reject({ code: 401, msg: "Unauthorized" });
+            }, error => reject({ code: 500, msg: error.message }));
     });
 }

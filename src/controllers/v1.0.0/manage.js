@@ -45,7 +45,7 @@ exports.destroyAll = (req, res) => {
     }
 }
 
-var record_broker = require("../../workers/records");
+var broker = require("../../workers/index");
 exports.ampqSend = (req, res) => {
     let records = [
         {
@@ -59,7 +59,7 @@ exports.ampqSend = (req, res) => {
             "sensor_id": "2a2f5839-6b68-41a6-ada7-f9cd4c66cf38"
         }
     ]
-    record_broker.send(records).then(
+    broker.record.insert(records).then(
         () => res.status(200).json({ success: true }),
         error => res.status(500).send(error.msg)
     );

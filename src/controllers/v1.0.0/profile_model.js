@@ -10,23 +10,16 @@ var business = require('../../business/index').v1_0_0;
  * 
  * @apiPermission admin
  * @apiParam {string} name profile model name
- * @apiParam {array} measures profile measures, each measure needs a min and max thresholds, the measure name and the relative sensor model tag
  * @apiParamExample {json} Request example:
  *     {
- *          "name": "MySignals Balance",
- *          "measures": [
- *              {"measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25},
- *              {"measure": "weight", "tag": "weight", "min": 58, "max": 64}
- *          ]
+ *          "name": "MySignals Balance"
  *     }
  * @apiSuccess {string} id created profile model id
  */
 exports.create = (req, res) => {
   if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-    business.profilemodel.createMeasures(req.body.measures).then(
-      measures => business.profilemodel.create(req.body.name, measures).then(
-        model => res.status(200).json({ id: model.id }),
-        error => res.status(error.code).send(error.msg)),
+    business.profilemodel.create(req.body.name).then(
+      model => res.status(200).json({ id: model.id }),
       error => res.status(error.code).send(error.msg));
   } else {
     res.status(401).send(req.t("unauthorized"));
@@ -60,34 +53,9 @@ exports.list = (req, res) => {
 }
 
 /**
- * @api {get} /profilemodel/:id 03) Find
+ * @api {put} /profilemodel/:id 03) Update name
  * @apiGroup Profilemodel
- * @apiName findProfileModel
- * @apiDescription get details of a profile models.
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission user
- * @apiParam {string} :id profile model id
- * @apiSuccess {string} name profile name
- * @apiSuccess {array} measures profile measures list
- * @apiSuccessExample {json} Response example:
- * {}
- */
-exports.find = (req, res) => {
-  if (req.client && req.client.constructor.name === "User") {
-    business.profilemodel.find(req.params.id).then(
-      model => res.status(200).json({ profile: model }),
-      error => res.status(error.code).send(error.msg));
-  } else {
-    res.status(401).send(req.t("unauthorized"));
-  }
-}
-
-/**
- * @api {put} /profilemodel/:id 04) Update
- * @apiGroup Profilemodel
- * @apiName listProfileModel
+ * @apiName updateProfileModel
  * @apiDescription list all profile models.
  * @apiVersion 1.0.0
  * @apiUse box
@@ -95,26 +63,22 @@ exports.find = (req, res) => {
  * @apiPermission admin
  * @apiParam {string} :id profile id
  * @apiParam {string} name profile name
- * @apiParam {array} measures profile measures list
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
 exports.update = (req, res) => {
   if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-    let promises = req.body.measures.map(x => { return business.profilemodel.updateMeasure(x.id, x); });
-    Promise.all(promises).then(
-      measures => business.profilemodel.update(req.params.id, { name: req.body.name, measures: measures.filter(x => x !== null) }).then(
-        () => res.status(200).json({ result: true }),
-        error => res.status(error.code).send(error.msg)),
-      error => res.status(error.code).send("Cannot update measures"));
+    business.profilemodel.update(req.params.id, req.body.name).then(
+      () => res.status(200).json({ result: true }),
+      error => res.status(error.code).send(error.msg));
   } else {
     res.status(401).send(req.t("unauthorized"));
   }
 }
 
 /**
- * @api {delete} /profilemodel/:id 05) Remove
+ * @api {delete} /profilemodel/:id 04) Remove
  * @apiGroup Profilemodel
- * @apiName removeProfileModel
+ * @apiName deleteProfileModel
  * @apiDescription remove a profile model.
  * @apiVersion 1.0.0
  * @apiUse box
@@ -123,9 +87,65 @@ exports.update = (req, res) => {
  * @apiParam {string} :id profile model id
  * @apiSuccess {boolean} result returns true if was successfuly removed
  */
-exports.remove = (req, res) => {
+exports.delete = (req, res) => {
   if (req.client && req.client.constructor.name === "User" && req.client.admin) {
     business.profilemodel.remove(req.params.id).then(
+      () => res.status(200).json({ result: true }),
+      error => res.status(error.code).send(error.msg));
+  } else {
+    res.status(401).send(req.t("unauthorized"));
+  }
+}
+
+/**
+ * @api {post} /profilemodel/:id/measure 05) Add measure
+ * @apiGroup Profilemodel
+ * @apiName AddMaesureToProfileModel
+ * @apiDescription add measure to profile model.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin
+ * @apiParam {string} :id profile model id
+ * @apiParam {string} tag measure tag
+ * @apiParam {string} measure measure name
+ * @apiParam {decimal} min minimum acceptable value
+ * @apiParam {decimal} max maximum acceptable value
+ * @apiParamExample {json} Request example:
+ *     {
+ *        "min": "10",
+ *        "max": "50",
+ *        "tag": "musclemass",
+ *        "measure": "muscle mass"
+ *     }
+ * @apiSuccess {string} id created profile measure id
+ */
+exports.AddMeasure = (req, res) => {
+  if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+    business.profilemodel.addMeasure(req.params.id, req.body).then(
+      model => res.status(200).json({ id: model }),
+      error => res.status(error.code).send(error.msg));
+  } else {
+    res.status(401).send(req.t("unauthorized"));
+  }
+}
+
+/**
+ * @api {delete} /profilemodel/:pid/measure/:mid 06) Remove measure
+ * @apiGroup Profilemodel
+ * @apiName removeMeasureFromProfileModel
+ * @apiDescription remove meaure from a profile model.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin
+ * @apiParam {string} :pid profile model id
+ * @apiParam {string} :mid measure model id
+ * @apiSuccess {boolean} result returns true if was successfuly removed
+ */
+exports.removeMeasure = (req, res) => {
+  if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+    business.profilemodel.removeMeasure(req.params.pid, req.params.mid).then(
       () => res.status(200).json({ result: true }),
       error => res.status(error.code).send(error.msg));
   } else {

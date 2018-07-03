@@ -22,8 +22,8 @@ if (cluster.isMaster) {
                 }, error => { console.log('Unable to seed Databases.', error.message); process.exit(1); });
         }, error => { console.log('Unable to connect to Databases.', error); process.exit(1); });
 } else {
-    // require("./src/workers/index").connect().then(() => {
-    //         console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with RabbitMQ');
+    require("./src/workers/broker").connect().then(() => {
+            console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with RabbitMQ');
 
     // START THE SERVER
     // =============================================================================
@@ -47,7 +47,7 @@ if (cluster.isMaster) {
     // start http server
     server.on('request', app);
     // Define the listenning port
-    var port = process.env.PORT || 8080;
+    let port = process.env.PORT || 8080;
     server.listen(port, () => {
         // https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
         console.log('\x1b[32m%s %d\x1b[0m.', '(PLAIN) Server http listening on port', port);
@@ -66,5 +66,5 @@ if (cluster.isMaster) {
     //     console.log('\x1b[32m%s %d\x1b[0m.', '(PLAIN) Server https listening on port', port);
     // });
 
-    // }, error => { console.log('Unable to connect RabbitMQ.', error); process.exit(1); });
+    }, error => { console.log('Unable to connect RabbitMQ.', error); process.exit(1); });
 }

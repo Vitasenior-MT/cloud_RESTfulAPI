@@ -1,4 +1,5 @@
-var business = require('../../business/index').v1_0_0;
+var business = require('../../business/index').v1_0_0,
+    worker = require('../../workers/index');
 
 /**
  * @api {post} /record 1) Receive
@@ -39,11 +40,9 @@ var business = require('../../business/index').v1_0_0;
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         if (req.body.records) {
-            business.record.create(req.body.records).then(
-                result => {
-                    if (result.has_invalid) res.status(200).json({ result: true, error: "some records were discarded by invalid parameters, value, datetime, sensor_id and board_id are required" });
-                    else res.status(200).json({ result: true, error: "" });
-                }, error => res.status(error.code).json(error.msg));
+            worker.record.insert(req.body.records).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).json(error.msg));
         } else { res.status(500).send("No records to introduce"); }
     } else { res.status(401).send(req.t("unauthorized")); }
 }

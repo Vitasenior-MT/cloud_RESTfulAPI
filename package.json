@@ -47,10 +47,12 @@
       "Sensormodel",
       "Boardmodel",
       "Profilemodel",
+      "User",
       "Vitabox",
       "Board",
       "Patient",
-      "Record"
+      "Record",
+      "Error"
     ]
   }
 }

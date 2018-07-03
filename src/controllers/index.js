@@ -1,6 +1,7 @@
 module.exports.v1_0_0 = {
     'board_model': require('./v1.0.0/board_model'),
     'board': require('./v1.0.0/board'),
+    'error': require('./v1.0.0/error'),
     'manage': require('./v1.0.0/manage'),
     'patient': require('./v1.0.0/patient'),
     'profile_model': require('./v1.0.0/profile_model'),

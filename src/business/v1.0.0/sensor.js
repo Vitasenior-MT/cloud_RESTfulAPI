@@ -14,6 +14,16 @@ exports.create = (board_id, board_model_id) => {
   });
 }
 
+exports.find = (sensor_id) => {
+  return new Promise((resolve, reject) => {
+    db.Sensor.findById(sensor_id).then(
+      sensor => {
+        if (sensor) resolve(sensor);
+        else reject({ code: 500, msg: "Sensor not found" });
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
 // ________________________________________________________________________
 // Private
 // ________________________________________________________________________

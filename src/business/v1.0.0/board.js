@@ -23,7 +23,7 @@ exports.create = (attributes) => {
 exports.get = (id) => {
   return new Promise((resolve, reject) => {
     db.Board.findById(id, {
-      attributes: ['id', 'mac_addr'],
+      attributes: ['id', 'mac_addr', 'vitabox_id'],
       include: [
         { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
         {
@@ -31,8 +31,10 @@ exports.get = (id) => {
           include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
         }]
     }).then(
-      board => resolve(board),
-      error => reject({ code: 500, msg: error.message }));
+      board => {
+        if (board) resolve(board);
+        else reject({ code: 500, msg: "board not found" });
+      }, error => reject({ code: 500, msg: error.message }));
   });
 }
 
@@ -101,11 +103,11 @@ exports.disable = (board_id) => {
   });
 }
 
-exports.addPatient = (current_user, board_id, patient_id) => {
+exports.addPatient = (current_user, board, patient_id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id).then(
-      board => {
-        if (board) if (current_user.admin)
+    board.hasPatient(patient_id).then(
+      success => {
+        if (!success) if (current_user.admin)
           board.addPatient(patient_id).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message }));
@@ -114,8 +116,8 @@ exports.addPatient = (current_user, board_id, patient_id) => {
             () => resolve(),
             error => reject({ code: 500, msg: error.message })),
           error => reject(error));
-        else reject({ code: 500, msg: "Board not found" });
-      }, error => reject({ code: 500, msg: error.message }));
+        else reject({ code: 500, msg: "board already registered to patient" });
+      });
   });
 }
 
@@ -159,21 +161,17 @@ exports.getPatients = (current_user, board_id) => {
   });
 }
 
-exports.removePatient = (current_user, board_id, patient_id) => {
+exports.removePatient = (current_user, board, patient_id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id).then(
-      board => {
-        if (board) if (current_user.admin)
-          board.removePatient(patient_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message }));
-        else vitabox.verifySponsor(current_user, board.vitabox_id).then(
-          () => board.removePatient(patient_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message })),
-          error => reject(error));
-        else reject({ code: 500, msg: "Board not found" });
-      }, error => reject({ code: 500, msg: error.message }));
+    if (current_user.admin)
+      board.removePatient(patient_id).then(
+        () => resolve(),
+        error => reject({ code: 500, msg: error.message }));
+    else vitabox.verifySponsor(current_user, board.vitabox_id).then(
+      () => board.removePatient(patient_id).then(
+        () => resolve(),
+        error => reject({ code: 500, msg: error.message })),
+      error => reject(error));
   });
 }
 

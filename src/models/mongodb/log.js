@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
   user_id: {
-    type: Number,
+    type: String,
     required: true
   },
   datetime: {

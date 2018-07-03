@@ -34,6 +34,12 @@ module.exports = (app) => {
         .get('/doctor', versioning({
             "1.0.0": controllers.v1_0_0.user.getPatients,
         }))
+        .get('/user', versioning({
+            "1.0.0": controllers.v1_0_0.user.list,
+        }))
+        .get('/user/:id/log', versioning({
+            "1.0.0": controllers.v1_0_0.user.getLogs,
+        }))
         /*________________________________________________
         *____________________ VITABOX_____________________
         *_________________________________________________*/
@@ -103,6 +109,12 @@ module.exports = (app) => {
         .delete('/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removeBoard
         }))
+        .get('/vitabox/:id/warning', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.getWarnings
+        }))
+        .put('/vitabox/:vid/warning/:wid', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.checkWarnings
+        }))
         /*________________________________________________
         *__________________ BOARD MODEL___________________
         *_________________________________________________*/
@@ -151,14 +163,8 @@ module.exports = (app) => {
         .get('/patient/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.patient.getBoardsFromPatient
         }))
-        .post('/patient/:id/profile', versioning({
-            "1.0.0": controllers.v1_0_0.patient.setProfiles
-        }))
         .put('/patient/:paid/profile/:prid', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateProfile
-        }))
-        .delete('/patient/:paid/profile/:prid', versioning({
-            "1.0.0": controllers.v1_0_0.patient.removeProfile
         }))
         .post('/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.addDoctor
@@ -168,6 +174,9 @@ module.exports = (app) => {
         }))
         .delete('/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.removeDoctor
+        }))
+        .get('/patient/:id/warning', versioning({
+            "1.0.0": controllers.v1_0_0.patient.getWarningsByPatient
         }))
         /*________________________________________________
         *__________________SENSOR MODEL___________________
@@ -220,14 +229,29 @@ module.exports = (app) => {
         .get('/profilemodel', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.list
         }))
-        .get('/profilemodel/:id', versioning({
-            "1.0.0": controllers.v1_0_0.profile_model.find
-        }))
         .put('/profilemodel/:id', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.update
         }))
         .delete('/profilemodel/:id', versioning({
-            "1.0.0": controllers.v1_0_0.profile_model.remove
+            "1.0.0": controllers.v1_0_0.profile_model.delete
+        }))
+        .post('/profilemodel/:id/measure', versioning({
+            "1.0.0": controllers.v1_0_0.profile_model.AddMeasure
+        }))
+        .delete('/profilemodel/:pid/measure/:mid', versioning({
+            "1.0.0": controllers.v1_0_0.profile_model.removeMeasure
+        }))
+        /*________________________________________________
+        *_____________________ERROR_______________________
+        *_________________________________________________*/
+        .get('/error/all', versioning({
+            "1.0.0": controllers.v1_0_0.error.listAll
+        }))
+        .get('/error/unseen', versioning({
+            "1.0.0": controllers.v1_0_0.error.listUnseen
+        }))
+        .put('/error/:id', versioning({
+            "1.0.0": controllers.v1_0_0.error.check
         }))
         /*________________________________________________
         *_____________________TRASH_______________________

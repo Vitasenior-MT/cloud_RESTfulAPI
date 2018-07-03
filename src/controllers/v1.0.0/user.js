@@ -1,4 +1,5 @@
-var business = require('../../business/index').v1_0_0;
+var business = require('../../business/index').v1_0_0,
+    broker = require("../../workers/index");
 /**
  * @apiDefine auth
  * 
@@ -38,9 +39,9 @@ var business = require('../../business/index').v1_0_0;
  */
 exports.register = (req, res) => {
     business.user.register(req.body.email, req.body.password, req.body.name).then(
-        user => {
-            business.utils.createToken(user, req.connection.remoteAddress).then(
-                token => res.status(200).json({
+        user => business.utils.createToken(user, req.connection.remoteAddress).then(
+            token => broker.log.send(user.id, "login").then(
+                () => res.status(200).json({
                     token: token,
                     id: user.id,
                     name: business.utils.decrypt(user.name),
@@ -49,10 +50,9 @@ exports.register = (req, res) => {
                     is_doctor: user.doctor,
                     photo: user.photo
                 }),
-                error => res.status(error.code).send(error.msg));
-        },
-        error => res.status(500).send(error.msg)
-    );
+                error => res.status(500).send(error.msg)),
+            error => res.status(error.code).send(error.msg)),
+        error => res.status(500).send(error.msg));
 }
 
 /**
@@ -84,17 +84,19 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
     business.user.login(req.body.email, req.body.password).then(
         user => {
-            console.log(req.t('Hello', "mundo"));
             business.utils.createToken(user, req.connection.remoteAddress).then(
-                token => res.status(200).json({
-                    token: token,
-                    id: user.id,
-                    name: business.utils.decrypt(user.name),
-                    email: business.utils.decrypt(user.email),
-                    is_admin: user.admin,
-                    is_doctor: user.doctor,
-                    photo: user.photo
-                }), error => res.status(error.code).send(error.msg));
+                token => broker.log.send(user.id, "login").then(
+                    () => res.status(200).json({
+                        token: token,
+                        id: user.id,
+                        name: business.utils.decrypt(user.name),
+                        email: business.utils.decrypt(user.email),
+                        is_admin: user.admin,
+                        is_doctor: user.doctor,
+                        photo: user.photo
+                    }),
+                    error => res.status(500).send(error.msg)),
+                error => res.status(error.code).send(error.msg));
         }, error => res.status(error.code).send(error.msg));
 }
 
@@ -157,11 +159,12 @@ exports.resetPassword = (req, res) => {
 }
 
 /**
- * @api {post} /photo 06) Update photo
- * @apiGroup Authentication
+ * @api {post} /photo 01) Update photo
+ * @apiGroup User
  * @apiName setPhotoFromUser
  * @apiVersion 1.0.0
  * @apiUse auth
+ * @apiHeader Authorization="< token >"
  * @apiParam {string} photo html name to input type file
  * @apiSuccess {boolean} result return true if was sucessfuly reseted
  */
@@ -179,11 +182,12 @@ exports.setPhoto = (req, res) => {
 }
 
 /**
- * @api {get} /doctor 07) Get patients
- * @apiGroup Authentication
+ * @api {get} /doctor 02) Get patients
+ * @apiGroup User
  * @apiName getPatientsAsDoctor
  * @apiVersion 1.0.0
  * @apiUse auth
+ * @apiHeader Authorization="< token >"
  * @apiPermission doctor
  * @apiSuccessExample {json} Response example:
  * {
@@ -243,6 +247,90 @@ exports.getPatients = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
         business.user.getPatients(req.client).then(
             patients => res.status(200).json({ patients: patients }),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send(req.t("unauthorized")); }
+}
+
+/**
+ * @api {get} /user/ 03) List
+ * @apiGroup User
+ * @apiName listUsers
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiHeader Authorization="< token >"
+ * @apiPermission admin
+ * @apiSuccessExample {json} Response example:
+ * {
+    "users": [
+        {
+            "id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+            "name": "Administrator Exemple",
+            "email": "admin@a.aa",
+            "photo": null,
+            "is_admin": 1,
+            "is_doctor": 0
+        },
+        {
+            "id": "9fc1d895-4a61-43d4-b6fa-96005b2f8e99",
+            "name": "José António",
+            "email": "jose@a.aa",
+            "photo": null,
+            "is_admin": 0,
+            "is_doctor": 0
+        }
+    ]
+}
+ */
+exports.list = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        business.user.list().then(
+            users => res.status(200).json({ users: users }),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send(req.t("unauthorized")); }
+}
+
+/**
+ * @api {get} /user/:id/log 04) Get Logs
+ * @apiGroup User
+ * @apiName getLogs
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiHeader Authorization="< token >"
+ * @apiPermission admin
+ * @apiSuccessExample {json} Response example:
+    {
+        "logs": [
+            {
+                "datetime": "2018-06-18T15:40:14.742Z",
+                "message": "logged in",
+                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+                "id": "5b27d25e176a610eafa34a43"
+            },
+            {
+                "datetime": "2018-06-18T15:40:14.789Z",
+                "message": "logged in",
+                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+                "id": "5b27d25e176a610eafa34a44"
+            },
+            {
+                "datetime": "2018-06-18T15:40:14.792Z",
+                "message": "logged in",
+                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+                "id": "5b27d25e176a610eafa34a45"
+            }
+        ]
+    }
+ */
+exports.getLogs = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        business.log.getByUser(req.params.id).then(
+            logs => {
+                logs.forEach(x => {
+                    x.toJSON();
+                    x.message = req.t(x.message);
+                });
+                res.status(200).json({ logs: logs });
+            },
             error => res.status(error.code).send(error.msg));
     } else { res.status(401).send(req.t("unauthorized")); }
 }

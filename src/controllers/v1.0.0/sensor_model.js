@@ -11,6 +11,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiPermission admin
  * @apiParam {string} transducer transducer name
  * @apiParam {string} measure transducer measure
+ * @apiParam {string} unit transducer measurement unit
  * @apiParam {decimal} min_acceptable minimum acceptable value to sensor
  * @apiParam {decimal} max_acceptable maximum acceptable value to sensor
  * @apiParam {decimal} min_possible minimum possible value to sensor
@@ -19,6 +20,7 @@ var business = require('../../business/index').v1_0_0;
  *      {
  *           "transducer": "dht22",
  *           "measure":"temperature",
+ *           "unit": "ºC",
  *           "tag": "temp",
  *           "min_acceptable": "10",
  *           "max_acceptable": "25",
@@ -99,6 +101,7 @@ exports.list = (req, res) => {
  * @apiParam {string} :id sensor id to update
  * @apiParam {string} transducer transducer name
  * @apiParam {string} measure transducer measure
+ * @apiParam {string} unit transducer measurement unit
  * @apiParam {decimal} min_acceptable minimum acceptable value to sensor
  * @apiParam {decimal} max_acceptable maximum acceptable value to sensor
  * @apiParam {decimal} min_possible minimum possible value to sensor
@@ -107,6 +110,7 @@ exports.list = (req, res) => {
  *      {
  *           "transducer": "dht22",
  *           "measure":"temperature",
+ *           "unit": "ºC",
  *           "tag": "temp",
  *           "min_acceptable": "10",
  *           "max_acceptable": "25",

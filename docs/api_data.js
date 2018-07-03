@@ -26,6 +26,13 @@ define({ "api": [
           {
             "group": "Header",
             "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
             "field": "Content-Type",
             "defaultValue": "application/json",
             "description": ""
@@ -130,65 +137,8 @@ define({ "api": [
           {
             "group": "Header",
             "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
-    "url": "/doctor",
-    "title": "07) Get patients",
-    "group": "Authentication",
-    "name": "getPatientsAsDoctor",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "doctor"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ]\n         \"Vitabox\": {\n             \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n             \"latitude\": \"51.5058372\",\n             \"longitude\": \"-0.1899126\",\n             \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\"\n         }\n     }\n ]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/user.js",
-    "groupTitle": "Authentication",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           },
           {
@@ -277,77 +227,8 @@ define({ "api": [
           {
             "group": "Header",
             "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "post",
-    "url": "/photo",
-    "title": "06) Update photo",
-    "group": "Authentication",
-    "name": "setPhotoFromUser",
-    "version": "1.0.0",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "photo",
-            "description": "<p>html name to input type file</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "result",
-            "description": "<p>return true if was sucessfuly reseted</p>"
-          }
-        ]
-      }
-    },
-    "filename": "src/controllers/v1.0.0/user.js",
-    "groupTitle": "Authentication",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           },
           {
@@ -480,6 +361,13 @@ define({ "api": [
             "optional": false,
             "field": "Accept-Version",
             "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           },
           {
@@ -624,6 +512,13 @@ define({ "api": [
           {
             "group": "Header",
             "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
             "field": "Content-Type",
             "defaultValue": "application/json",
             "description": ""
@@ -722,6 +617,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -847,6 +749,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -932,6 +841,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -1016,6 +932,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -1120,6 +1043,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -1208,6 +1138,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -1347,6 +1284,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -1451,6 +1395,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -1554,6 +1505,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -1649,6 +1607,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -1760,6 +1725,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -1856,6 +1828,267 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/error/:id",
+    "title": "03) Check",
+    "group": "Error",
+    "name": "checkError",
+    "description": "<p>get all warnings from vitabox</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>error unique ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/error.js",
+    "groupTitle": "Error",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/error/all",
+    "title": "01) List all",
+    "group": "Error",
+    "name": "listAllErrors",
+    "description": "<p>get all errors</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"errors\":[]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/error.js",
+    "groupTitle": "Error",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/error/unseen",
+    "title": "02) List unseen",
+    "group": "Error",
+    "name": "listUnseenErrors",
+    "description": "<p>get unseen errors</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"errors\":[]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/error.js",
+    "groupTitle": "Error",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -1927,7 +2160,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/patient/:id/doctor",
-    "title": "04) Add Doctor",
+    "title": "02) Add Doctor",
     "group": "Patient",
     "name": "addDoctor",
     "description": "<p>add doctor to a specific patient if the requester is sponsor of him.</p>",
@@ -2002,6 +2235,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -2030,7 +2270,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/patient/:id/board",
-    "title": "07) Get Boards",
+    "title": "05) Get Boards",
     "group": "Patient",
     "name": "getBoardsFromPatient",
     "description": "<p>Get boards from a patient</p>",
@@ -2074,6 +2314,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -2102,7 +2349,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/patient/:id/doctor",
-    "title": "05) Get Doctors",
+    "title": "03) Get Doctors",
     "group": "Patient",
     "name": "getDoctors",
     "description": "<p>get doctors list from a patient if the requester is sponsor of him.</p>",
@@ -2198,6 +2445,92 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/patient/:id/warning",
+    "title": "06) Get Warnings",
+    "group": "Patient",
+    "name": "getWarningsByPatient",
+    "description": "<p>Get boards from a patient</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n warnings:[]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -2226,7 +2559,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/patient/:id/doctor",
-    "title": "06) Remove Doctor",
+    "title": "04) Remove Doctor",
     "group": "Patient",
     "name": "removeDoctor",
     "description": "<p>remove doctor from a patient if the requester is sponsor of him.</p>",
@@ -2301,232 +2634,12 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "delete",
-    "url": "patient/:paid/profile/:prid",
-    "title": "03) Remove profile",
-    "group": "Patient",
-    "name": "removeProfilesToPatient",
-    "description": "<p>remove profile from patient.</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "admin"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":paid",
-            "description": "<p>patient id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":prid",
-            "description": "<p>profile id to remove</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "result",
-            "description": "<p>returns true if was successfuly removed</p>"
-          }
-        ]
-      }
-    },
-    "filename": "src/controllers/v1.0.0/patient.js",
-    "groupTitle": "Patient",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
           },
           {
             "group": "Header",
             "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "post",
-    "url": "patient/:id/profile",
-    "title": "01) Add profiles",
-    "group": "Patient",
-    "name": "setProfilesToPatient",
-    "description": "<p>add profiles to patient.</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "admin"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":id",
-            "description": "<p>patient id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "array",
-            "optional": false,
-            "field": "profiles",
-            "description": "<p>profiles array to add</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "measure",
-            "description": "<p>sensor model measure</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "tag",
-            "description": "<p>sensor model tag</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "decimal",
-            "optional": false,
-            "field": "min",
-            "description": "<p>minimum value acceptable</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "decimal",
-            "optional": false,
-            "field": "max",
-            "description": "<p>maximum value acceptable</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "object",
-            "optional": false,
-            "field": "profiles",
-            "description": "<p>created profiles</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{\nprofiles: [\n {  \n     tag: 'bodyfat',\n        min: '19',\n        max: '25',\n        measure: 'body fat',\n        patient_id: '61795ea7-4cca-4658-ab98-e913d465ea74',\n        id: 'ac115530-b06c-42b0-a897-06fe5a088d2b',\n        created_at: 2018-06-12T14:59:43.679Z,\n        updated_at: 2018-06-12T14:59:43.679Z \n    },\n    { \n        tag: 'bodyfat',\n        min: '19',\n        max: '25',\n        measure: 'body fat',\n        patient_id: '61795ea7-4cca-4658-ab98-e913d465ea74',\n        id: 'ac115530-b06c-42b0-a897-06fe5a043354',\n        created_at: 2018-06-12T14:59:43.679Z,\n        updated_at: 2018-06-12T14:59:43.679Z \n    }\n    ]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/patient.js",
-    "groupTitle": "Patient",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -2556,14 +2669,14 @@ define({ "api": [
   {
     "type": "put",
     "url": "patient/:paid/profile/:prid",
-    "title": "02) Update profile",
+    "title": "01) Update profile",
     "group": "Patient",
     "name": "updateProfilesToPatient",
     "description": "<p>update profile from patient.</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "admin"
+        "name": "doctor"
       }
     ],
     "parameter": {
@@ -2582,20 +2695,6 @@ define({ "api": [
             "optional": false,
             "field": ":prid",
             "description": "<p>profile id to update</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "measure",
-            "description": "<p>sensor model measure</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "tag",
-            "description": "<p>sensor model tag</p>"
           },
           {
             "group": "Parameter",
@@ -2652,6 +2751,144 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/profilemodel/:id/measure",
+    "title": "05) Add measure",
+    "group": "Profilemodel",
+    "name": "AddMaesureToProfileModel",
+    "description": "<p>add measure to profile model.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>profile model id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "tag",
+            "description": "<p>measure tag</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "measure",
+            "description": "<p>measure name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "min",
+            "description": "<p>minimum acceptable value</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "max",
+            "description": "<p>maximum acceptable value</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n   \"min\": \"10\",\n   \"max\": \"50\",\n   \"tag\": \"musclemass\",\n   \"measure\": \"muscle mass\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>created profile measure id</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/profile_model.js",
+    "groupTitle": "Profilemodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -2699,20 +2936,13 @@ define({ "api": [
             "optional": false,
             "field": "name",
             "description": "<p>profile model name</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "array",
-            "optional": false,
-            "field": "measures",
-            "description": "<p>profile measures, each measure needs a min and max thresholds, the measure name and the relative sensor model tag</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"name\": \"MySignals Balance\",\n     \"measures\": [\n         {\"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n         {\"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n     ]\n}",
+          "content": "{\n     \"name\": \"MySignals Balance\"\n}",
           "type": "json"
         }
       ]
@@ -2755,6 +2985,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -2781,16 +3018,16 @@ define({ "api": [
     }
   },
   {
-    "type": "get",
+    "type": "delete",
     "url": "/profilemodel/:id",
-    "title": "03) Find",
+    "title": "04) Remove",
     "group": "Profilemodel",
-    "name": "findProfileModel",
-    "description": "<p>get details of a profile models.</p>",
+    "name": "deleteProfileModel",
+    "description": "<p>remove a profile model.</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "user"
+        "name": "admin"
       }
     ],
     "parameter": {
@@ -2811,27 +3048,13 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "boolean",
             "optional": false,
-            "field": "name",
-            "description": "<p>profile name</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "array",
-            "optional": false,
-            "field": "measures",
-            "description": "<p>profile measures list</p>"
+            "field": "result",
+            "description": "<p>returns true if was successfuly removed</p>"
           }
         ]
-      },
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{}",
-          "type": "json"
-        }
-      ]
+      }
     },
     "filename": "src/controllers/v1.0.0/profile_model.js",
     "groupTitle": "Profilemodel",
@@ -2857,6 +3080,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -2962,6 +3192,116 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "/profilemodel/:pid/measure/:mid",
+    "title": "06) Remove measure",
+    "group": "Profilemodel",
+    "name": "removeMeasureFromProfileModel",
+    "description": "<p>remove meaure from a profile model.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":pid",
+            "description": "<p>profile model id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":mid",
+            "description": "<p>measure model id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly removed</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/profile_model.js",
+    "groupTitle": "Profilemodel",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -2990,9 +3330,9 @@ define({ "api": [
   {
     "type": "put",
     "url": "/profilemodel/:id",
-    "title": "04) Update",
+    "title": "03) Update name",
     "group": "Profilemodel",
-    "name": "listProfileModel",
+    "name": "updateProfileModel",
     "description": "<p>list all profile models.</p>",
     "version": "1.0.0",
     "permission": [
@@ -3016,13 +3356,6 @@ define({ "api": [
             "optional": false,
             "field": "name",
             "description": "<p>profile name</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "array",
-            "optional": false,
-            "field": "measures",
-            "description": "<p>profile measures list</p>"
           }
         ]
       }
@@ -3065,94 +3398,12 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "delete",
-    "url": "/profilemodel/:id",
-    "title": "05) Remove",
-    "group": "Profilemodel",
-    "name": "removeProfileModel",
-    "description": "<p>remove a profile model.</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "admin"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":id",
-            "description": "<p>profile model id</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "result",
-            "description": "<p>returns true if was successfuly removed</p>"
-          }
-        ]
-      }
-    },
-    "filename": "src/controllers/v1.0.0/profile_model.js",
-    "groupTitle": "Profilemodel",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
           },
           {
             "group": "Header",
             "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -3284,6 +3535,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -3429,6 +3687,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -3582,6 +3847,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -3719,6 +3991,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -3865,6 +4144,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -3996,6 +4282,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -4084,6 +4377,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -4209,6 +4509,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -4348,10 +4655,341 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
     },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/user/:id/log",
+    "title": "04) Get Logs",
+    "group": "User",
+    "name": "getLogs",
+    "version": "1.0.0",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n    \"logs\": [\n        {\n            \"datetime\": \"2018-06-18T15:40:14.742Z\",\n            \"message\": \"logged in\",\n            \"user_id\": \"1c64c510-4e17-46f8-bc97-c968d6b2e09b\",\n            \"id\": \"5b27d25e176a610eafa34a43\"\n        },\n        {\n            \"datetime\": \"2018-06-18T15:40:14.789Z\",\n            \"message\": \"logged in\",\n            \"user_id\": \"1c64c510-4e17-46f8-bc97-c968d6b2e09b\",\n            \"id\": \"5b27d25e176a610eafa34a44\"\n        },\n        {\n            \"datetime\": \"2018-06-18T15:40:14.792Z\",\n            \"message\": \"logged in\",\n            \"user_id\": \"1c64c510-4e17-46f8-bc97-c968d6b2e09b\",\n            \"id\": \"5b27d25e176a610eafa34a45\"\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/doctor",
+    "title": "02) Get patients",
+    "group": "User",
+    "name": "getPatientsAsDoctor",
+    "version": "1.0.0",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "permission": [
+      {
+        "name": "doctor"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ]\n         \"Vitabox\": {\n             \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n             \"latitude\": \"51.5058372\",\n             \"longitude\": \"-0.1899126\",\n             \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\"\n         }\n     }\n ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/user/",
+    "title": "03) List",
+    "group": "User",
+    "name": "listUsers",
+    "version": "1.0.0",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n    \"users\": [\n        {\n            \"id\": \"1c64c510-4e17-46f8-bc97-c968d6b2e09b\",\n            \"name\": \"Administrator Exemple\",\n            \"email\": \"admin@a.aa\",\n            \"photo\": null,\n            \"is_admin\": 1,\n            \"is_doctor\": 0\n        },\n        {\n            \"id\": \"9fc1d895-4a61-43d4-b6fa-96005b2f8e99\",\n            \"name\": \"José António\",\n            \"email\": \"jose@a.aa\",\n            \"photo\": null,\n            \"is_admin\": 0,\n            \"is_doctor\": 0\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/photo",
+    "title": "01) Update photo",
+    "group": "User",
+    "name": "setPhotoFromUser",
+    "version": "1.0.0",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "photo",
+            "description": "<p>html name to input type file</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly reseted</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
     "error": {
       "fields": {
         "Error 4xx": [
@@ -4464,6 +5102,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -4582,6 +5227,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -4692,6 +5344,116 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/vitabox/:vid/warning/:wid",
+    "title": "24) Check warning",
+    "group": "Vitabox",
+    "name": "checkWarnings",
+    "description": "<p>check warning from vitabox</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":vid",
+            "description": "<p>vitabox unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":wid",
+            "description": "<p>vitabox unique ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -4774,6 +5536,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -4863,6 +5632,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -4967,6 +5743,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -5069,6 +5852,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -5173,6 +5963,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -5275,6 +6072,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -5440,6 +6244,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -5588,6 +6399,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -5729,6 +6547,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -5811,6 +6636,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -5935,6 +6767,105 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/vitabox/:id/warning",
+    "title": "23) Get warning",
+    "group": "Vitabox",
+    "name": "getWarnings",
+    "description": "<p>get all warnings from vitabox</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox, vitabox user, admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>vitabox unique ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"warnings\":[]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -6094,6 +7025,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -6196,6 +7134,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -6300,6 +7245,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -6403,6 +7355,13 @@ define({ "api": [
             "field": "Authorization",
             "defaultValue": "< token >",
             "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
           }
         ]
       }
@@ -6498,6 +7457,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -6627,6 +7593,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]
@@ -6828,6 +7801,13 @@ define({ "api": [
             "optional": false,
             "field": "Authorization",
             "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
             "description": ""
           }
         ]

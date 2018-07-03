@@ -29,6 +29,20 @@ exports.login = (email, password) => {
     });
 }
 
+exports.list = () => {
+    return new Promise((resolve, reject) => {
+        db.User.findAll({ attributes: ['id', 'name', 'email', 'photo', ['admin', 'is_admin'], ['doctor', 'is_doctor']] }).then(
+            users => {
+                users.forEach(user => {
+                    user.name = utils.decrypt(user.name);
+                    user.email = utils.decrypt(user.email);
+                })
+                resolve(users);
+            },
+            error => reject({ code: 500, msg: error.message }));
+    })
+}
+
 exports.changePassword = (user, password) => {
     return new Promise((resolve, reject) => {
         if (/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d$@$!%*#?&-.]{8,}$/.test(password)) {

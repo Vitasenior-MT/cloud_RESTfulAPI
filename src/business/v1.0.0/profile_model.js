@@ -1,9 +1,9 @@
 var db = require('../../models/index');
 
-exports.create = (name, measures) => {
+exports.create = (name) => {
   return new Promise((resolve, reject) => {
     if (name) {
-      db.Profilemodel.create({ name: name, measures: measures }).then(
+      db.Profilemodel.create({ name: name }).then(
         res => resolve(res.toJSON()),
         err => reject({ code: 500, msg: err.message }));
     } else reject({ code: 500, msg: "profile name or measures undentified" });
@@ -12,25 +12,16 @@ exports.create = (name, measures) => {
 
 exports.list = () => {
   return new Promise((resolve, reject) => {
-    db.Profilemodel.find({}).exec((err, res) => {
+    db.Profilemodel.find({}).populate('measures').exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
       resolve(res.map(p => { return p.toJSON() }));
     });
   });
 }
 
-exports.find = (id) => {
+exports.update = (id, name) => {
   return new Promise((resolve, reject) => {
-    db.Profilemodel.findOne({ '_id': id }).populate('measures').exec((err, res) => {
-      if (err) reject({ code: 500, msg: err.message });
-      resolve(res.toJSON());
-    });
-  });
-}
-
-exports.update = (id, options) => {
-  return new Promise((resolve, reject) => {
-    db.Profilemodel.findOneAndUpdate({ _id: id }, options).exec((err, res) => {
+    db.Profilemodel.findOneAndUpdate({ _id: id }, { name: name }).exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
       resolve();
     });
@@ -39,39 +30,49 @@ exports.update = (id, options) => {
 
 exports.remove = (id) => {
   return new Promise((resolve, reject) => {
-    db.Profilemodel.deleteOne({ _id: id }).exec((err, res) => {
+    db.Profilemodel.findOne({ '_id': id }).populate('measures').exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
-      resolve();
+      let promises = res.measures.map(x => new Promise((resolve, reject) => {
+          db.Profilemeasure.deleteOne({ _id: x._id }).exec((err, res) => {
+            if (err) reject({ code: 500, msg: err.message });
+            else resolve();
+          });
+        }));
+      Promise.all(promises).then(
+        () => db.Profilemodel.deleteOne({ _id: id }).exec((err, res) => {
+          if (err) reject({ code: 500, msg: err.message });
+          resolve();
+        }), error => reject({ code: 500, msg: error.message }));
     });
   });
 }
 
-exports.createMeasures = (measures) => {
+exports.addMeasure = (profile_id, measure) => {
   return new Promise((resolve, reject) => {
-    db.Profilemeasure.insertMany(measures.filter(x => x.min && x.max && x.tag && x.measure)).then(
-      res => resolve(res.map(x => { return x._id })),
-      err => reject({ code: 500, msg: err.message }))
+    db.Profilemeasure.create({ min: measure.min, max: measure.max, tag: measure.tag, measure: measure.measure }).then(
+      res => db.Profilemodel.findOne({ '_id': profile_id }).populate('measures').exec((err, profile) => {
+        if (err) reject({ code: 500, msg: err.message });
+        if (!profile.measures.some(x => x.tag === measure.tag)) {
+          profile.measures.push(res);
+          profile.save().then(
+            () => resolve(res._id),
+            error => reject({ code: 500, msg: error.message }));
+        } else reject({ code: 500, msg: "maesure already registered to profile" });
+      }),
+      err => reject({ code: 500, msg: err.message }));
   });
 }
 
-exports.updateMeasure = (id, measure) => {
+exports.removeMeasure = (profile_id, measure_id) => {
   return new Promise((resolve, reject) => {
-    db.Profilemeasure.findOneAndUpdate(
-      { _id: id },
-      id ? Object.assign({ _id: measure.id }, measure) : measure,
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    ).exec((err, res) => {
+    db.Profilemodel.findOne({ '_id': profile_id }).exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
-      else resolve(res._id);
-    });
-  });
-}
-
-exports.removeMeasure = (id, options) => {
-  return new Promise((resolve, reject) => {
-    db.Profilemeasure.deleteOne({ _id: id }).exec((err, res) => {
-      if (err) reject({ code: 500, msg: err.message });
-      else resolve();
+      res.measures = res.measures.filter(x => x !== measure_id);
+      res.save().then(
+        () => db.Profilemeasure.deleteOne({ _id: measure_id }).exec((err, res) => {
+          if (err) reject({ code: 500, msg: err.message });
+          else resolve();
+        }), error => reject({ code: 500, msg: error.message }));
     });
   });
 }

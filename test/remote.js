@@ -12,7 +12,6 @@ describe("Tests", () => {
 
     before((done) => {
         request.get(base_url + "testdb", (error, response, body) => {
-            console.log("body", body);
             assert.equal(200, response.statusCode);
             done();
         });
@@ -618,15 +617,6 @@ describe("Tests", () => {
         request.get({
             headers: test2_headers,
             url: base_url + "profilemodel"
-        }, (error, response, body) => {
-            if (response.statusCode != 200) console.log(body);
-            assert.equal(200, response.statusCode); done();
-        });
-    });
-    it("GET /profilemodel/:id -> must accept user:test2@ipt.pt", (done) => {
-        request.get({
-            headers: test2_headers,
-            url: base_url + "profilemodel/" + profilemodel1
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
@@ -1279,83 +1269,6 @@ describe("Tests", () => {
 
     /**
      * ______________________________________________________________________________________
-     * ___________________________________PROFILE____________________________________________
-     * ______________________________________________________________________________________
-     */
-
-    it("POST /patient/:id/profile -> must refuse a user that is not sponsor to add a profile to patient", (done) => {
-        request.post({
-            headers: test1_headers,
-            url: base_url + "patient/" + testpatient1 + "/profile",
-            form: {
-                "profiles": [
-                    { "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25 },
-                    { "measure": "weight", "tag": "weight", "min": 58, "max": 64 }
-                ]
-            }
-        }, (error, response, body) => {
-            if (response.statusCode != 401) console.log(body);
-            assert.equal(401, response.statusCode); done();
-        });
-    });
-    it("POST /patient/:paid/profile/ -> must accept sponsor to set the patient profiles", (done) => {
-        request.post({
-            headers: test2_headers,
-            url: base_url + "patient/" + testpatient1 + "/profile",
-            form: {
-                "profiles": [
-                    { "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25 },
-                    { "measure": "weight", "tag": "weight", "min": 58, "max": 64 }
-                ]
-            }
-        }, (error, response, body) => {
-            if (response.statusCode != 200) console.log(body);
-            profile1 = JSON.parse(body).profiles[0].id;
-            assert.equal(200, response.statusCode);
-            done();
-        });
-    });
-    it("PUT /patient/:paid/profile/:prid -> must refuse a user that is not sponsor to update a profile to board", (done) => {
-        request.put({
-            headers: test1_headers,
-            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1,
-            form: { "measure": "body fat", "tag": "bodyfat", "min": 20, "max": 26 }
-        }, (error, response, body) => {
-            if (response.statusCode != 401) console.log(body);
-            assert.equal(401, response.statusCode); done();
-        });
-    });
-    it("PUT /patient/:paid/profile/:prid -> must accept sponsor to update the patient profiles", (done) => {
-        request.put({
-            headers: test2_headers,
-            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1,
-            form: { "measure": "body fat", "tag": "bodyfat", "min": 20, "max": 26 }
-        }, (error, response, body) => {
-            if (response.statusCode != 200) console.log(body);
-            assert.equal(200, response.statusCode); done();
-        });
-    });
-    it("DELETE /patient/:paid/profile/:prid -> must refuse a user that is not sponsor to update a profile to board", (done) => {
-        request.delete({
-            headers: test1_headers,
-            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1
-        }, (error, response, body) => {
-            if (response.statusCode != 401) console.log(body);
-            assert.equal(401, response.statusCode); done();
-        });
-    });
-    it("DELETE /patient/:paid/profile/:prid -> must accept sponsor to update the patient profiles", (done) => {
-        request.delete({
-            headers: test2_headers,
-            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1
-        }, (error, response, body) => {
-            if (response.statusCode != 200) console.log(body);
-            assert.equal(200, response.statusCode); done();
-        });
-    });
-
-    /**
-     * ______________________________________________________________________________________
      * ____________________________________DOCTOR____________________________________________
      * ______________________________________________________________________________________
      */
@@ -1421,6 +1334,61 @@ describe("Tests", () => {
 
     /**
      * ______________________________________________________________________________________
+     * ___________________________________PROFILE____________________________________________
+     * ______________________________________________________________________________________
+     */
+    it("Add doctor and board to patient and get profile", (done) => {
+        request.post({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/doctor",
+            form: { "email": "test1@ipt.pt" }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode);
+
+            request.post({
+                headers: test2_headers,
+                url: base_url + "board/" + testboard1 + "/patient",
+                form: { "patient_id": testpatient1 }
+            }, (error, response, body) => {
+                if (response.statusCode != 200) console.log(body);
+                assert.equal(200, response.statusCode);
+
+                request.get({
+                    headers: test2_headers,
+                    url: base_url + "vitabox/" + vitabox1.id + "/patient",
+                }, (error, response, body) => {
+                    if (response.statusCode != 200) console.log(body);
+                    profile1 = JSON.parse(body).patients[0].Profiles[0].id;
+                    assert.equal(200, response.statusCode);
+                    assert.equal(true, Array.isArray(JSON.parse(body).patients)); done();
+                });
+            });
+        });
+    });
+    it("PUT /patient/:paid/profile/:prid -> must refuse a user that is not doctor to update a profile", (done) => {
+        request.put({
+            headers: test2_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1,
+            form: { "min": 20, "max": 26 }
+        }, (error, response, body) => {
+            if (response.statusCode != 401) console.log(body);
+            assert.equal(401, response.statusCode); done();
+        });
+    });
+    it("PUT /patient/:paid/profile/:prid -> must accept doctor to update the patient profiles", (done) => {
+        request.put({
+            headers: test1_headers,
+            url: base_url + "patient/" + testpatient1 + "/profile/" + profile1,
+            form: { "min": 20, "max": 26 }
+        }, (error, response, body) => {
+            if (response.statusCode != 200) console.log(body);
+            assert.equal(200, response.statusCode); done();
+        });
+    });
+
+    /**
+     * ______________________________________________________________________________________
      * ____________________________________RECORD____________________________________________
      * ______________________________________________________________________________________
      */
@@ -1463,22 +1431,6 @@ describe("Tests", () => {
         }, (error, response, body) => {
             if (response.statusCode != 200) console.log(body);
             assert.equal(200, response.statusCode); done();
-        });
-    });
-    it("POST /record -> must accept null patient_id", (done) => {
-        records.push({
-            "value": 13,
-            "datetime": "2018-03-02T15:36:26.000Z",
-            "sensor_id": sensor1
-        })
-        request.post({
-            headers: box_headers,
-            url: base_url + "record",
-            form: { "records": records }
-        }, (error, response, body) => {
-            if (response.statusCode != 200) console.log(body);
-            assert.equal(200, response.statusCode);
-            assert.equal(true, JSON.parse(body).error === ""); done();
         });
     });
     it("GET /record/sensor/:id/page/1 -> must refuse a user not related with vitabox to query records", (done) => {

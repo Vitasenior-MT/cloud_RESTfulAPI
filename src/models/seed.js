@@ -30,16 +30,16 @@ module.exports.seed = (db) => {
                         { "name": "Temperatura", "type": "non-wearable", "tag": "bodytemperature" }
                       ]).then(
                         board_models => db.Sensormodel.bulkCreate([
-                          { "transducer": "dht22", "measure": "temperatura (ºC)", "tag": "temp", "min_acceptable": "10", "max_acceptable": "28", "min_possible": "-20", "max_possible": "50", "last_commit": "2018-06-18T06:48:48.400Z", "deviation_range": 5, "last_values": [21, 23, 24, 22, 20] },
-                          { "transducer": "dht22", "measure": "humidade (%)", "tag": "humi", "min_acceptable": "30", "max_acceptable": "60", "min_possible": "20", "max_possible": "70" },
-                          { "transducer": "medidor", "measure": "monox. carbono (ppm)", "tag": "mono", "min_acceptable": "0", "max_acceptable": "500", "min_possible": "-1", "max_possible": "600" },
-                          { "transducer": "medidor", "measure": "oximetria de pulso (%)", "tag": "spo2", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
-                          { "transducer": "medidor", "measure": "puls. arterial (bpm)", "tag": "pulse", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
-                          { "transducer": "medidor", "measure": "tensão art. diastólica", "tag": "diastolic", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
-                          { "transducer": "medidor", "measure": "tensão art. sistólica", "tag": "systolic", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
-                          { "transducer": "medidor", "measure": "peso (Kg)", "tag": "weight", "min_acceptable": "2", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                          { "transducer": "dht22", "measure": "temperatura", "unit": "ºC", "tag": "temp", "min_acceptable": "10", "max_acceptable": "28", "min_possible": "-20", "max_possible": "50", "last_commit": "2018-06-18T06:48:48.400Z", "deviation_range": 5, "last_values": [21, 23, 24, 22, 20] },
+                          { "transducer": "dht22", "measure": "humidade", "unit": "%", "tag": "humi", "min_acceptable": "30", "max_acceptable": "60", "min_possible": "20", "max_possible": "70" },
+                          { "transducer": "medidor", "measure": "monóxido de carbono", "unit": "ppm", "tag": "mono", "min_acceptable": "0", "max_acceptable": "500", "min_possible": "-1", "max_possible": "600" },
+                          { "transducer": "medidor", "measure": "oximetria de pulso", "unit": "%", "tag": "spo2", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                          { "transducer": "medidor", "measure": "pulsação arterial", "unit": "bpm", "tag": "pulse", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                          { "transducer": "medidor", "measure": "pressão arterial diastólica", "unit": "mmHg", "tag": "diastolic", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                          { "transducer": "medidor", "measure": "pressão arterial sistólica", "unit": "mmHg", "tag": "systolic", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
+                          { "transducer": "medidor", "measure": "peso", "tag": "weight", "unit": "Kg", "min_acceptable": "2", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
                           { "transducer": "medidor", "measure": "passos", "tag": "steps", "min_acceptable": "2", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" },
-                          { "transducer": "medidor", "measure": "freq. cardíaca", "tag": "heartrate", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" }
+                          { "transducer": "medidor", "measure": "frequênca cardíaca", "unit": "bpm", "tag": "heartrate", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0" }
                         ]).then(
                           sensor_models => board_models[0].addSensormodels([sensor_models[0].id, sensor_models[1].id, sensor_models[2].id]).then(
                             () => board_models[1].addSensormodels([sensor_models[8].id, sensor_models[9].id]).then(

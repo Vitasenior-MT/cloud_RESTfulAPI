@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    unit: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: ''
+    },
     tag: {
       type: DataTypes.STRING,
       allowNull: false,

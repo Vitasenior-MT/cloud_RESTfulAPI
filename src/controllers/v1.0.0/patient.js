@@ -1,90 +1,26 @@
 var business = require('../../business/index').v1_0_0;
 
 /**
- * @api {post} patient/:id/profile 01) Add profiles
- * @apiGroup Patient
- * @apiName setProfilesToPatient
- * @apiDescription add profiles to patient.
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission admin
- * @apiParam {string} :id patient id
- * @apiParam {array} profiles profiles array to add
- * @apiParam {string} measure sensor model measure
- * @apiParam {string} tag sensor model tag
- * @apiParam {decimal} min minimum value acceptable
- * @apiParam {decimal} max maximum value acceptable
- * @apiSuccess {object} profiles created profiles
- * @apiSuccessExample {json} Response example:
- * {
- * profiles: [
- *  {  
- *      tag: 'bodyfat',
-        min: '19',
-        max: '25',
-        measure: 'body fat',
-        patient_id: '61795ea7-4cca-4658-ab98-e913d465ea74',
-        id: 'ac115530-b06c-42b0-a897-06fe5a088d2b',
-        created_at: 2018-06-12T14:59:43.679Z,
-        updated_at: 2018-06-12T14:59:43.679Z 
-    },
-    { 
-        tag: 'bodyfat',
-        min: '19',
-        max: '25',
-        measure: 'body fat',
-        patient_id: '61795ea7-4cca-4658-ab98-e913d465ea74',
-        id: 'ac115530-b06c-42b0-a897-06fe5a043354',
-        created_at: 2018-06-12T14:59:43.679Z,
-        updated_at: 2018-06-12T14:59:43.679Z 
-    }
-    ]
-}
- */
-exports.setProfiles = (req, res) => {
-    if (req.client && req.client.constructor.name === "User") {
-        business.patient.find(req.params.id).then(
-            patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
-                () => {
-                    let promises = req.body.profiles.map(profile => {
-                        return business.profile.create(patient.id, profile);
-                    });
-                    Promise.all(promises).then(
-                        profiles => res.status(200).json({ profiles: profiles.filter(x => x !== null) }),
-                        error => res.status(500).send("cannot create profiles"));
-                }, error => res.status(error.code).send(error.msg)),
-            error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send(req.t("unauthorized"));
-    }
-}
-
-/**
- * @api {put} patient/:paid/profile/:prid 02) Update profile
+ * @api {put} patient/:paid/profile/:prid 01) Update profile
  * @apiGroup Patient
  * @apiName updateProfilesToPatient
  * @apiDescription update profile from patient.
  * @apiVersion 1.0.0
  * @apiUse box
  * 
- * @apiPermission admin
+ * @apiPermission doctor
  * @apiParam {string} :paid patient id
  * @apiParam {string} :prid profile id to update
- * @apiParam {string} measure sensor model measure
- * @apiParam {string} tag sensor model tag
  * @apiParam {decimal} min minimum value acceptable
  * @apiParam {decimal} max maximum value acceptable
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
 exports.updateProfile = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
-        business.patient.find(req.params.paid).then(
-            patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
-                () => business.profile.update(req.params.prid, req.body).then(
-                    () => res.status(200).json({ result: true }),
-                    error => res.status(500).send("cannot create profiles")),
-                error => res.status(error.code).send(error.msg)),
+        business.patient.verifyDoctor(req.client, req.params.paid).then(
+            () => business.profile.update(req.params.prid, req.body.min, req.body.max).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(500).send("cannot create profiles")),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -92,34 +28,7 @@ exports.updateProfile = (req, res) => {
 }
 
 /**
- * @api {delete} patient/:paid/profile/:prid 03) Remove profile
- * @apiGroup Patient
- * @apiName removeProfilesToPatient
- * @apiDescription remove profile from patient.
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission admin
- * @apiParam {string} :paid patient id
- * @apiParam {string} :prid profile id to remove
- * @apiSuccess {boolean} result returns true if was successfuly removed
- */
-exports.removeProfile = (req, res) => {
-    if (req.client && req.client.constructor.name === "User") {
-        business.patient.find(req.params.paid).then(
-            patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
-                () => business.profile.remove(req.params.prid).then(
-                    () => res.status(200).json({ result: true }),
-                    error => res.status(500).send("cannot create profiles")),
-                error => res.status(error.code).send(error.msg)),
-            error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send(req.t("unauthorized"));
-    }
-}
-
-/**
- * @api {post} /patient/:id/doctor 04) Add Doctor
+ * @api {post} /patient/:id/doctor 02) Add Doctor
  * @apiGroup Patient
  * @apiName addDoctor
  * @apiDescription add doctor to a specific patient if the requester is sponsor of him.
@@ -154,7 +63,7 @@ exports.addDoctor = (req, res) => {
 }
 
 /**
- * @api {get} /patient/:id/doctor 05) Get Doctors
+ * @api {get} /patient/:id/doctor 03) Get Doctors
  * @apiGroup Patient
  * @apiName getDoctors
  * @apiDescription get doctors list from a patient if the requester is sponsor of him.
@@ -206,7 +115,7 @@ exports.getDoctor = (req, res) => {
 }
 
 /**
- * @api {delete} /patient/:id/doctor 06) Remove Doctor
+ * @api {delete} /patient/:id/doctor 04) Remove Doctor
  * @apiGroup Patient
  * @apiName removeDoctor
  * @apiDescription remove doctor from a patient if the requester is sponsor of him.
@@ -239,7 +148,7 @@ exports.removeDoctor = (req, res) => {
 }
 
 /**
- * @api {get} /patient/:id/board 07) Get Boards
+ * @api {get} /patient/:id/board 05) Get Boards
  * @apiGroup Patient
  * @apiName getBoardsFromPatient
  * @apiDescription Get boards from a patient
@@ -283,6 +192,43 @@ exports.getBoardsFromPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.patient.getBoards(req.params.id).then(
             result => res.status(200).json({ boards: result }),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send(req.t("unauthorized"));
+    }
+}
+
+/**
+ * @api {get} /patient/:id/warning 06) Get Warnings
+ * @apiGroup Patient
+ * @apiName getWarningsByPatient
+ * @apiDescription Get boards from a patient
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin
+ * @apiSuccessExample {json} Request example:
+ * {
+ *  warnings:[]
+ * }
+ */
+exports.getWarningsByPatient = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
+        business.patient.verifyDoctor(req.client, req.params.id).then(
+            () => business.warning.getByPatient(req.params.id).then(
+                data => {
+                    let to_send = [];
+                    data.forEach(x => to_send.push({
+                        "id": x._id,
+                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
+                        "sensor_id": x.sensor_id,
+                        "patient_id": x.patient_id,
+                        "seen_date": x.seen_date,
+                        "seen_user": x.seen_user,
+                        "seen_vitabox": x.seen_vitabox,
+                    }));
+                    res.status(200).json({ warnings: to_send });
+                }, error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

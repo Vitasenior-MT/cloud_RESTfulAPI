@@ -13,18 +13,12 @@ var schema = new mongoose.Schema({
     type: String,
     required: true
   },
-  is_board: {
-    type: Boolean,
-    required: true,
-    default: false
+  patient_id: {
+    type: String,
+    required: false,
   },
-  is_patient: {
-    type: Boolean,
-    required: true,
-    default: false
-  },
-  object_id: {
-    type: Number,
+  sensor_id: {
+    type: String,
     required: true
   },
   seen_date: {
@@ -33,6 +27,10 @@ var schema = new mongoose.Schema({
   },
   seen_user: {
     type: String,
+    default: null
+  },
+  seen_vitabox: {
+    type: Date,
     default: null
   }
 }, {
