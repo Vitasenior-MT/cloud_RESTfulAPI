@@ -79,8 +79,11 @@ exports.getBoards = function (patient_id) {
 
 exports.addDoctor = (patient, doctor_id) => {
     return new Promise((resolve, reject) => {
-        patient.addUser(doctor_id).then(
-            () => resolve(),
+        patient.addDoctor(doctor_id).then(
+            result => {
+                if (result.length > 0) resolve();
+                else reject({ code: 500, msg: "doctor already associated to patient" })
+            },
             error => reject({ code: 500, msg: error.message }));
     });
 }

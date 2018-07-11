@@ -78,11 +78,9 @@ exports.list = (req, res) => {
  * @apiPermission admin
  * @apiParam {string} :id board model id to update
  * @apiParam {string} name board model name
- * @apiParam {string} type board type, must be 'environmental', 'wearable' or 'non-wearable'
  * @apiParamExample {json} Request example:
  *     {
- *          "name": "Zolertia RE-Mote",
- *          "type": "environmental"
+ *          "name": "Zolertia RE-Mote"
  *     }
  * @apiSuccess {boolean} result return "true" if was sucessfuly updated
  */

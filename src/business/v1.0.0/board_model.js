@@ -20,7 +20,7 @@ exports.update = (board_model_id, attributes) => {
     return new Promise((resolve, reject) => {
         db.Boardmodel.findById(board_model_id).then(
             model => {
-                if (model) model.update({ type: attributes.type, name: attributes.name }).then(
+                if (model) model.update({ name: attributes.name }).then(
                     () => resolve(),
                     error => reject(error));
                 else reject({ code: 500, msg: "board model not found" });

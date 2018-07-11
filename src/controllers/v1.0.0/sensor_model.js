@@ -12,10 +12,12 @@ var business = require('../../business/index').v1_0_0;
  * @apiParam {string} transducer transducer name
  * @apiParam {string} measure transducer measure
  * @apiParam {string} unit transducer measurement unit
+ * @apiParam {string} tag transducer tag
  * @apiParam {decimal} min_acceptable minimum acceptable value to sensor
  * @apiParam {decimal} max_acceptable maximum acceptable value to sensor
  * @apiParam {decimal} min_possible minimum possible value to sensor
  * @apiParam {decimal} max_possible maximum possible value to sensor
+ * @apiParam {string} to_read text to text-to-speech
  * @apiParamExample {json} Request example:
  *      {
  *           "transducer": "dht22",
@@ -25,7 +27,8 @@ var business = require('../../business/index').v1_0_0;
  *           "min_acceptable": "10",
  *           "max_acceptable": "25",
  *           "min_possible": "-20",
- *           "max_possible": "50"
+ *           "max_possible": "50",
+ *          "to_read": "temperature"
  *      }
  * @apiSuccess {string} id created sensor id
  */
@@ -55,6 +58,7 @@ exports.create = (req, res) => {
  * @apiSuccess {decimal} max_acceptable maximum acceptable value to sensor
  * @apiSuccess {decimal} min_possible minimum possible value to sensor
  * @apiSuccess {decimal} max_possible maximum possible value to sensor
+ * @apiSuccess {string} to_read text to text-to-speech
  * @apiSuccessExample {json} Response example:
  * {
  *  "sensors": [
@@ -100,8 +104,6 @@ exports.list = (req, res) => {
  * @apiPermission admin
  * @apiParam {string} :id sensor id to update
  * @apiParam {string} transducer transducer name
- * @apiParam {string} measure transducer measure
- * @apiParam {string} unit transducer measurement unit
  * @apiParam {decimal} min_acceptable minimum acceptable value to sensor
  * @apiParam {decimal} max_acceptable maximum acceptable value to sensor
  * @apiParam {decimal} min_possible minimum possible value to sensor
@@ -109,9 +111,6 @@ exports.list = (req, res) => {
  * @apiParamExample {json} Request example:
  *      {
  *           "transducer": "dht22",
- *           "measure":"temperature",
- *           "unit": "ºC",
- *           "tag": "temp",
  *           "min_acceptable": "10",
  *           "max_acceptable": "25",
  *           "min_possible": "-20",

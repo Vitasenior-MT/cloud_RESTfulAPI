@@ -60,7 +60,11 @@ exports.findByEmail = (email) => {
         let encrypted = utils.encrypt([email]);
         if (!encrypted.error) db.User.findOne({ where: { email: encrypted.value[0] } }).then(
             user => {
-                if (user) resolve(user);
+                if (user) {
+                    user.name = utils.decrypt(user.name);
+                    user.email = utils.decrypt(user.email);
+                    resolve(user);
+                }
                 else reject({ code: 404, msg: "user not registered" });
             }, error => reject({ code: 500, msg: error.message }));
         else reject({ code: 500, msg: encrypted.error.message });

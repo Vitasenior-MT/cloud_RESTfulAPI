@@ -42,7 +42,14 @@ exports.updateProfile = (req, res) => {
  *     {
  *          "email": "user-example@some.thing"
  *     }
- * @apiSuccess {boolean} result return true if was sucessfuly added
+ * @apiSuccessExample {json} Response example:
+ * {
+ *  doctor:{
+ *      "id":"585402ef-68dd-44a4-a44b-04152e659d11",
+ *      "name":"Jose Manel",
+ *      "email": "jmanfns@a.aa"
+ *  }
+ * }
  */
 exports.addDoctor = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
@@ -51,7 +58,7 @@ exports.addDoctor = (req, res) => {
                 patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
                     () => business.patient.addDoctor(patient, user.id).then(
                         () => business.user.setHasDoctor(user).then(
-                            () => res.status(200).json({ result: true }),
+                            () => res.status(200).json({ doctor: { id: user.id, name: user.name, email: user.email, since: new Date() } }),
                             error => res.status(error.code).send(error.msg)),
                         error => res.status(error.code).send(error.msg)),
                     error => res.status(error.code).send(error.msg)),

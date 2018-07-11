@@ -40,32 +40,36 @@ exports.create = (req, res) => {
  * @apiVersion 1.0.0
  * @apiUse box
  * 
- * @apiPermission admin
+ * @apiPermission user, admin
  * @apiParam {string} :id vitabox id
  * @apiParam {decimal} latitude min: -90, max: 90 (based on google maps coordinates)
  * @apiParam {decimal} longitude min: -180, max: 180 (based on google maps coordinates)
  * @apiParam {string} address full address with postal code
  * @apiParam {string} email sponsor's email
+ * @apiParam {string} password (only to users) vitabox password to register
  * @apiParamExample {json} Request example to admin:
  *     {
  *          "latitude": "38.8976763",
  *          "longitude": "-77.0387185",
  *          "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
- *          "email": "sponsor@example.com"
+ *          "email": "sponsor@example.com",
+ *          "password": "1DlA2.d$"
  *     }
  * @apiSuccess {boolean} result return "true" if was sucessfuly registered
  */
 exports.register = (req, res) => {
-    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.user.findByEmail(req.body.email).then(
-            user => {
-                business.vitabox.register(req.params.id, req.body).then(
-                    vitabox => {
-                        business.vitabox.addUser(req.client, vitabox.id, user.id, true).then(
-                            () => res.status(200).json({ result: true }),
-                            error => res.status(error.code).send(error.msg));
-                    }, error => res.status(error.code).send(error.msg));
-            }, error => res.status(500).send(error.msg));
+    if (req.client && req.client.constructor.name === "User") {
+        if (req.client.admin) {
+            business.user.findByEmail(req.body.email).then(
+                user => business.vitabox.register(req.params.id, req.body, user, true).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(500).send(error.msg));
+        } else {
+            business.vitabox.register(req.params.id, req.body, req.client, false).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        }
     } else {
         res.status(401).send(req.t("unauthorized"));
     }
@@ -131,7 +135,8 @@ exports.requestToken = (req, res) => {
  *          "latitude": "51.5058372",
  *          "longitude": "-0.1899126",
  *          "address": "Kensington Gardens, London W8 4PX, Reino Unido",
- *          "sponsor": false
+ *          "sponsor": false,
+ *          "active": false,
  *      }
  *  ]
  * }
@@ -558,11 +563,13 @@ exports.addPatient = (req, res) => {
  *                              "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
  *                              "transducer": "dht22",
  *                              "measure": "humidity",
+ *                              "unit": "%",
  *                              "min_acceptable": "30.00000",
  *                              "max_acceptable": "50.00000",
  *                              "min_possible": "20.00000",
  *                              "max_possible": "60.00000",
- *                              "tag": "humi"
+ *                              "tag": "humi",
+ *                              "to_read": "temperature"
  *                          }
  *                      }
  *                  ]
@@ -606,10 +613,12 @@ exports.addPatient = (req, res) => {
  *                              "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
  *                              "transducer": "dht22",
  *                              "measure": "humidity",
+ *                              "unit": "%",
  *                              "min_acceptable": "30.00000",
  *                              "max_acceptable": "50.00000",
  *                              "min_possible": "20.00000",
- *                              "max_possible": "60.00000"
+ *                              "max_possible": "60.00000",
+ *                              "to_read": "temperature"
  *                          }
  *                      }
  *                  ]
@@ -618,6 +627,9 @@ exports.addPatient = (req, res) => {
  *          "Profiles":[
  *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25},
  *              {"id": "32443b5e-28cd-ab43-b86b-a423442401b8", "measure": "weight", "tag": "weight", "min": 58, "max": 64}
+ *          ],
+ *          "Doctors":[
+ *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "name": "Julia Almeida", email: "jalme@a.aa"}
  *          ]
  *      }
  *  ]
@@ -831,11 +843,13 @@ exports.addBoard = (req, res) => {
  *                      "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
  *                      "transducer": "dht22",
  *                      "measure": "humidity",
+ *                      "unit": "%",
  *                      "min_acceptable": "30.00000",
  *                      "max_acceptable": "50.00000",
  *                      "min_possible": "20.00000",
  *                      "max_possible": "60.00000".
- *                      "tag": "humid"
+ *                      "tag": "humid",
+ *                      "to_read": "temperature"
  *                  }
  *              }
  *          ]
@@ -865,10 +879,12 @@ exports.addBoard = (req, res) => {
  *                      "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
  *                      "transducer": "dht22",
  *                      "measure": "humidity",
+ *                      "unit": "%",
  *                      "min_acceptable": "30.00000",
  *                      "max_acceptable": "50.00000",
  *                      "min_possible": "20.00000",
- *                      "max_possible": "60.00000"
+ *                      "max_possible": "60.00000",
+ *                      "to_read": "temperature"
  *                  }
  *              }
  *          ]
