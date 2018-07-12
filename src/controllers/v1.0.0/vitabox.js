@@ -1,4 +1,5 @@
-var business = require('../../business/index').v1_0_0;
+var business = require('../../business/index').v1_0_0,
+    worker = require('../../workers/index');
 /**
  * @apiDefine box
  * 
@@ -996,7 +997,7 @@ exports.removeBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeBoard(req.client, req.params.id, req.body.board_id).then(
             () => business.board.removeDescription(req.body.board_id).then(
-                () => business.record.withdrawsAccess({ 'board_id': req.body.board_id }).then(
+                () => worker.record.remove(req.body.board_id).then(
                     () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
