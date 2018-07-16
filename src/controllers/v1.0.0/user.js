@@ -70,6 +70,7 @@ exports.register = (req, res) => {
  * @apiSuccess {boolean} is_admin flag indicating if is admin
  * @apiSuccess {boolean} is_doctor flag indicating if is doctor
  * @apiSuccess {string} photo user photo
+ * @apiSuccess {number} warnings unseen warnings count
  * @apiSuccessExample {json} Response example:
  * {
  *      "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA",
@@ -78,14 +79,15 @@ exports.register = (req, res) => {
  *      "email": "admin@some.thing",
  *      "is_admin": true,
  *      "is_doctor": false,
- *      "photo": "8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg"
+ *      "photo": "8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg",
+ *      "warnings"_ 0
  * }
  */
 exports.login = (req, res) => {
     business.user.login(req.body.email, req.body.password).then(
-        user => {
-            business.utils.createToken(user, req.connection.remoteAddress).then(
-                token => broker.log.send(user.id, "login").then(
+        user => business.utils.createToken(user, req.connection.remoteAddress).then(
+            token => business.warning.getWarningCount(user.id).then(
+                warnings => broker.log.send(user.id, "login").then(
                     () => res.status(200).json({
                         token: token,
                         id: user.id,
@@ -93,11 +95,11 @@ exports.login = (req, res) => {
                         email: business.utils.decrypt(user.email),
                         is_admin: user.admin,
                         is_doctor: user.doctor,
-                        photo: user.photo
-                    }),
-                    error => res.status(500).send(error.msg)),
-                error => res.status(error.code).send(error.msg));
-        }, error => res.status(error.code).send(error.msg));
+                        photo: user.photo,
+                        warnings: warnings
+                    }), error => res.status(500).send(error.msg))),
+            error => res.status(error.code).send(error.msg)),
+        error => res.status(error.code).send(error.msg));
 }
 
 /**
@@ -333,4 +335,115 @@ exports.getLogs = (req, res) => {
             },
             error => res.status(error.code).send(error.msg));
     } else { res.status(401).send(req.t("unauthorized")); }
+}
+
+/**
+ * @api {get} /warning/:page 5) Get warning
+ * @apiGroup User
+ * @apiName getWarnings
+ * @apiDescription get warnings from page
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission user
+ * @apiParam {string} :page warnings page
+ * @apiSuccessExample {json} Response example:
+ * {
+    "warnings": [
+        {
+            "datetime": "2018-07-16T13:36:23.149Z",
+            "message": "o valor de humidade do(a) Quarto está acima do recomendado",
+            "sensor_id": "0e35251f-dd9c-4928-9b8d-a94a44f22770",
+            "patient_id": null,
+            "seen_vitabox": null
+        }]
+ * }
+ */
+/**
+ * @api {get} /warning 6) Get warning to Vitabox
+ * @apiGroup User
+ * @apiName getWarnings
+ * @apiDescription get all unseen warnings from vitabox
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox
+ * @apiSuccessExample {json} Response example:
+ * {
+    "warnings": [
+        {
+            "datetime": "2018-07-16T13:36:23.149Z",
+            "message": "o valor de humidade do(a) Quarto está acima do recomendado",
+            "sensor_id": "0e35251f-dd9c-4928-9b8d-a94a44f22770",
+            "patient_id": null,
+            "seen_vitabox": null
+        }]
+ * }
+ */
+exports.getWarnings = (req, res) => {
+    if (req.client) {
+        if (req.client.constructor.name === "Vitabox") business.warning.getFromVitabox(req.client.id).then(
+            data => res.status(200).json({
+                warnings: data.map(x => {
+                    return {
+                        "id": x._id,
+                        "datetime": x.datetime,
+                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
+                        "sensor_id": x.sensor_id,
+                        "patient_id": x.patient_id,
+                        "seen_vitabox": x.seen_vitabox,
+                    }
+                })
+            }), error => res.status(error.code).send(error.msg));
+        else if (req.client.doctor) business.warning.getFromDoctor(req.params.page ? req.params.page : 1, req.client).then(
+            data => res.status(200).json({
+                warnings: data.map(x => {
+                    return {
+                        "id": x._id,
+                        "datetime": x.datetime,
+                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
+                        "sensor_id": x.sensor_id,
+                        "patient_id": x.patient_id,
+                        "seen_vitabox": x.seen_vitabox,
+                    }
+                })
+            }), error => res.status(error.code).send(error.msg));
+        else business.warning.getFromUser(req.params.page ? req.params.page : 1, req.client).then(
+            data => res.status(200).json({
+                warnings: data.map(x => {
+                    return {
+                        "id": x._id,
+                        "datetime": x.datetime,
+                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
+                        "sensor_id": x.sensor_id,
+                        "patient_id": x.patient_id,
+                        "seen_vitabox": x.seen_vitabox,
+                    }
+                })
+            }), error => res.status(error.code).send(error.msg));
+    } else res.status(401).send(req.t("unauthorized"));
+}
+
+/**
+ * @api {put} /warning 7) Check warning
+ * @apiGroup User
+ * @apiName getWarnings
+ * @apiDescription check all warnings, or a single warning by vitabox
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission vitabox, vitabox user, admin
+ * @apiParam {string} :warning_id (only to vitabox) warning unique ID
+ * @apiSuccess {boolean} result return true if was sucessfuly checked
+ */
+exports.checkWarnings = (req, res) => {
+    if (req.client && req.client.constructor.name === "Vitabox") {
+        if (req.body.warning_id) business.warning.checkWarningByVitabox(req.body.warning_id, req.client.id).then(
+            () => res.status(200).json({ result: true }),
+            error => res.status(error.code).send(error.msg));
+        else res.status(500).send("warning id undifined");
+    } else if (req.client) business.warning.checkWarningByUser(req.client).then(
+        () => res.status(200).json({ result: true }),
+        error => res.status(error.code).send(error.msg));
+    else res.status(401).send(req.t("unauthorized"));
 }

@@ -40,6 +40,15 @@ module.exports = (app) => {
         .get('/user/:id/log', versioning({
             "1.0.0": controllers.v1_0_0.user.getLogs,
         }))
+        .get('/warning/:page', versioning({
+            "1.0.0": controllers.v1_0_0.user.getWarnings
+        }))
+        .get('/warning', versioning({
+            "1.0.0": controllers.v1_0_0.user.getWarnings
+        }))
+        .put('/warning', versioning({
+            "1.0.0": controllers.v1_0_0.user.checkWarnings
+        }))
         /*________________________________________________
         *____________________ VITABOX_____________________
         *_________________________________________________*/
@@ -52,10 +61,10 @@ module.exports = (app) => {
         .get('/vitabox/:id', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.find
         }))
-        .get('/settings/vitabox', versioning({
+        .get('/vitabox/:id/settings', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getSettings
         }))
-        .put('/settings/vitabox', versioning({
+        .put('/vitabox/:id/settings', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.setSettings
         }))
         .put('/vitabox/:id', versioning({
@@ -108,12 +117,6 @@ module.exports = (app) => {
         }))
         .delete('/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removeBoard
-        }))
-        .get('/vitabox/:id/warning', versioning({
-            "1.0.0": controllers.v1_0_0.vitabox.getWarnings
-        }))
-        .put('/vitabox/:vid/warning/:wid', versioning({
-            "1.0.0": controllers.v1_0_0.vitabox.checkWarnings
         }))
         /*________________________________________________
         *__________________ BOARD MODEL___________________

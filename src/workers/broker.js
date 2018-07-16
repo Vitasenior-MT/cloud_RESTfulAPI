@@ -5,7 +5,7 @@ var uri = "";
 if (process.env.NODE_ENV === "production") {
   uri = 'amqps://admin:EDWTTTFIPYYJTKHE@portal-ssl241-11.bmix-lon-yp-527bf6a8-196a-4434-bac2-20581b651b99.565374449.composedb.com:26654/bmix-lon-yp-527bf6a8-196a-4434-bac2-20581b651b99';
 } else {
-  uri = 'amqp://root:123qwe@192.168.161.79:5672';
+  uri = 'amqp://root:123qwe@192.168.161.224:5672';
 }
 const parsedURI = url.parse(uri);
 
@@ -18,10 +18,8 @@ exports.connect = () => {
     amqp.connect(uri, { servername: parsedURI.hostname }, (err, conn) => {
       if (err) { reject(err); }
       conn.createChannel((err, ch) => {
-        if (err) {
-          conn.close();
-          reject(err);
-        }
+        if (err) { conn.close(); reject(err); }
+
         connection = conn;
         channel = ch;
 

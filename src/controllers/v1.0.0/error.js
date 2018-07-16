@@ -31,7 +31,7 @@ exports.listAll = (req, res) => {
 }
 
 /**
- * @api {get} /error/unseen 02) List unseen
+ * @api {get} v 02) List unseen
  * @apiGroup Error
  * @apiName listUnseenErrors
  * @apiDescription get unseen errors
@@ -74,7 +74,7 @@ exports.listUnseen = (req, res) => {
 */
 exports.check = (req, res) => {
   if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-    business.error.setCheck(req.params.id).then(
+    business.error.setCheck(req.params.id, req.client.id).then(
       () => res.status(200).json({ result: true }),
       error => res.status(error.code).send(error.msg));
   } else {

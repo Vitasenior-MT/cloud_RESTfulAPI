@@ -245,7 +245,7 @@ exports.find = (req, res) => {
 }
 
 /**
- * @api {get} /settings/vitabox 06) Get Settings
+ * @api {get} /vitabox/:id/settings 06) Get Settings
  * @apiGroup Vitabox
  * @apiName getSettings
  * @apiDescription returns the vitabox settings
@@ -272,14 +272,14 @@ exports.getSettings = (req, res) => {
 }
 
 /**
- * @api {put} /settings/vitabox 07) Set Settings
+ * @api {put} /vitabox/:id/settings 07) Set Settings
  * @apiGroup Vitabox
  * @apiName setSettings
  * @apiDescription update vitabox settings
  * @apiVersion 1.0.0
  * @apiUse box
  * 
- * @apiPermission vitabox
+ * @apiPermission vitabox, admin, sponsor
  * @apiParam {json} settings configuration's structure to be updated
  * @apiParamExample {json} Response example:
  * {
@@ -292,10 +292,21 @@ exports.getSettings = (req, res) => {
  * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
 exports.setSettings = (req, res) => {
-    if (req.client && req.client.constructor.name === "Vitabox") {
-        req.client.update({ settings: req.body.settings }).then(
-            () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.msg));
+    if (req.client) {
+        if (req.client.constructor.name === "Vitabox")
+            req.client.update({ settings: req.body.settings }).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        else if (req.client.admin) business.vitabox.find(req.client, req.params.id).then(
+            vitabox => vitabox.update({ settings: req.body.settings }).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
+            res.status(401).send(req.t("unauthorized")));
+        else business.vitabox.verifySponsor(req.client, req.params.id).then(
+            vitabox => vitabox.update({ settings: req.body.settings }).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
+            res.status(401).send(req.t("unauthorized")));
     } else {
         res.status(401).send(req.t("unauthorized"));
     }
@@ -388,7 +399,9 @@ exports.addUser = (req, res) => {
         let flag = req.body.sponsor ? true : false;
         business.user.findByEmail(req.body.email).then(
             user => business.vitabox.addUser(req.client, req.params.id, user.id, flag).then(
-                () => res.status(200).json({ result: true }),
+                () => business.warning.setWarningCount(user.id, req.params.id).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(500).send(error.msg));
     } else {
@@ -461,7 +474,9 @@ exports.getUsers = (req, res) => {
 exports.removeUser = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeUser(req.client, req.params.id, req.body.user_id).then(
-            () => res.status(200).json({ result: true }),
+            () => business.warning.removeWarningCount(req.body.user_id, req.params.id).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -1000,102 +1015,6 @@ exports.removeBoard = (req, res) => {
                 () => worker.record.remove(req.body.board_id).then(
                     () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg)),
-                error => res.status(error.code).send(error.msg)),
-            error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send(req.t("unauthorized"));
-    }
-}
-
-/**
- * @api {get} /vitabox/:id/warning 23) Get warning
- * @apiGroup Vitabox
- * @apiName getWarnings
- * @apiDescription get all warnings from vitabox
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission vitabox, vitabox user, admin
- * @apiParam {string} :id vitabox unique ID
- * @apiSuccessExample {json} Response example:
- * {
- *  "warnings":[]
- * }
- */
-exports.getWarnings = (req, res) => {
-    if (req.client) {
-        if (req.client.admin) business.warning.getByVitabox(req.params.id).then(
-            data => res.status(200).json({
-                warnings: data.map(x => {
-                    return {
-                        "id": x._id,
-                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-                        "sensor_id": x.sensor_id,
-                        "patient_id": x.patient_id,
-                        "seen_date": x.seen_date,
-                        "seen_user": x.seen_user,
-                        "seen_vitabox": x.seen_vitabox,
-                    }
-                })
-            }), error => res.status(error.code).send(error.msg));
-        else if (req.client.constructor.name === "Vitabox" && req.client.id === req.params.id) {
-            business.warning.getFromVitabox(req.params.id).then(
-                data => res.status(200).json({
-                    warnings: data.map(x => {
-                        return {
-                            "id": x._id,
-                            "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-                            "sensor_id": x.sensor_id,
-                            "patient_id": x.patient_id,
-                            "seen_date": x.seen_date,
-                            "seen_user": x.seen_user,
-                            "seen_vitabox": x.seen_vitabox,
-                        }
-                    })
-                }), error => res.status(error.code).send(error.msg));
-        } else business.vitabox.verifyUser(req.client, req.params.id).then(
-            () => business.warning.getByVitabox(req.params.id).then(
-                data => res.status(200).json({
-                    warnings: data.map(x => {
-                        return {
-                            "id": x._id,
-                            "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-                            "sensor_id": x.sensor_id,
-                            "patient_id": x.patient_id,
-                            "seen_date": x.seen_date,
-                            "seen_user": x.seen_user,
-                            "seen_vitabox": x.seen_vitabox,
-                        }
-                    })
-                }), error => res.status(error.code).send(error.msg)),
-            error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send(req.t("unauthorized"));
-    }
-}
-
-/**
- * @api {put} /vitabox/:vid/warning/:wid 24) Check warning
- * @apiGroup Vitabox
- * @apiName checkWarnings
- * @apiDescription check warning from vitabox
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission vitabox user
- * @apiParam {string} :vid vitabox unique ID
- * @apiParam {string} :wid vitabox unique ID
- * @apiSuccess {boolean} result return true if was sucessfuly updated
- */
-exports.checkWarnings = (req, res) => {
-    if (req.client) {
-        if (req.client.constructor.name === "Vitabox" && req.client.id === req.params.vid)
-            business.warning.setCheckByVitabox(req.params.wid).then(
-                () => res.status(200).json({ result: true }),
-                error => res.status(error.code).send(error.msg));
-        else business.vitabox.verifyUser(req.client, req.params.vid).then(
-            () => business.warning.setCheckByUser(req.params.wid, req.client.id).then(
-                () => res.status(200).json({ result: true }),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {

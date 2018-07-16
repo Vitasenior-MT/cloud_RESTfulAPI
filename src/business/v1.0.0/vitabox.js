@@ -407,7 +407,7 @@ exports.verifySponsor = (current_user, vitabox_id) => {
     db.Vitabox.findById(vitabox_id).then(
       vitabox => {
         if (vitabox) _isSponsor(vitabox, current_user).then(
-          () => resolve(),
+          () => resolve(vitabox),
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
@@ -423,14 +423,6 @@ exports.verifyUser = (current_user, vitabox_id) => {
           error => reject(error));
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
-  });
-}
-
-exports.updateLastCommit = (vitabox) => {
-  return new Promise((resolve, reject) => {
-    vitabox.update({ last_commit: new Date() }).then(
-      () => resolve(),
-      error => reject({ code: 500, msg: error.message }));
   });
 }
 

@@ -31,5 +31,9 @@
 	"steps": "passos",
 	"meters": "metros",
 	"heartrate": "batimento cardíaco",
-	"bodytemp": "temperatura corporal"
+	"bodytemp": "temperatura corporal",
+	"monóxido de carbono": "monóxido de carbono",
+	"Quarto": "Quarto",
+	"humidade": "humidade",
+	"temperatura": "temperatura"
 }

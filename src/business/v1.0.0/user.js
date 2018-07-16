@@ -154,7 +154,7 @@ exports.getPatients = (user) => {
                 {
                     model: db.Board, attributes: ['id', 'mac_addr'],
                     include: [
-                        { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+                        { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
                         {
                             model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
                             include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]

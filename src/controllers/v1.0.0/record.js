@@ -41,10 +41,7 @@ exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
         if (req.body.records) {
             worker.record.insert(req.body.records).then(
-                () => {
-                    console.log("enviou records");
-                    res.status(200).json({ result: true })
-                },
+                () => res.status(200).json({ result: true }),
                 error => res.status(error.code).json(error.msg));
         } else { res.status(500).send("No records to introduce"); }
     } else { res.status(401).send(req.t("unauthorized")); }

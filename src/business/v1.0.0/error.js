@@ -18,7 +18,7 @@ exports.getAll = () => {
   })
 }
 
-exports.setCheck = (error_id) => {
+exports.setCheck = (error_id, user_id) => {
   return new Promise((resolve, reject) => {
     db.Error.find().where({ _id: error_id }).exec((err, error) => {
       if (err) reject({ code: 500, msg: err.message });
