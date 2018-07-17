@@ -16,7 +16,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
 exports.updateProfile = (req, res) => {
-    if (req.client && req.client.constructor.name === "User") {
+    if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
         business.patient.verifyDoctor(req.client, req.params.paid).then(
             () => business.profile.update(req.params.prid, req.body.min, req.body.max).then(
                 () => res.status(200).json({ result: true }),
@@ -57,8 +57,10 @@ exports.addDoctor = (req, res) => {
             user => business.patient.find(req.params.id).then(
                 patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
                     () => business.patient.addDoctor(patient, user.id).then(
-                        () => business.user.setHasDoctor(user).then(
-                            () => res.status(200).json({ doctor: { id: user.id, name: user.name, email: user.email, since: new Date() } }),
+                        () => business.warning.setWarningDoctor(user.id, patient.id).then(
+                            () => business.user.setHasDoctor(user).then(
+                                () => res.status(200).json({ doctor: { id: user.id, name: user.name, email: user.email, since: new Date() } }),
+                                error => res.status(error.code).send(error.msg)),
                             error => res.status(error.code).send(error.msg)),
                         error => res.status(error.code).send(error.msg)),
                     error => res.status(error.code).send(error.msg)),
@@ -143,8 +145,10 @@ exports.removeDoctor = (req, res) => {
         business.patient.find(req.params.id).then(
             patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
                 () => business.patient.removeDoctor(patient, req.body.doctor_id).then(
-                    () => business.user.setHasDoctor(req.client).then(
-                        () => res.status(200).json({ result: true }),
+                    () => business.warning.removeWarningDoctor(req.body.doctor_id, req.params.id).then(
+                        () => business.user.setHasDoctor(req.client).then(
+                            () => res.status(200).json({ result: true }),
+                            error => res.status(error.code).send(error.msg)),
                         error => res.status(error.code).send(error.msg)),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
@@ -199,43 +203,6 @@ exports.getBoardsFromPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.patient.getBoards(req.params.id).then(
             result => res.status(200).json({ boards: result }),
-            error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send(req.t("unauthorized"));
-    }
-}
-
-/**
- * @api {get} /patient/:id/warning 06) Get Warnings
- * @apiGroup Patient
- * @apiName getWarningsByPatient
- * @apiDescription Get boards from a patient
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission admin
- * @apiSuccessExample {json} Request example:
- * {
- *  warnings:[]
- * }
- */
-exports.getWarningsByPatient = (req, res) => {
-    if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
-        business.patient.verifyDoctor(req.client, req.params.id).then(
-            () => business.warning.getByPatient(req.params.id).then(
-                data => {
-                    let to_send = [];
-                    data.forEach(x => to_send.push({
-                        "id": x._id,
-                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-                        "sensor_id": x.sensor_id,
-                        "patient_id": x.patient_id,
-                        "seen_date": x.seen_date,
-                        "seen_user": x.seen_user,
-                        "seen_vitabox": x.seen_vitabox,
-                    }));
-                    res.status(200).json({ warnings: to_send });
-                }, error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

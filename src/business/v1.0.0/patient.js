@@ -90,7 +90,7 @@ exports.addDoctor = (patient, doctor_id) => {
 
 exports.getDoctors = (patient) => {
     return new Promise((resolve, reject) => {
-        patient.getUsers({ attributes: ['id', 'email', 'name'] }).then(
+        patient.getDoctors({ attributes: ['id', 'email', 'name'] }).then(
             users => {
                 users.forEach(user => {
                     user.email = utils.decrypt(user.email);
@@ -106,7 +106,7 @@ exports.getDoctors = (patient) => {
 
 exports.removeDoctor = (patient, doctor_id) => {
     return new Promise((resolve, reject) => {
-        patient.removeUser(doctor_id).then(
+        patient.removeDoctor(doctor_id).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message }));
     });
@@ -129,7 +129,7 @@ exports.verifyDoctor = (current_user, patient_id) => {
 // ________________________________________________________________________
 _isDoctor = (patient, user) => {
     return new Promise((resolve, reject) => {
-        patient.getUsers({ where: { id: user.id } }).then(
+        patient.getDoctors({ where: { id: user.id } }).then(
             users => {
                 if (users.length > 0) resolve();
                 else reject({ code: 401, msg: "Unauthorized" });

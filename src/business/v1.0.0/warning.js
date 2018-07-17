@@ -47,12 +47,13 @@ exports.getFromVitabox = (vitabox_id) => {
 
 exports.checkWarningByUser = (user) => {
   return new Promise((resolve, reject) => {
-    db.WarningUnseen.where({ user_id: user.id }).update({
-      "seen_date": new Date(),
-      "count": 0
-    }, (err, res) => {
+    db.WarningUser.where({ user_id: user.id }).update({ "seen_date": new Date(), "count": 0 }, (err, res) => {
       if (err) reject(err);
-      resolve();
+      if (user.doctor) db.WarningDoctor.where({ user_id: user.id }).update({ "seen_date": new Date(), "count": 0 }, (err, res) => {
+        if (err) reject({ code: 500, msg: err.message });
+        resolve();
+      });
+      else resolve();
     });
   })
 }
@@ -60,7 +61,7 @@ exports.checkWarningByUser = (user) => {
 exports.checkWarningByVitabox = (id, vitabox_id) => {
   return new Promise((resolve, reject) => {
     db.Warning.where({ _id: id, vitabox_id: vitabox_id }).update({ "seen_vitabox": new Date() }, (err, res) => {
-      if (err) reject(err);
+      if (err) reject({ code: 500, msg: err.message });
       resolve();
     });
   })
@@ -68,11 +69,17 @@ exports.checkWarningByVitabox = (id, vitabox_id) => {
 
 exports.setWarningCount = (user_id, vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.WarningUnseen.create({
-      "vitabox_id": vitabox_id,
-      "user_id": user_id
-    }, (err, res) => {
-      if (err) reject(err);
+    db.WarningUser.create({ "vitabox_id": vitabox_id, "user_id": user_id }, (err, res) => {
+      if (err) reject({ code: 500, msg: err.message });
+      resolve();
+    });
+  })
+}
+
+exports.setWarningDoctor = (user_id, patient_id) => {
+  return new Promise((resolve, reject) => {
+    db.WarningDoctor.create({ "patient_id": patient_id, "user_id": user_id }, (err, res) => {
+      if (err) reject({ code: 500, msg: err.message });
       resolve();
     });
   })
@@ -80,23 +87,43 @@ exports.setWarningCount = (user_id, vitabox_id) => {
 
 exports.getWarningCount = (user_id) => {
   return new Promise((resolve, reject) => {
-    db.WarningUnseen.find().where({ "user_id": user_id }).select("count").exec((err, res) => {
-      if (err) reject(err);
-      else if (res.length > 0) resolve(res.reduce((a, v) => a + v));
-      else resolve(0);
+    let promise1 = new Promise((resolve, reject) => {
+      db.WarningUser.find().where({ "user_id": user_id }).select("count").exec((err, res) => {
+        if (err) reject();
+        else if (res.length > 0) resolve(res.reduce((a, v) => a + v));
+        else resolve(0);
+      });
     });
+    let promise2 = new Promise((resolve, reject) => {
+      db.WarningDoctor.find().where({ "user_id": user_id }).select("count").exec((err, res) => {
+        if (err) reject();
+        else if (res.length > 0) resolve(res.reduce((a, v) => a + v));
+        else resolve(0);
+      });
+    });
+    Promise.all([promise1, promise2]).then(
+      res => resolve(res.reduce((a, v) => a + v)),
+      err => reject({ code: 500, msg: "Could not extract warnings count" }));
   })
 }
 
 exports.removeWarningCount = (user_id, vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.WarningUnseen.remove({ "vitabox_id": vitabox_id, "user_id": user_id }).exec(err => {
+    db.WarningUser.remove({ "vitabox_id": vitabox_id, "user_id": user_id }).exec(err => {
       if (err) reject(err);
       else resolve();
     });
   })
 }
 
+exports.removeWarningDoctor = (user_id, patient_id) => {
+  return new Promise((resolve, reject) => {
+    db.WarningDoctor.remove({ "patient_id": patient_id, "user_id": user_id }).exec(err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  })
+}
 
 _getSensorWarningInfo = (warning) => {
   return new Promise((resolve, reject) => {

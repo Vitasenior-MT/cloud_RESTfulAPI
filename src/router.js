@@ -178,9 +178,6 @@ module.exports = (app) => {
         .delete('/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.removeDoctor
         }))
-        .get('/patient/:id/warning', versioning({
-            "1.0.0": controllers.v1_0_0.patient.getWarningsByPatient
-        }))
         /*________________________________________________
         *__________________SENSOR MODEL___________________
         *_________________________________________________*/

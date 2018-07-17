@@ -340,13 +340,20 @@ define({ "api": [
             "optional": false,
             "field": "photo",
             "description": "<p>user photo</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "warnings",
+            "description": "<p>unseen warnings count</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"is_doctor\": false,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\"\n}",
+          "content": "{\n     \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\",\n     \"id\": \"84bb251c-f1ca-4ecd-893e-56ae404ef8ef\",\n     \"name\": \"Administrator Exemple\",\n     \"email\": \"admin@some.thing\",\n     \"is_admin\": true,\n     \"is_doctor\": false,\n     \"photo\": \"8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg\",\n     \"warnings\"_ 0\n}",
           "type": "json"
         }
       ]
@@ -1669,20 +1676,13 @@ define({ "api": [
             "optional": false,
             "field": "name",
             "description": "<p>board model name</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "type",
-            "description": "<p>board type, must be 'environmental', 'wearable' or 'non-wearable'</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"name\": \"Zolertia RE-Mote\",\n     \"type\": \"environmental\"\n}",
+          "content": "{\n     \"name\": \"Zolertia RE-Mote\"\n}",
           "type": "json"
         }
       ]
@@ -2037,7 +2037,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/error/unseen",
+    "url": "v",
     "title": "02) List unseen",
     "group": "Error",
     "name": "listUnseenErrors",
@@ -2198,17 +2198,13 @@ define({ "api": [
       ]
     },
     "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "result",
-            "description": "<p>return true if was sucessfuly added</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n doctor:{\n     \"id\":\"585402ef-68dd-44a4-a44b-04152e659d11\",\n     \"name\":\"Jose Manel\",\n     \"email\": \"jmanfns@a.aa\"\n }\n}",
+          "type": "json"
+        }
+      ]
     },
     "filename": "src/controllers/v1.0.0/patient.js",
     "groupTitle": "Patient",
@@ -2416,85 +2412,6 @@ define({ "api": [
         {
           "title": "Response example:",
           "content": "{\n \"doctors\": [\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"email\": \"donaldtrump@usa.com\",\n         \"name\": \"Donald Trump\",\n         \"since\": \"2018-02-19T14:41:13.000Z\"\n     },\n     {\n         \"id\": \"78007a69-baa2-4b24-b936-234883811b6a\",\n         \"email\": \"queenelizabeth@majesty.uk\",\n         \"name\": \"Queen Elizabeth\",\n         \"since\": \"2018-02-19T14:40:14.000Z\"\n     }\n ]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/patient.js",
-    "groupTitle": "Patient",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
-    "url": "/patient/:id/warning",
-    "title": "06) Get Warnings",
-    "group": "Patient",
-    "name": "getWarningsByPatient",
-    "description": "<p>Get boards from a patient</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "admin"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "Request example:",
-          "content": "{\n warnings:[]\n}",
           "type": "json"
         }
       ]
@@ -4215,6 +4132,13 @@ define({ "api": [
           },
           {
             "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "tag",
+            "description": "<p>transducer tag</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "decimal",
             "optional": false,
             "field": "min_acceptable",
@@ -4595,20 +4519,6 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "measure",
-            "description": "<p>transducer measure</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "unit",
-            "description": "<p>transducer measurement unit</p>"
-          },
-          {
-            "group": "Parameter",
             "type": "decimal",
             "optional": false,
             "field": "min_acceptable",
@@ -4634,20 +4544,13 @@ define({ "api": [
             "optional": false,
             "field": "max_possible",
             "description": "<p>maximum possible value to sensor</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "to_read",
-            "description": "<p>text to text-to-speech</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"transducer\": \"dht22\",\n     \"measure\":\"temperature\",\n     \"unit\": \"ºC\",\n     \"tag\": \"temp\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\",\n     \"to_read\": \"temperature\"\n}",
+          "content": "{\n     \"transducer\": \"dht22\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\"\n}",
           "type": "json"
         }
       ]
@@ -4857,6 +4760,273 @@ define({ "api": [
     },
     "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "User",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/warning",
+    "title": "6) Get warning to Vitabox",
+    "group": "User",
+    "name": "getWarnings",
+    "description": "<p>get all unseen warnings from vitabox</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null\n        }]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/warning",
+    "title": "7) Check warning",
+    "group": "User",
+    "name": "getWarnings",
+    "description": "<p>check all warnings, or a single warning by vitabox</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox, vitabox user, admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":warning_id",
+            "description": "<p>(only to vitabox) warning unique ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly checked</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/warning/:page",
+    "title": "5) Get warning",
+    "group": "User",
+    "name": "getWarnings",
+    "description": "<p>get warnings from page</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":page",
+            "description": "<p>warnings page</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null\n        }]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
     "error": {
       "fields": {
         "Error 4xx": [
@@ -5350,109 +5520,6 @@ define({ "api": [
             "optional": false,
             "field": "result",
             "description": "<p>return true if was sucessfuly added</p>"
-          }
-        ]
-      }
-    },
-    "filename": "src/controllers/v1.0.0/vitabox.js",
-    "groupTitle": "Vitabox",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "put",
-    "url": "/vitabox/:vid/warning/:wid",
-    "title": "24) Check warning",
-    "group": "Vitabox",
-    "name": "checkWarnings",
-    "description": "<p>check warning from vitabox</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "vitabox user"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":vid",
-            "description": "<p>vitabox unique ID</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":wid",
-            "description": "<p>vitabox unique ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "result",
-            "description": "<p>return true if was sucessfuly updated</p>"
           }
         ]
       }
@@ -6552,7 +6619,7 @@ define({ "api": [
         },
         {
           "title": "Response example to users:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ],\n         \"Doctors\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"name\": \"Julia Almeida\", email: \"jalme@a.aa\"}\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -6616,7 +6683,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/settings/vitabox",
+    "url": "/vitabox/:id/settings",
     "title": "06) Get Settings",
     "group": "Vitabox",
     "name": "getSettings",
@@ -6837,98 +6904,6 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/vitabox/:id/warning",
-    "title": "23) Get warning",
-    "group": "Vitabox",
-    "name": "getWarnings",
-    "description": "<p>get all warnings from vitabox</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "vitabox, vitabox user, admin"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":id",
-            "description": "<p>vitabox unique ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{\n \"warnings\":[]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/vitabox.js",
-    "groupTitle": "Vitabox",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
     "url": "/vitabox",
     "title": "04) List",
     "group": "Vitabox",
@@ -7025,7 +7000,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example to common user:",
-          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"sponsor\": true\n     },\n     {\n         \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"sponsor\": false\n     }\n ]\n}",
+          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"sponsor\": true\n     },\n     {\n         \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"sponsor\": false,\n         \"active\": false,\n     }\n ]\n}",
           "type": "json"
         },
         {
@@ -7424,7 +7399,7 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "/settings/vitabox",
+    "url": "/vitabox/:id/settings",
     "title": "07) Set Settings",
     "group": "Vitabox",
     "name": "setSettings",
@@ -7432,7 +7407,7 @@ define({ "api": [
     "version": "1.0.0",
     "permission": [
       {
-        "name": "vitabox"
+        "name": "vitabox, admin, sponsor"
       }
     ],
     "parameter": {
@@ -7748,7 +7723,7 @@ define({ "api": [
     "version": "1.0.0",
     "permission": [
       {
-        "name": "admin"
+        "name": "user, admin"
       }
     ],
     "parameter": {
@@ -7788,13 +7763,20 @@ define({ "api": [
             "optional": false,
             "field": "email",
             "description": "<p>sponsor's email</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "password",
+            "description": "<p>(only to users) vitabox password to register</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example to admin:",
-          "content": "{\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"email\": \"sponsor@example.com\"\n}",
+          "content": "{\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"email\": \"sponsor@example.com\",\n     \"password\": \"1DlA2.d$\"\n}",
           "type": "json"
         }
       ]
