@@ -11,7 +11,7 @@ exports.create = (attributes) => {
       max_possible: attributes.max_possible,
       tag: attributes.tag,
       unit: attributes.unit ? attributes.unit : "",
-      to_read: attributes.to_read ? attributes.to_read : ""
+      to_read: attributes.to_read
     }).then(
       model => resolve(model),
       error => reject({ code: 500, msg: error.message }));
@@ -32,10 +32,14 @@ exports.update = (sensor_id, attributes) => {
       model => {
         if (model) model.update({
           transducer: attributes.transducer,
+          measure: attributes.measure,
           min_acceptable: attributes.min_acceptable,
           max_acceptable: attributes.max_acceptable,
           min_possible: attributes.min_possible,
-          max_possible: attributes.max_possible
+          max_possible: attributes.max_possible,
+          tag: attributes.tag,
+          unit: attributes.unit ? attributes.unit : "",
+          to_read: attributes.to_read
         }).then(
           () => resolve(),
           error => reject({ code: 500, msg: error.message }));

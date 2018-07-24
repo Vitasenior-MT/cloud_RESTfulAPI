@@ -31,23 +31,17 @@ module.exports = (app) => {
         .post('/photo', versioning({
             "1.0.0": controllers.v1_0_0.user.setPhoto,
         }))
-        .get('/doctor', versioning({
-            "1.0.0": controllers.v1_0_0.user.getPatients,
-        }))
         .get('/user', versioning({
             "1.0.0": controllers.v1_0_0.user.list,
         }))
         .get('/user/:id/log', versioning({
             "1.0.0": controllers.v1_0_0.user.getLogs,
         }))
-        .get('/warning/:page', versioning({
-            "1.0.0": controllers.v1_0_0.user.getWarnings
+        .get('/doctor/patient', versioning({
+            "1.0.0": controllers.v1_0_0.user.getPatients,
         }))
-        .get('/warning', versioning({
-            "1.0.0": controllers.v1_0_0.user.getWarnings
-        }))
-        .put('/warning', versioning({
-            "1.0.0": controllers.v1_0_0.user.checkWarnings
+        .get('/doctor/request', versioning({
+            "1.0.0": controllers.v1_0_0.user.getRequests,
         }))
         /*________________________________________________
         *____________________ VITABOX_____________________
@@ -58,8 +52,8 @@ module.exports = (app) => {
         .get('/vitabox', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.list
         }))
-        .get('/vitabox/:id', versioning({
-            "1.0.0": controllers.v1_0_0.vitabox.find
+        .get('/vitabox/:own', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.list
         }))
         .get('/vitabox/:id/settings', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getSettings
@@ -163,6 +157,9 @@ module.exports = (app) => {
         /*________________________________________________
         *____________________PATIENT______________________
         *_________________________________________________*/
+        .put('/patient/:id/biometric', versioning({
+            "1.0.0": controllers.v1_0_0.patient.updateBiometric
+        }))
         .get('/patient/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.patient.getBoardsFromPatient
         }))
@@ -172,8 +169,8 @@ module.exports = (app) => {
         .post('/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.addDoctor
         }))
-        .get('/patient/:id/doctor', versioning({
-            "1.0.0": controllers.v1_0_0.patient.getDoctor
+        .put('/patient/:id/doctor', versioning({
+            "1.0.0": controllers.v1_0_0.patient.acceptAsDoctor
         }))
         .delete('/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.removeDoctor
@@ -244,14 +241,23 @@ module.exports = (app) => {
         /*________________________________________________
         *_____________________ERROR_______________________
         *_________________________________________________*/
-        .get('/error/all', versioning({
-            "1.0.0": controllers.v1_0_0.error.listAll
-        }))
-        .get('/error/unseen', versioning({
-            "1.0.0": controllers.v1_0_0.error.listUnseen
+        .get('/error/:page', versioning({
+            "1.0.0": controllers.v1_0_0.error.list
         }))
         .put('/error/:id', versioning({
             "1.0.0": controllers.v1_0_0.error.check
+        }))
+        /*________________________________________________
+        *____________________WARNING______________________
+        *_________________________________________________*/
+        .get('/warning/:page', versioning({
+            "1.0.0": controllers.v1_0_0.warning.getWarnings
+        }))
+        .get('/warning', versioning({
+            "1.0.0": controllers.v1_0_0.warning.getWarnings
+        }))
+        .put('/warning', versioning({
+            "1.0.0": controllers.v1_0_0.warning.checkWarnings
         }))
         /*________________________________________________
         *_____________________TRASH_______________________

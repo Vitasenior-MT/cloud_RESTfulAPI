@@ -63,6 +63,7 @@ const db = {
     'UserVitabox': require('./mysql/user_vitabox')(sequelize, Sequelize),
     'User': require('./mysql/user')(sequelize, Sequelize),
     'Vitabox': require('./mysql/vitabox')(sequelize, Sequelize),
+    'DoctorPatient': require('./mysql/doctor_patient')(sequelize, Sequelize),
 
     'Error': require('./mongodb/error'),
     'Log': require('./mongodb/log'),

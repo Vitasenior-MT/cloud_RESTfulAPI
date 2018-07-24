@@ -1,7 +1,7 @@
 var db = require('../../models/index'),
     utils = require('./utils');
 
-exports.createIfNotExists = (attributes) => {
+exports.createIfNotExists = (attributes, vitabox_id) => {
     return new Promise((resolve, reject) => {
         if (["male", "female", "undefined"].includes(attributes.gender))
             if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(attributes.name)) {
@@ -14,8 +14,7 @@ exports.createIfNotExists = (attributes) => {
                                 name: encrypted.value[0],
                                 birthdate: attributes.birthdate,
                                 gender: attributes.gender,
-                                height: attributes.height,
-                                weight: attributes.weight
+                                vitabox_id: vitabox_id
                             }).then(
                                 patient => resolve(patient),
                                 error => reject({ code: 500, msg: error.message })
@@ -34,6 +33,19 @@ exports.find = function (patient_id) {
                 if (patient) resolve(patient);
                 else reject({ code: 500, msg: "Patient not found" });
             }, error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+exports.setBiometricData = (patient_id, attributes) => {
+    return new Promise((resolve, reject) => {
+        db.Patient.findById(patient_id).then(
+            patient => patient.update({
+                height: attributes.height,
+                weight: attributes.weight
+            }).then(
+                result => resolve(result),
+                error => reject({ code: 500, msg: error.message })),
+            error => reject({ code: 500, msg: error.message }));
     });
 }
 
@@ -88,22 +100,6 @@ exports.addDoctor = (patient, doctor_id) => {
     });
 }
 
-exports.getDoctors = (patient) => {
-    return new Promise((resolve, reject) => {
-        patient.getDoctors({ attributes: ['id', 'email', 'name'] }).then(
-            users => {
-                users.forEach(user => {
-                    user.email = utils.decrypt(user.email);
-                    user.name = utils.decrypt(user.name);
-                    user.dataValues.since = user.DoctorPatient.created_at;
-                    delete user.dataValues.DoctorPatient;
-                });
-                resolve(users);
-            },
-            error => reject({ code: 500, msg: error.message }));
-    });
-}
-
 exports.removeDoctor = (patient, doctor_id) => {
     return new Promise((resolve, reject) => {
         patient.removeDoctor(doctor_id).then(
@@ -129,7 +125,7 @@ exports.verifyDoctor = (current_user, patient_id) => {
 // ________________________________________________________________________
 _isDoctor = (patient, user) => {
     return new Promise((resolve, reject) => {
-        patient.getDoctors({ where: { id: user.id } }).then(
+        patient.getDoctors({ where: { id: user.id }, through: { accepted: true } }).then(
             users => {
                 if (users.length > 0) resolve();
                 else reject({ code: 401, msg: "Unauthorized" });

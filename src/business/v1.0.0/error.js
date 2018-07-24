@@ -1,34 +1,45 @@
-var db = require('../../models/index');
+var db = require('../../models/index'),
+  utils = require('./utils');
 
-exports.getUnseen = () => {
+exports.countUnseen = () => {
   return new Promise((resolve, reject) => {
-    db.Error.find().where({ seen_date: null }).exec((err, res) => {
+    db.Error.count({ seen_date: null }).exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
       resolve(res);
     });
   })
 }
 
-exports.getAll = () => {
+exports.getFromPage = (page) => {
   return new Promise((resolve, reject) => {
-    db.Error.find().exec((err, res) => {
+    db.Error.find().sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
-      resolve(res);
+
+      let promises = res.map(to_send => {
+        if (to_send.seen_user !== null) return new Promise(resolve => {
+          db.User.findById(to_send.seen_user, { attributes: ["name"] }).then(
+            user => {
+              user.name = utils.decrypt(user.name);
+              to_send.seen_user = user.name;
+              resolve(to_send);
+            },
+            error => resolve(to_send));
+        });
+        else return to_send;
+      });
+      Promise.all(promises).then(
+        res => resolve(res),
+        err => reject({ code: 500, msg: err.message })
+      );
     });
   })
 }
 
 exports.setCheck = (error_id, user_id) => {
   return new Promise((resolve, reject) => {
-    db.Error.find().where({ _id: error_id }).exec((err, error) => {
-      if (err) reject({ code: 500, msg: err.message });
-      if (error.seen_user !== null) {
-        error.seen_user = user_id;
-        error.seen_date = new Date();
-        error.save().then(
-          () => resolve(),
-          err => reject({ code: 500, msg: err.message }));
-      } else resolve();
-    });
+    db.Error.update({ _id: error_id, seen_user: null }, { seen_user: user_id, seen_date: new Date() }, (err) => {
+      if (err) reject({ code: 500, msg: "error not found or already checked" });
+      else resolve();
+    })
   })
 }

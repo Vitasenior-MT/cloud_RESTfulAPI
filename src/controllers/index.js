@@ -9,5 +9,5 @@ module.exports.v1_0_0 = {
     'sensor_model': require('./v1.0.0/sensor_model'),
     'user': require('./v1.0.0/user'),
     'vitabox': require('./v1.0.0/vitabox'),
-
+    'warning':require('./v1.0.0/warning')
 }

@@ -86,18 +86,34 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
     business.user.login(req.body.email, req.body.password).then(
         user => business.utils.createToken(user, req.connection.remoteAddress).then(
-            token => business.warning.getWarningCount(user.id).then(
-                warnings => broker.log.send(user.id, "login").then(
-                    () => res.status(200).json({
-                        token: token,
-                        id: user.id,
-                        name: business.utils.decrypt(user.name),
-                        email: business.utils.decrypt(user.email),
-                        is_admin: user.admin,
-                        is_doctor: user.doctor,
-                        photo: user.photo,
-                        warnings: warnings
-                    }), error => res.status(500).send(error.msg))),
+            token => broker.log.send(user.id, "login").then(
+                () => business.warning.getWarningCount(user.id).then(
+                    warnings => {
+                        if (!user.admin) res.status(200).json({
+                            token: token,
+                            id: user.id,
+                            name: business.utils.decrypt(user.name),
+                            email: business.utils.decrypt(user.email),
+                            is_admin: user.admin,
+                            is_doctor: user.doctor,
+                            photo: user.photo,
+                            warnings: warnings,
+                            errors: 0
+                        });
+                        else business.error.countUnseen().then(
+                            errors => res.status(200).json({
+                                token: token,
+                                id: user.id,
+                                name: business.utils.decrypt(user.name),
+                                email: business.utils.decrypt(user.email),
+                                is_admin: user.admin,
+                                is_doctor: user.doctor,
+                                photo: user.photo,
+                                warnings: warnings,
+                                errors: errors
+                            }),
+                            error => res.status(500).send(error.msg));
+                    }, error => res.status(500).send(error.msg))),
             error => res.status(error.code).send(error.msg)),
         error => res.status(error.code).send(error.msg));
 }
@@ -184,7 +200,91 @@ exports.setPhoto = (req, res) => {
 }
 
 /**
- * @api {get} /doctor 02) Get patients
+ * @api {get} /user 02) List
+ * @apiGroup User
+ * @apiName listUsers
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiHeader Authorization="< token >"
+ * @apiPermission admin
+ * @apiSuccessExample {json} Response example:
+ * {
+    "users": [
+        {
+            "id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+            "name": "Administrator Exemple",
+            "email": "admin@a.aa",
+            "photo": null,
+            "is_admin": 1,
+            "is_doctor": 0
+        },
+        {
+            "id": "9fc1d895-4a61-43d4-b6fa-96005b2f8e99",
+            "name": "José António",
+            "email": "jose@a.aa",
+            "photo": null,
+            "is_admin": 0,
+            "is_doctor": 0
+        }
+    ]
+}
+ */
+exports.list = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        business.user.list().then(
+            users => res.status(200).json({ users: users }),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send(req.t("unauthorized")); }
+}
+
+/**
+ * @api {get} /user/:id/log 03) Get Logs
+ * @apiGroup User
+ * @apiName getLogs
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiHeader Authorization="< token >"
+ * @apiPermission admin
+ * @apiSuccessExample {json} Response example:
+    {
+        "logs": [
+            {
+                "datetime": "2018-06-18T15:40:14.742Z",
+                "message": "logged in",
+                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+                "id": "5b27d25e176a610eafa34a43"
+            },
+            {
+                "datetime": "2018-06-18T15:40:14.789Z",
+                "message": "logged in",
+                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+                "id": "5b27d25e176a610eafa34a44"
+            },
+            {
+                "datetime": "2018-06-18T15:40:14.792Z",
+                "message": "logged in",
+                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
+                "id": "5b27d25e176a610eafa34a45"
+            }
+        ]
+    }
+ */
+exports.getLogs = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        business.log.getByUser(req.params.id).then(
+            logs => {
+                logs.forEach(x => {
+                    x.toJSON();
+                    x.message = req.t(x.message);
+                });
+                res.status(200).json({ logs: logs });
+            },
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send(req.t("unauthorized")); }
+}
+
+/**
+ * @api {get} /doctor/patient 04) Get patients
  * @apiGroup User
  * @apiName getPatientsAsDoctor
  * @apiVersion 1.0.0
@@ -247,203 +347,31 @@ exports.setPhoto = (req, res) => {
  */
 exports.getPatients = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
-        business.user.getPatients(req.client).then(
+        business.doctor.getPatients(req.client).then(
             patients => res.status(200).json({ patients: patients }),
             error => res.status(error.code).send(error.msg));
     } else { res.status(401).send(req.t("unauthorized")); }
 }
 
 /**
- * @api {get} /user/ 03) List
+ * @api {get} /doctor/request 04) Get patient resquests
  * @apiGroup User
- * @apiName listUsers
+ * @apiName getPatientsAsDoctor
  * @apiVersion 1.0.0
  * @apiUse auth
  * @apiHeader Authorization="< token >"
- * @apiPermission admin
+ * @apiPermission doctor
  * @apiSuccessExample {json} Response example:
  * {
-    "users": [
-        {
-            "id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
-            "name": "Administrator Exemple",
-            "email": "admin@a.aa",
-            "photo": null,
-            "is_admin": 1,
-            "is_doctor": 0
-        },
-        {
-            "id": "9fc1d895-4a61-43d4-b6fa-96005b2f8e99",
-            "name": "José António",
-            "email": "jose@a.aa",
-            "photo": null,
-            "is_admin": 0,
-            "is_doctor": 0
-        }
-    ]
-}
- */
-exports.list = (req, res) => {
-    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.user.list().then(
-            users => res.status(200).json({ users: users }),
-            error => res.status(error.code).send(error.msg));
-    } else { res.status(401).send(req.t("unauthorized")); }
-}
-
-/**
- * @api {get} /user/:id/log 04) Get Logs
- * @apiGroup User
- * @apiName getLogs
- * @apiVersion 1.0.0
- * @apiUse auth
- * @apiHeader Authorization="< token >"
- * @apiPermission admin
- * @apiSuccessExample {json} Response example:
-    {
-        "logs": [
-            {
-                "datetime": "2018-06-18T15:40:14.742Z",
-                "message": "logged in",
-                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
-                "id": "5b27d25e176a610eafa34a43"
-            },
-            {
-                "datetime": "2018-06-18T15:40:14.789Z",
-                "message": "logged in",
-                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
-                "id": "5b27d25e176a610eafa34a44"
-            },
-            {
-                "datetime": "2018-06-18T15:40:14.792Z",
-                "message": "logged in",
-                "user_id": "1c64c510-4e17-46f8-bc97-c968d6b2e09b",
-                "id": "5b27d25e176a610eafa34a45"
-            }
-        ]
-    }
- */
-exports.getLogs = (req, res) => {
-    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.log.getByUser(req.params.id).then(
-            logs => {
-                logs.forEach(x => {
-                    x.toJSON();
-                    x.message = req.t(x.message);
-                });
-                res.status(200).json({ logs: logs });
-            },
-            error => res.status(error.code).send(error.msg));
-    } else { res.status(401).send(req.t("unauthorized")); }
-}
-
-/**
- * @api {get} /warning/:page 5) Get warning
- * @apiGroup User
- * @apiName getWarnings
- * @apiDescription get warnings from page
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission user
- * @apiParam {string} :page warnings page
- * @apiSuccessExample {json} Response example:
- * {
-    "warnings": [
-        {
-            "datetime": "2018-07-16T13:36:23.149Z",
-            "message": "o valor de humidade do(a) Quarto está acima do recomendado",
-            "sensor_id": "0e35251f-dd9c-4928-9b8d-a94a44f22770",
-            "patient_id": null,
-            "seen_vitabox": null
-        }]
+ *  "requests": [
+ *      {"created_at": "2018-07-23T05:15:27.000Z", "patient_id": "a6abfa76-68f0-4325-b3ab-6c540a800284", "patient":"José Manuel"}
+ *  ]
  * }
  */
-/**
- * @api {get} /warning 6) Get warning to Vitabox
- * @apiGroup User
- * @apiName getWarnings
- * @apiDescription get all unseen warnings from vitabox
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission vitabox
- * @apiSuccessExample {json} Response example:
- * {
-    "warnings": [
-        {
-            "datetime": "2018-07-16T13:36:23.149Z",
-            "message": "o valor de humidade do(a) Quarto está acima do recomendado",
-            "sensor_id": "0e35251f-dd9c-4928-9b8d-a94a44f22770",
-            "patient_id": null,
-            "seen_vitabox": null
-        }]
- * }
- */
-exports.getWarnings = (req, res) => {
-    if (req.client) {
-        if (req.client.constructor.name === "Vitabox") business.warning.getFromVitabox(req.client.id).then(
-            data => res.status(200).json({
-                warnings: data.map(x => {
-                    return {
-                        "id": x._id,
-                        "datetime": x.datetime,
-                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-                        "sensor_id": x.sensor_id,
-                        "patient_id": x.patient_id,
-                        "seen_vitabox": x.seen_vitabox,
-                    }
-                })
-            }), error => res.status(error.code).send(error.msg));
-        else if (req.client.doctor) business.warning.getFromDoctor(req.params.page ? req.params.page : 1, req.client).then(
-            data => res.status(200).json({
-                warnings: data.map(x => {
-                    return {
-                        "id": x._id,
-                        "datetime": x.datetime,
-                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-                        "sensor_id": x.sensor_id,
-                        "patient_id": x.patient_id,
-                        "seen_vitabox": x.seen_vitabox,
-                    }
-                })
-            }), error => res.status(error.code).send(error.msg));
-        else business.warning.getFromUser(req.params.page ? req.params.page : 1, req.client).then(
-            data => res.status(200).json({
-                warnings: data.map(x => {
-                    return {
-                        "id": x._id,
-                        "datetime": x.datetime,
-                        "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-                        "sensor_id": x.sensor_id,
-                        "patient_id": x.patient_id,
-                        "seen_vitabox": x.seen_vitabox,
-                    }
-                })
-            }), error => res.status(error.code).send(error.msg));
-    } else res.status(401).send(req.t("unauthorized"));
-}
-
-/**
- * @api {put} /warning 7) Check warning
- * @apiGroup User
- * @apiName getWarnings
- * @apiDescription check all warnings, or a single warning by vitabox
- * @apiVersion 1.0.0
- * @apiUse box
- * 
- * @apiPermission vitabox, vitabox user, admin
- * @apiParam {string} :warning_id (only to vitabox) warning unique ID
- * @apiSuccess {boolean} result return true if was sucessfuly checked
- */
-exports.checkWarnings = (req, res) => {
-    if (req.client && req.client.constructor.name === "Vitabox") {
-        if (req.body.warning_id) business.warning.checkWarningByVitabox(req.body.warning_id, req.client.id).then(
-            () => res.status(200).json({ result: true }),
+exports.getRequests = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
+        business.doctor.listDoctorRequests(req.client.id).then(
+            requests => res.status(200).json({ requests: requests }),
             error => res.status(error.code).send(error.msg));
-        else res.status(500).send("warning id undifined");
-    } else if (req.client) business.warning.checkWarningByUser(req.client).then(
-        () => res.status(200).json({ result: true }),
-        error => res.status(error.code).send(error.msg));
-    else res.status(401).send(req.t("unauthorized"));
+    } else { res.status(401).send(req.t("unauthorized")); }
 }

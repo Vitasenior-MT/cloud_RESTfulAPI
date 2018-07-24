@@ -103,19 +103,13 @@ exports.disable = (board_id) => {
   });
 }
 
-exports.addPatient = (current_user, board, patient_id) => {
+exports.addPatient = (board, patient_id) => {
   return new Promise((resolve, reject) => {
     board.hasPatient(patient_id).then(
       success => {
-        if (!success) if (current_user.admin)
-          board.addPatient(patient_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message }));
-        else vitabox.verifySponsor(current_user, board.vitabox_id).then(
-          () => board.addPatient(patient_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message })),
-          error => reject(error));
+        if (!success) board.addPatient(patient_id).then(
+          () => resolve(),
+          error => reject({ code: 500, msg: error.message }));
         else reject({ code: 500, msg: "board already registered to patient" });
       });
   });
@@ -158,20 +152,6 @@ exports.getPatients = (current_user, board_id) => {
           error => reject(error));
         else reject({ code: 500, msg: "Board not found" });
       }, error => reject({ code: 500, msg: error.message }));
-  });
-}
-
-exports.removePatient = (current_user, board, patient_id) => {
-  return new Promise((resolve, reject) => {
-    if (current_user.admin)
-      board.removePatient(patient_id).then(
-        () => resolve(),
-        error => reject({ code: 500, msg: error.message }));
-    else vitabox.verifySponsor(current_user, board.vitabox_id).then(
-      () => board.removePatient(patient_id).then(
-        () => resolve(),
-        error => reject({ code: 500, msg: error.message })),
-      error => reject(error));
   });
 }
 

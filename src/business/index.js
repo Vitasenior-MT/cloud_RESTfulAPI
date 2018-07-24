@@ -12,5 +12,6 @@ module.exports.v1_0_0 = {
     'user': require('./v1.0.0/user'),
     'utils': require('./v1.0.0/utils'),
     'vitabox': require('./v1.0.0/vitabox'),
-    'warning': require('./v1.0.0/warning')
+    'warning': require('./v1.0.0/warning'),
+    'doctor': require('./v1.0.0/doctor')
 };

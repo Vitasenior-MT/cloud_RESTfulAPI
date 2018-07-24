@@ -55,9 +55,9 @@ exports.requestToken = (vitabox_id, password) => {
   });
 }
 
-exports.list = (current_user) => {
+exports.list = (current_user, own) => {
   return new Promise((resolve, reject) => {
-    if (current_user.admin)
+    if (current_user.admin && !own)
       db.Vitabox.findAll({ attributes: { exclude: ['password'] }, where: { registered: true } }).then(
         list => {
           list.forEach(element => element.address = utils.decrypt(element.address));
@@ -75,28 +75,13 @@ exports.list = (current_user) => {
   });
 }
 
-exports.find = (current_user, vitabox_id) => {
+exports.find = (vitabox_id) => {
   return new Promise((resolve, reject) => {
-    if (current_user.admin)
-      db.Vitabox.findById(vitabox_id, { attributes: { exclude: ['password'] } }).then(
-        vitabox => {
-          if (vitabox) {
-            vitabox.address = utils.decrypt(vitabox.address);
-            resolve(vitabox);
-          }
-          else reject({ code: 500, msg: "Vitabox not found" });
-        }, error => reject({ code: 500, msg: error.message }));
-    else current_user.getVitaboxes({
-      attributes: ['id', 'latitude', 'longitude', 'address', 'active'],
-      where: { id: vitabox_id }
-    }).then(vitabox => {
-      if (vitabox.length > 0) {
-        vitabox[0].address = utils.decrypt(vitabox[0].address);
-        vitabox[0].dataValues.sponsor = vitabox[0].UserVitabox.sponsor;
-        delete vitabox[0].dataValues.UserVitabox;
-        resolve(vitabox[0]);
-      } else reject({ code: 500, msg: "Vitabox not found" });
-    }, error => reject({ code: 500, msg: error.message }));
+    db.Vitabox.findById(vitabox_id, { attributes: { exclude: ['password'] } }).then(
+      vitabox => {
+        if (vitabox) resolve(vitabox);
+        else reject({ code: 500, msg: "Vitabox not found" });
+      }, error => reject({ code: 500, msg: error.message }));
   });
 }
 
@@ -154,40 +139,9 @@ exports.addUser = (current_user, vitabox_id, user_id, is_sponsor) => {
   });
 }
 
-exports.getUsers = (is_user, client, vitabox_id) => {
+exports.getUsers = (vitabox) => {
   return new Promise((resolve, reject) => {
-    if (is_user) db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) if (client.admin)
-          vitabox.getUsers({ attributes: ['id', 'email', 'name'] }).then(
-            users => {
-              users.forEach(user => {
-                user.email = utils.decrypt(user.email);
-                user.name = utils.decrypt(user.name);
-                user.dataValues.since = user.dataValues.UserVitabox.dataValues.created_at;
-                user.dataValues.sponsor = user.dataValues.UserVitabox.dataValues.sponsor;
-                delete user.dataValues.UserVitabox;
-              });
-              resolve(users);
-            },
-            error => reject({ code: 500, msg: error.message }));
-        else _isUser(vitabox, client).then(
-          () => vitabox.getUsers({ attributes: ['id', 'email', 'name'] }).then(
-            users => {
-              users.forEach(user => {
-                user.email = utils.decrypt(user.email);
-                user.name = utils.decrypt(user.name);
-                user.dataValues.since = user.dataValues.UserVitabox.dataValues.created_at;
-                user.dataValues.sponsor = user.dataValues.UserVitabox.dataValues.sponsor;
-                delete user.dataValues.UserVitabox;
-              });
-              resolve(users);
-            },
-            error => reject({ code: 500, msg: error.message })),
-          error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message }));
-    else client.getUsers({ attributes: ['id', 'email', 'name'] }).then(
+    vitabox.getUsers({ attributes: ['id', 'email', 'name'] }).then(
       users => {
         users.forEach(user => {
           user.email = utils.decrypt(user.email);
@@ -197,7 +151,8 @@ exports.getUsers = (is_user, client, vitabox_id) => {
           delete user.dataValues.UserVitabox;
         });
         resolve(users);
-      }, error => reject({ code: 500, msg: error.message }));
+      },
+      error => reject({ code: 500, msg: error.message }));
   });
 }
 
@@ -241,51 +196,13 @@ exports.addPatient = (current_user, vitabox_id, patient_id) => {
   });
 }
 
-exports.getPatients = (is_user, client, vitabox_id) => {
+exports.getPatients = (vitabox, where_condiction) => {
   return new Promise((resolve, reject) => {
-    if (is_user) if (client.admin)
-      db.Patient.findAll({ where: { vitabox_id: vitabox_id }, attributes: ['id', 'birthdate', 'active', 'name', 'gender', ['created_at', 'since'], 'weight', 'height'] }).then(
-        patients => {
-          patients.forEach(patient => patient.name = utils.decrypt(patient.name));
-          resolve(patients);
-        }, error => reject({ code: 500, msg: error.message }));
-    else db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) _isUser(vitabox, client).then(
-          () => vitabox.getPatients({
-            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height'],
-            include: [{
-              model: db.Board, attributes: ['id', 'mac_addr'],
-              include: [
-                { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
-                {
-                  model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
-                  include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
-                }]
-            },
-            { model: db.Profile },
-            { model: db.User, as: 'Doctors', attributes: ['id', 'name', "email"] }],
-          }).then(
-            patients => {
-              patients.forEach(patient => {
-                patient.name = utils.decrypt(patient.name);
-                patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
-                patient.Doctors.forEach(user => {
-                  user.name = utils.decrypt(user.name);
-                  user.email = utils.decrypt(user.email);
-                  user.dataValues.since = user.DoctorPatient.created_at;
-                  delete user.dataValues.DoctorPatient;
-                });
-              });
-              resolve(patients);
-            }, error => reject({ code: 500, msg: error.message })),
-          error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message }));
-    else client.getPatients({
-      where: { active: true }, attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'weight', 'height'],
+    vitabox.getPatients({
+      where: where_condiction,
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height'],
       include: [{
-        model: db.Board, attributes: ['id', 'description', 'mac_addr'],
+        model: db.Board, attributes: ['id', 'mac_addr'],
         include: [
           { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
           {
@@ -293,33 +210,22 @@ exports.getPatients = (is_user, client, vitabox_id) => {
             include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
           }]
       },
-      { model: db.Profile }],
+      { model: db.Profile },
+      { model: db.User, as: 'Doctors', attributes: ['id', 'name', "email"] }],
     }).then(
       patients => {
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
           patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
+          patient.Doctors.forEach(user => {
+            user.name = utils.decrypt(user.name);
+            user.email = utils.decrypt(user.email);
+            user.dataValues.since = user.DoctorPatient.created_at;
+            user.dataValues.accepted = user.DoctorPatient.accepted;
+            delete user.dataValues.DoctorPatient;
+          });
         });
         resolve(patients);
-      }, error => reject({ code: 500, msg: error.message }));
-  });
-}
-
-exports.removePatient = (current_user, vitabox_id, patient_id) => {
-  return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) if (current_user.admin)
-          vitabox.removePatient(patient_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message }));
-        else _isSponsor(vitabox, current_user).then(
-          () => {
-            vitabox.removePatient(patient_id).then(
-              () => resolve(),
-              error => reject({ code: 500, msg: error.message }));
-          }, error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
   });
 }
@@ -343,34 +249,10 @@ exports.addBoard = (current_user, vitabox_id, board_id) => {
   });
 }
 
-exports.getBoards = (is_user, client, vitabox_id) => {
+exports.getBoards = (vitabox, where_condiction) => {
   return new Promise((resolve, reject) => {
-    if (is_user) if (client.admin)
-      db.Board.findAll({
-        where: { vitabox_id: vitabox_id }, attributes: ['id', 'description', 'mac_addr', 'active', 'updated_at'],
-        include: [{ model: db.Boardmodel, attributes: ['id', 'type', 'name'] }]
-      }).then(
-        boards => resolve(boards),
-        error => reject({ code: 500, msg: error.message }));
-    else db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) _isUser(vitabox, client).then(
-          () => vitabox.getBoards({
-            attributes: ['id', 'description', 'mac_addr', 'updated_at', 'active'],
-            include: [
-              { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
-              {
-                model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'], include:
-                  [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
-              }]
-          }).then(
-            boards => resolve(boards),
-            error => reject({ code: 500, msg: error.message })),
-          error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message }));
-    else client.getBoards({
-      where: { active: true }, attributes: ['id', 'description', 'mac_addr', 'node_id', 'updated_at'],
+    vitabox.getBoards({
+      where: where_condiction, attributes: ['id', 'description', 'mac_addr', 'node_id', 'updated_at', 'active'],
       include: [
         { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
         {
@@ -380,25 +262,6 @@ exports.getBoards = (is_user, client, vitabox_id) => {
     }).then(
       boards => resolve(boards),
       error => reject({ code: 500, msg: error.message }));
-  });
-}
-
-exports.removeBoard = (current_user, vitabox_id, board_id) => {
-  return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) if (current_user.admin)
-          vitabox.removeBoard(board_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message }));
-        else _isSponsor(vitabox, current_user).then(
-          () => {
-            vitabox.removeBoard(board_id).then(
-              () => resolve(),
-              error => reject({ code: 500, msg: error.message }));
-          }, error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message }));
   });
 }
 
@@ -414,15 +277,11 @@ exports.verifySponsor = (current_user, vitabox_id) => {
   });
 }
 
-exports.verifyUser = (current_user, vitabox_id) => {
+exports.verifyUser = (current_user, vitabox) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) _isUser(vitabox, current_user).then(
-          () => resolve(),
-          error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message }));
+    _isUser(vitabox, current_user).then(
+      () => resolve(),
+      error => reject(error));
   });
 }
 

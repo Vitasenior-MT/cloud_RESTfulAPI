@@ -88,13 +88,11 @@ exports.listFromPage = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.sensor.find(req.params.id).then(
             sensor => {
-                if (sensor.Board.Vitabox) sensor.Board.Vitabox.hasUser(req.client).then(
-                    success => {
-                        if (success) business.record.listFromPage(req.params.id, req.params.page).then(
-                            data => res.status(200).json({ records: data }),
-                            error => res.status(error.code).send(error.msg));
-                        else res.status(401).send(req.t("unauthorized"));
-                    }, error => res.status(500).send(error.message));
+                if (sensor.Board.Vitabox) business.vitabox.verifyUser(req.client, sensor.Board.Vitabox).then(
+                    () => business.record.listFromPage(req.params.id, req.params.page).then(
+                        data => res.status(200).json({ records: data }),
+                        error => res.status(error.code).send(error.msg)),
+                    error => res.status(error.code).send(error.msg));
                 else res.status(500).send("This board doesn't belong to the vitabox");
             }, error => res.status(error.code).send(error.msg));
     } else res.status(401).send(req.t("unauthorized"));
@@ -142,20 +140,21 @@ exports.listFromPageByPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.sensor.find(req.params.sid).then(
             sensor => {
-                if (sensor.Board.Vitabox) if (sensor.Board.Patients.filter(x => x.id === req.params.pid).length > 0) {
-                    sensor.Board.Vitabox.hasUser(req.client).then(
-                        success => {
-                            if (success) business.record.listFromPageByPatient(req.params.sid, req.params.pid, req.params.page).then(
-                                data => res.status(200).json({ records: data }),
-                                error => res.status(error.code).send(error.msg));
-                            else if (req.client.doctor) business.patient.verifyDoctor(req.client, req.params.pid).then(
+                if (sensor.Board.Vitabox) if (sensor.Board.Patients.filter(x => x.id === req.params.pid).length > 0)
+                    business.vitabox.verifyUser(req.client, sensor.Board.Vitabox).then(
+                        () => business.record.listFromPageByPatient(req.params.sid, req.params.pid, req.params.page).then(
+                            data => res.status(200).json({ records: data }),
+                            error => res.status(error.code).send(error.msg)),
+                        error => {
+                            console.log("não autorizado", error);
+                            if (req.client.doctor) business.patient.verifyDoctor(req.client, req.params.pid).then(
                                 () => business.record.listFromPageByPatient(req.params.sid, req.params.pid, req.params.page).then(
                                     data => res.status(200).json({ records: data }),
                                     error => res.status(error.code).send(error.msg)),
-                                err => res.status(401).send(req.t("unauthorized")));
-                            else res.status(401).send(req.t("unauthorized"));
-                        }, error => res.status(500).send(error.message))
-                } else res.status(500).send("This sensor doesn't belong to the patient");
+                                error => res.status(error.code).send(error.msg));
+                            else res.status(error.code).send(error.msg);
+                        });
+                else res.status(500).send("This sensor doesn't belong to the patient");
                 else res.status(500).send("This sensor doesn't belong to any vitabox");
             }, error => res.status(error.code).send(error.msg));
     } else res.status(401).send(req.t("unauthorized"));
@@ -203,13 +202,11 @@ exports.listBetweenDates = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.sensor.find(req.params.id).then(
             sensor => {
-                if (sensor.Board.Vitabox) sensor.Board.Vitabox.hasUser(req.client).then(
-                    success => {
-                        if (success) business.record.listBetweenDates(req.params.id, req.params.sdate, req.params.edate).then(
-                            data => res.status(200).json({ records: data }),
-                            error => res.status(error.code).send(error.msg));
-                        else res.status(401).send(req.t("unauthorized"));
-                    }, error => res.status(500).send(error.message));
+                if (sensor.Board.Vitabox) business.vitabox.verifyUser(req.client, sensor.Board.Vitabox).then(
+                    () => business.record.listBetweenDates(req.params.id, req.params.sdate, req.params.edate).then(
+                        data => res.status(200).json({ records: data }),
+                        error => res.status(error.code).send(error.msg)),
+                    error => res.status(500).send(error.message));
                 else res.status(500).send("This board doesn't belong to the vitabox");
             }, error => res.status(error.code).send(error.msg));
     } else res.status(401).send(req.t("unauthorized"));
@@ -258,20 +255,20 @@ exports.listBetweenDatesByPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.sensor.find(req.params.sid).then(
             sensor => {
-                if (sensor.Board.Vitabox) if (sensor.Board.Patients.filter(x => x.id === req.params.pid).length > 0) {
-                    sensor.Board.Vitabox.hasUser(req.client).then(
-                        success => {
-                            if (success) business.record.listBetweenDatesByPatient(req.params.sid, req.params.pid, req.params.sdate, req.params.edate).then(
-                                data => res.status(200).json({ records: data }),
-                                error => res.status(error.code).send(error.msg));
-                            else if (req.client.doctor) business.patient.verifyDoctor(req.client, req.params.pid).then(
+                if (sensor.Board.Vitabox) if (sensor.Board.Patients.filter(x => x.id === req.params.pid).length > 0)
+                    business.vitabox.verifyUser(req.client, sensor.Board.Vitabox).then(
+                        () => business.record.listBetweenDatesByPatient(req.params.sid, req.params.pid, req.params.sdate, req.params.edate).then(
+                            data => res.status(200).json({ records: data }),
+                            error => res.status(error.code).send(error.msg)),
+                        error => {
+                            if (req.client.doctor) business.patient.verifyDoctor(req.client, req.params.pid).then(
                                 () => business.record.listBetweenDatesByPatient(req.params.sid, req.params.pid, req.params.sdate, req.params.edate).then(
                                     data => res.status(200).json({ records: data }),
                                     error => res.status(error.code).send(error.msg)),
                                 err => res.status(401).send(req.t("unauthorized")));
-                            else res.status(401).send(req.t("unauthorized"));
-                        }, error => res.status(500).send(error.message))
-                } else res.status(500).send("This sensor doesn't belong to the patient");
+                            else res.status(error.code).send(error.msg);
+                        });
+                else res.status(500).send("This sensor doesn't belong to the patient");
                 else res.status(500).send("This sensor doesn't belong to any vitabox");
             }, error => res.status(error.code).send(error.msg));
     } else res.status(401).send(req.t("unauthorized"));

@@ -1863,7 +1863,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/error/:id",
-    "title": "03) Check",
+    "title": "02) Check",
     "group": "Error",
     "name": "checkError",
     "description": "<p>get all warnings from vitabox</p>",
@@ -1958,90 +1958,11 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/error/all",
-    "title": "01) List all",
+    "url": "/error/:page",
+    "title": "01) List",
     "group": "Error",
     "name": "listAllErrors",
     "description": "<p>get all errors</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "admin"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{\n \"errors\":[]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/error.js",
-    "groupTitle": "Error",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
-    "url": "v",
-    "title": "02) List unseen",
-    "group": "Error",
-    "name": "listUnseenErrors",
-    "description": "<p>get unseen errors</p>",
     "version": "1.0.0",
     "permission": [
       {
@@ -2158,9 +2079,119 @@ define({ "api": [
     "groupTitle": "Files"
   },
   {
+    "type": "put",
+    "url": "/patient/:id/doctor",
+    "title": "04) Accept as Doctor",
+    "group": "Patient",
+    "name": "acceptAsDoctor",
+    "description": "<p>doctor accept patient</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": false,
+            "field": "accept",
+            "description": "<p>flag indicating if accept patient</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"accept\": true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return true if was sucessfuly removed</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "post",
     "url": "/patient/:id/doctor",
-    "title": "02) Add Doctor",
+    "title": "03) Add Doctor",
     "group": "Patient",
     "name": "addDoctor",
     "description": "<p>add doctor to a specific patient if the requester is sponsor of him.</p>",
@@ -2266,7 +2297,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/patient/:id/board",
-    "title": "05) Get Boards",
+    "title": "06) Get Boards",
     "group": "Patient",
     "name": "getBoardsFromPatient",
     "description": "<p>Get boards from a patient</p>",
@@ -2343,140 +2374,9 @@ define({ "api": [
     }
   },
   {
-    "type": "get",
-    "url": "/patient/:id/doctor",
-    "title": "03) Get Doctors",
-    "group": "Patient",
-    "name": "getDoctors",
-    "description": "<p>get doctors list from a patient if the requester is sponsor of him.</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "vitabox user"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":id",
-            "description": "<p>patient unique ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "array",
-            "optional": false,
-            "field": "doctors",
-            "description": "<p>patient doctors list</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "id",
-            "description": "<p>id of each user</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "email",
-            "description": "<p>email of each user</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "name",
-            "description": "<p>name of each user</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "datetime",
-            "optional": false,
-            "field": "since",
-            "description": "<p>relationship date with the patient</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{\n \"doctors\": [\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"email\": \"donaldtrump@usa.com\",\n         \"name\": \"Donald Trump\",\n         \"since\": \"2018-02-19T14:41:13.000Z\"\n     },\n     {\n         \"id\": \"78007a69-baa2-4b24-b936-234883811b6a\",\n         \"email\": \"queenelizabeth@majesty.uk\",\n         \"name\": \"Queen Elizabeth\",\n         \"since\": \"2018-02-19T14:40:14.000Z\"\n     }\n ]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/patient.js",
-    "groupTitle": "Patient",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "delete",
     "url": "/patient/:id/doctor",
-    "title": "04) Remove Doctor",
+    "title": "05) Remove Doctor",
     "group": "Patient",
     "name": "removeDoctor",
     "description": "<p>remove doctor from a patient if the requester is sponsor of him.</p>",
@@ -2585,8 +2485,125 @@ define({ "api": [
   },
   {
     "type": "put",
+    "url": "patient/:id/biometric",
+    "title": "01) Update Biomatric Data",
+    "group": "Patient",
+    "name": "updateProfilesToPatient",
+    "description": "<p>update height and weight from patient.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "doctor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "height",
+            "description": "<p>patient height</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "weight",
+            "description": "<p>patient weight</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"height\": 1.72,\n     \"weight\": 78.2\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
     "url": "patient/:paid/profile/:prid",
-    "title": "01) Update profile",
+    "title": "02) Update profile",
     "group": "Patient",
     "name": "updateProfilesToPatient",
     "description": "<p>update profile from patient.</p>",
@@ -4628,7 +4645,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/user/:id/log",
-    "title": "04) Get Logs",
+    "title": "03) Get Logs",
     "group": "User",
     "name": "getLogs",
     "version": "1.0.0",
@@ -4705,8 +4722,8 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/doctor",
-    "title": "02) Get patients",
+    "url": "/doctor/patient",
+    "title": "04) Get patients",
     "group": "User",
     "name": "getPatientsAsDoctor",
     "version": "1.0.0",
@@ -4783,6 +4800,84 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/doctor/request",
+    "title": "04) Get patient resquests",
+    "group": "User",
+    "name": "getPatientsAsDoctor",
+    "version": "1.0.0",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "permission": [
+      {
+        "name": "doctor"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"requests\": [\n     {\"created_at\": \"2018-07-23T05:15:27.000Z\", \"patient_id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\", \"patient\":\"José Manuel\"}\n ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "User",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
     "url": "/warning",
     "title": "6) Get warning to Vitabox",
     "group": "User",
@@ -4803,7 +4898,99 @@ define({ "api": [
         }
       ]
     },
-    "filename": "src/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/warning.js",
+    "groupTitle": "User",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/warning/:page",
+    "title": "5) Get warning",
+    "group": "User",
+    "name": "getWarnings",
+    "description": "<p>get warnings from page</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":page",
+            "description": "<p>warnings page</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null\n        }]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/warning.js",
     "groupTitle": "User",
     "header": {
       "fields": {
@@ -4899,7 +5086,7 @@ define({ "api": [
         ]
       }
     },
-    "filename": "src/controllers/v1.0.0/user.js",
+    "filename": "src/controllers/v1.0.0/warning.js",
     "groupTitle": "User",
     "header": {
       "fields": {
@@ -4958,100 +5145,8 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/warning/:page",
-    "title": "5) Get warning",
-    "group": "User",
-    "name": "getWarnings",
-    "description": "<p>get warnings from page</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "user"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":page",
-            "description": "<p>warnings page</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "Response example:",
-          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null\n        }]\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/user.js",
-    "groupTitle": "User",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
-    "url": "/user/",
-    "title": "03) List",
+    "url": "/user",
+    "title": "02) List",
     "group": "User",
     "name": "listUsers",
     "version": "1.0.0",
@@ -5219,7 +5314,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/vitabox/:id/board",
-    "title": "18) Add Board",
+    "title": "17) Add Board",
     "group": "Vitabox",
     "name": "addBoard",
     "description": "<p>add board to a specific vitabox if the requester is sponsor of it.</p>",
@@ -5343,14 +5438,14 @@ define({ "api": [
   {
     "type": "post",
     "url": "/vitabox/:id/patient",
-    "title": "13) Add Patient",
+    "title": "12) Add Patient",
     "group": "Vitabox",
     "name": "addPatient",
     "description": "<p>add patient to a specific vitabox if the requester is sponsor of it.</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "vitabox sponsor"
+        "name": "sponsor"
       }
     ],
     "parameter": {
@@ -5389,7 +5484,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"name\": \"José António\",\n     \"birthdate\": \"1987-02-28\",\n     \"gender\": \"male\",\n     \"height\": 1.72,\n     \"weight\": 78.2\n}",
+          "content": "{\n     \"name\": \"José António\",\n     \"birthdate\": \"1987-02-28\",\n     \"gender\": \"male\"\n}",
           "type": "json"
         }
       ]
@@ -5467,7 +5562,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/vitabox/:id/user",
-    "title": "10) Add User",
+    "title": "9) Add User",
     "group": "Vitabox",
     "name": "addUser",
     "description": "<p>add user to a specific vitabox if the requester is sponsor of it.</p>",
@@ -5674,7 +5769,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id",
-    "title": "09) Delete",
+    "title": "08) Delete",
     "group": "Vitabox",
     "name": "delete",
     "description": "<p>list all users related with the vitabox if the requester is related too.</p>",
@@ -5770,7 +5865,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id/board/disable",
-    "title": "20) Disable Board",
+    "title": "19) Disable Board",
     "group": "Vitabox",
     "name": "disableBoard",
     "description": "<p>disable board from a specific vitabox if the requester is sponsor of it.</p>",
@@ -5880,14 +5975,14 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id/patient/disable",
-    "title": "15) Disable Patient",
+    "title": "14) Disable Patient",
     "group": "Vitabox",
     "name": "disablePatient",
     "description": "<p>disable patient from a specific vitabox if the requester is sponsor of it.</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "vitabox sponsor"
+        "name": "sponsor"
       }
     ],
     "parameter": {
@@ -5990,7 +6085,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id/board/enable",
-    "title": "21) Enable Board",
+    "title": "20) Enable Board",
     "group": "Vitabox",
     "name": "enableBoard",
     "description": "<p>disable board from a specific vitabox if the requester is sponsor of it.</p>",
@@ -6100,14 +6195,14 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id/patient/enable",
-    "title": "16) Enable Patient",
+    "title": "15) Enable Patient",
     "group": "Vitabox",
     "name": "enablePatient",
     "description": "<p>enable patient from a specific vitabox if the requester is sponsor of it.</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "vitabox sponsor"
+        "name": "sponsor"
       }
     ],
     "parameter": {
@@ -6209,179 +6304,8 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/vitabox/:id",
-    "title": "05) Find",
-    "group": "Vitabox",
-    "name": "find",
-    "description": "<p>find a specific vitabox if the requester is related to it.</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "user"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":id",
-            "description": "<p>vitabox unique ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "id",
-            "description": "<p>vitabox unique ID</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "decimal",
-            "optional": false,
-            "field": "latitude",
-            "description": "<p>vitabox latitude, min: -90, max: 90 (based on google maps coordinates)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "decimal",
-            "optional": false,
-            "field": "longitude",
-            "description": "<p>vitabox longitude, min: -180, max: 180 (based on google maps coordinates)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "address",
-            "description": "<p>vitabox full address</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "sponsor",
-            "description": "<p>flag indicating if the requester is sponsor of that vitabox (only if NOT admin)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "json",
-            "optional": false,
-            "field": "settings",
-            "description": "<p>configuration's structure, defined by vitabox (only if admin)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "registered",
-            "description": "<p>flag indicating if the vitabox was already registered (only if admin)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "active",
-            "description": "<p>flag indicating if the vitabox was already activated (only if admin)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "datetime",
-            "optional": false,
-            "field": "created_at",
-            "description": "<p>date of production (only if admin)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "datetime",
-            "optional": false,
-            "field": "updated_at",
-            "description": "<p>date of last update (only if admin)</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Response example to common user:",
-          "content": "{\n \"vitabox\": {\n     \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"sponsor\": false\n }\n}",
-          "type": "json"
-        },
-        {
-          "title": "Response example to admin:",
-          "content": "{\n \"vitabox\": {\n     \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"settings\":{\n         \"cnfg1\": \"true\",\n         \"cnfg2\": \"12345\",\n         \"cnfg3\": \"some other config\"\n     },\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"created_at\": \"2018-02-19T11:38:32.000Z\",\n     \"updated_at\": \"2018-02-23T16:12:47.000Z\"\n }\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/controllers/v1.0.0/vitabox.js",
-    "groupTitle": "Vitabox",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "get",
     "url": "/vitabox/:id/board",
-    "title": "19) Get Boards",
+    "title": "18) Get Boards",
     "group": "Vitabox",
     "name": "getBoards",
     "description": "<p>get boards of specific vitabox if the requester is related to it.</p>",
@@ -6413,65 +6337,13 @@ define({ "api": [
             "optional": false,
             "field": "boards",
             "description": "<p>vitabox boards list</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "id",
-            "description": "<p>id of each board</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "description",
-            "description": "<p>description to identify the board</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "mac_addr",
-            "description": "<p>board MAC address</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "active",
-            "description": "<p>status of the board, only to admin, the other users will only receive boards with &quot;is_active=true&quot;</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "datetime",
-            "optional": false,
-            "field": "updated_at",
-            "description": "<p>last update time</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "json",
-            "optional": false,
-            "field": "BoardModel",
-            "description": "<p>model of each board, contains an id, type and name, the vitabox itself wiil receive the transdutors list of each model</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Response example to admin:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"983227e9-e1dc-410e-829d-1636627397ba\",\n         \"description\": \"kitchen\",\n         \"mac_addr\": \"00:19:B9:FB:E2:58\",\n         \"active\": false,\n         \"updated_at\": \"2018-02-22T15:25:50.000Z\",\n         \"Boardmodel\": {\n             \"id\": \"1920ed05-0a24-4611-b822-5da7a58ba8bb\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         }\n     }\n ]\n}",
-          "type": "json"
-        },
-        {
-          "title": "Response example to vitabox:",
-          "content": "{\n \"boards\": [\n     {\n         \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n         \"description\": \"kitchen\",\n         \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n         \"node_id\": \"60c8\",\n         \"updated_at\": \"2018-05-13T14:50:11.000Z\",\n         \"Boardmodel\": {\n             \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"tag\": null\n         },\n         \"Sensors\": [\n             {\n                 \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                 \"last_values\": [ 17, 16, 13, 16, 15 ],\n                 \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                 \"Sensormodel\": {\n                     \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"humidity\",\n                     \"unit\": \"%\",\n                     \"min_acceptable\": \"30.00000\",\n                     \"max_acceptable\": \"50.00000\",\n                     \"min_possible\": \"20.00000\",\n                     \"max_possible\": \"60.00000\".\n                     \"tag\": \"humid\",\n                     \"to_read\": \"temperature\"\n                 }\n             }\n         ]\n     }\n ]\n}",
-          "type": "json"
-        },
-        {
-          "title": "Response example to user:",
-          "content": "{\n  \"boards\": [\n     {\n         \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n         \"description\": \"kitchen\",\n         \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n         \"updated_at\": \"2018-05-13T14:50:11.000Z\",\n         \"active\": true,\n         \"Boardmodel\": {\n             \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\"\n         },\n         \"Sensors\": [\n             {\n                 \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                 \"last_values\": [ 17, 16, 13, 16, 15 ],\n                 \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                 \"Sensormodel\": {\n                     \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"humidity\",\n                     \"unit\": \"%\",\n                     \"min_acceptable\": \"30.00000\",\n                     \"max_acceptable\": \"50.00000\",\n                     \"min_possible\": \"20.00000\",\n                     \"max_possible\": \"60.00000\",\n                     \"to_read\": \"temperature\"\n                 }\n             }\n         ]\n     }\n ]\n}",
+          "title": "Response example:",
+          "content": "{\n  \"boards\": [\n     {\n         \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n         \"description\": \"kitchen\",\n         \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n         \"updated_at\": \"2018-05-13T14:50:11.000Z\",\n         \"active\": true,\n         \"node_id\": \"60c8\",\n         \"Boardmodel\": {\n             \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n             \"type\": \"environmental\",\n             \"name\": \"Zolertia RE-Mote\",\n             \"tag\": \"zolertiaremote\",\n         },\n         \"Sensors\": [\n             {\n                 \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                 \"last_values\": [ 17, 16, 13, 16, 15 ],\n                 \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                 \"Sensormodel\": {\n                     \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                     \"transducer\": \"dht22\",\n                     \"measure\": \"humidity\",\n                     \"unit\": \"%\",\n                     \"min_acceptable\": \"30.00000\",\n                     \"max_acceptable\": \"50.00000\",\n                     \"min_possible\": \"20.00000\",\n                     \"max_possible\": \"60.00000\",\n                     \"to_read\": \"temperature\",\n                     \"tag\": \"humi\"\n                 }\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -6536,7 +6408,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/vitabox/:id/patient",
-    "title": "14) Get Patients",
+    "title": "13) Get Patients",
     "group": "Vitabox",
     "name": "getPatients",
     "description": "<p>get patients of specific vitabox if the requester is related to it.</p>",
@@ -6568,58 +6440,13 @@ define({ "api": [
             "optional": false,
             "field": "patients",
             "description": "<p>vitabox patients list</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "id",
-            "description": "<p>id of each patient</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
-            "field": "birthdate",
-            "description": "<p>patient birthdate (date only)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "name",
-            "description": "<p>name of each patient</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "gender",
-            "description": "<p>patient gender (must be 'male', 'female' or 'undefined')</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "datetime",
-            "optional": false,
-            "field": "since",
-            "description": "<p>relationship date with the vitabox</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Response example to admin:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"active\": true,\n         \"since\": \"2018-02-19T14:55:59.000Z\"\n         \"weight\": 79.6,\n         \"height\": 1.74,\n ]\n}",
-          "type": "json"
-        },
-        {
-          "title": "Response example to vitabox:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"tag\": \"humi\",\n                             \"to_read\": \"temperature\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ]\n     }\n ]\n}",
-          "type": "json"
-        },
-        {
-          "title": "Response example to users:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ],\n         \"Doctors\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"name\": \"Julia Almeida\", email: \"jalme@a.aa\"}\n         ]\n     }\n ]\n}",
+          "title": "Response example:",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"measure\": \"body fat\", \"tag\": \"bodyfat\", \"min\": 19, \"max\": 25},\n             {\"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \"measure\": \"weight\", \"tag\": \"weight\", \"min\": 58, \"max\": 64}\n         ],\n         \"Doctors\":[\n             {\"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \"name\": \"Julia Almeida\", email: \"jalme@a.aa\"}\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -6684,7 +6511,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/vitabox/:id/settings",
-    "title": "06) Get Settings",
+    "title": "05) Get Settings",
     "group": "Vitabox",
     "name": "getSettings",
     "description": "<p>returns the vitabox settings</p>",
@@ -6774,7 +6601,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/vitabox/:id/user",
-    "title": "11) Get Users",
+    "title": "10) Get Users",
     "group": "Vitabox",
     "name": "getUsers",
     "description": "<p>get users of specific vitabox if the requester is related to it.</p>",
@@ -6904,7 +6731,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/vitabox",
+    "url": "/vitabox/:own",
     "title": "04) List",
     "group": "Vitabox",
     "name": "list",
@@ -6915,6 +6742,19 @@ define({ "api": [
         "name": "any user"
       }
     ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":mine",
+            "description": "<p>(admin) indicate if are listing their own vitaboxes</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "fields": {
         "Success 200": [
@@ -7070,7 +6910,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id/board",
-    "title": "22) Remove Board",
+    "title": "21) Remove Board",
     "group": "Vitabox",
     "name": "removeBoard",
     "description": "<p>remove a board from a specific vitabox if the requester is sponsor of it, all the board records will became unavailable to the users of the vitabox.</p>",
@@ -7180,7 +7020,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id/patient",
-    "title": "17) Remove Patient",
+    "title": "16) Remove Patient",
     "group": "Vitabox",
     "name": "removePatient",
     "description": "<p>remove a patient from a specific vitabox if the requester is sponsor of it, all the patient records will became unavailable to the users of the vitabox.</p>",
@@ -7290,7 +7130,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/vitabox/:id/user",
-    "title": "12) Remove User",
+    "title": "11) Remove User",
     "group": "Vitabox",
     "name": "removeUser",
     "description": "<p>remove user from a specific vitabox if the requester is sponsor of it.</p>",
@@ -7400,7 +7240,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id/settings",
-    "title": "07) Set Settings",
+    "title": "06) Set Settings",
     "group": "Vitabox",
     "name": "setSettings",
     "description": "<p>update vitabox settings</p>",
@@ -7503,7 +7343,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "/vitabox/:id",
-    "title": "08) Update",
+    "title": "07) Update",
     "group": "Vitabox",
     "name": "update",
     "description": "<p>update a specific vitabox if the requester is sponsor of it.</p>",
