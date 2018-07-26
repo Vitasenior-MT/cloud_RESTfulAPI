@@ -30,12 +30,6 @@ var business = require('../../business/index').v1_0_0,
  *  ]
  * }
  * @apiSuccess {boolean} result return true if was sucessfuly recorded
- * @apiSuccess {string} error return "" if all records were valid and a error message if some records has invalid parameters
- * @apiSuccessExample {json} Response example:
- * {
- *  "result":true,
- *  "error": "some records were discarded by invalid parameters: value, datetime, sensor_id and board_id are required"
- * }
  */
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "Vitabox") {
@@ -146,7 +140,6 @@ exports.listFromPageByPatient = (req, res) => {
                             data => res.status(200).json({ records: data }),
                             error => res.status(error.code).send(error.msg)),
                         error => {
-                            console.log("não autorizado", error);
                             if (req.client.doctor) business.patient.verifyDoctor(req.client, req.params.pid).then(
                                 () => business.record.listFromPageByPatient(req.params.sid, req.params.pid, req.params.page).then(
                                     data => res.status(200).json({ records: data }),

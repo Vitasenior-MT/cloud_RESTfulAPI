@@ -11,7 +11,24 @@ var business = require('../../business/index').v1_0_0;
  * @apiPermission admin
  * @apiSuccessExample {json} Response example:
  * {
- *  "errors":[]
+ *  "errors":[
+ *    {
+ *      "id": "0e35251fdd9c4928-9b8d",
+ *      "title": "Os valores do sensor estão fora dos limites possíveis",
+ *      "datetime": "2018-02-19T14:55:59.000Z",
+ *      "message": "",
+ *      "seen_date": "2018-02-19T15:13:23.000Z",
+ *      "seen_user":"Administrator Name"
+ *    },
+ *    {
+ *      "id": "0e35251fdd9c4928-9b8d",
+ *      "title": "Os valores do sensor estão fora dos limites possíveis",
+ *      "datetime": "2018-02-19T14:55:59.000Z",
+ *      "message": "",
+ *      "seen_date": null,
+ *      "seen_user": null
+ *    }
+ *  ]
  * }
  */
 exports.list = (req, res) => {

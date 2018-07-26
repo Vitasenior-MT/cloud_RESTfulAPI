@@ -59,7 +59,7 @@ module.exports.seed = (db) => {
                                       { "vitabox_id": vitaboxes[0].id, "boardmodel_id": board_models[0].id, "description": "Quarto", "mac_addr": "00:12:4b:00:06:0d:2f:26", "node_id": "2f26", password: encrypted.value[4], active: true },
                                       { "vitabox_id": vitaboxes[1].id, "boardmodel_id": board_models[5].id, "mac_addr": "8c:de:52:97:c0:35", "node_id": "c035", password: encrypted.value[4], active: true },
                                       { "vitabox_id": vitaboxes[0].id, "boardmodel_id": board_models[4].id, "mac_addr": "8c:de:52:97:b0:9b", "node_id": "b09b", password: encrypted.value[4], active: true },
-                                      { "vitabox_id": vitaboxes[0].id, "boardmodel_id": board_models[2].id, "mac_addr": "50:8c:b1:66:4c:4c", "node_id": "4c4c", password: encrypted.value[4], active: true },
+                                      { "vitabox_id": vitaboxes[0].id, "boardmodel_id": board_models[2].id, "mac_addr": "50:8c:b1:66:64:80", "node_id": "4c4c", password: encrypted.value[4], active: true },
                                       { "vitabox_id": vitaboxes[0].id, "boardmodel_id": board_models[5].id, "mac_addr": "a8:1b:6a:a8:f8:4d", "node_id": "f84d", password: encrypted.value[4], active: true },
                                       { "vitabox_id": vitaboxes[0].id, "boardmodel_id": board_models[3].id, "mac_addr": "00:a0:50:04:13:1e", "node_id": "131e", password: encrypted.value[4], active: true },
                                       { "vitabox_id": vitaboxes[0].id, "boardmodel_id": board_models[1].id, "description": "Miband do Mario", "mac_addr": "cd:8d:c0:93:b4:26", "node_id": "131e", password: encrypted.value[4], active: true },

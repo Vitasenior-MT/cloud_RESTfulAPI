@@ -14,7 +14,8 @@ exports.createIfNotExists = (attributes, vitabox_id) => {
                                 name: encrypted.value[0],
                                 birthdate: attributes.birthdate,
                                 gender: attributes.gender,
-                                vitabox_id: vitabox_id
+                                vitabox_id: vitabox_id,
+                                active: false
                             }).then(
                                 patient => resolve(patient),
                                 error => reject({ code: 500, msg: error.message })
@@ -41,7 +42,8 @@ exports.setBiometricData = (patient_id, attributes) => {
         db.Patient.findById(patient_id).then(
             patient => patient.update({
                 height: attributes.height,
-                weight: attributes.weight
+                weight: attributes.weight,
+                active: true
             }).then(
                 result => resolve(result),
                 error => reject({ code: 500, msg: error.message })),

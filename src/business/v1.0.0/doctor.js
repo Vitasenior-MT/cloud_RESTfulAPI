@@ -18,7 +18,7 @@ exports.setHasDoctor = (user) => {
 
 exports.listDoctorRequests = (doctor_id) => {
   return new Promise((resolve, reject) => {
-    db.DoctorPatient.find({ where: { user_id: doctor_id, accepted: false } }).then(
+    db.DoctorPatient.findAll({ where: { user_id: doctor_id, accepted: false } }).then(
       requests => {
         let promises = requests.map(request =>
           new Promise((resolve, reject) => db.Patient.findById(request.patient_id).then(
@@ -35,11 +35,22 @@ exports.listDoctorRequests = (doctor_id) => {
   })
 }
 
+exports.countDoctorRequests = (doctor_id) => {
+  return new Promise((resolve, reject) => {
+    db.DoctorPatient.count({ where: { user_id: doctor_id, accepted: false } }).then(
+      count => resolve(count),
+      error => reject({ code: 500, msg: error.message }));
+  })
+}
+
 exports.acceptAsDoctor = (doctor_id, patient_id, flag) => {
   return new Promise((resolve, reject) => {
     db.DoctorPatient.findOne({ where: { user_id: doctor_id, patient_id: patient_id } }).then(
       relation => {
-        if (relation) relation.update({ accepted: flag }).then(
+        if (relation) if (flag) relation.update({ accepted: true }).then(
+          () => resolve(),
+          error => reject({ code: 500, msg: error.message }));
+        else relation.destroy().then(
           () => resolve(),
           error => reject({ code: 500, msg: error.message }));
         else reject({ code: 500, msg: "request not found" });
@@ -50,7 +61,6 @@ exports.acceptAsDoctor = (doctor_id, patient_id, flag) => {
 exports.getPatients = (user) => {
   return new Promise((resolve, reject) => {
     user.getPatients({
-      through: { accepted: true },
       attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height'],
       include: [
         {
@@ -65,14 +75,24 @@ exports.getPatients = (user) => {
         { model: db.Profile },
         { model: db.Vitabox, attributes: ['id', 'latitude', 'longitude', 'address'] }
       ]
-    }).then(
+    }, { through: { accepted: true } }).then(
       patients => {
-        patients.forEach(patient => {
-          patient.name = utils.decrypt(patient.name);
-          patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
-          patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
-        });
-        resolve(patients);
+        // patients
+        //   .filter(patient => patient.DoctorPatient.accepted === true)
+        //   .map(patient => {
+        //     patient.name = utils.decrypt(patient.name);
+        //     patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
+        //     patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
+        //     return patient;
+        //   });
+        resolve(patients
+          .filter(patient => patient.DoctorPatient.accepted === true)
+          .map(patient => {
+            patient.name = utils.decrypt(patient.name);
+            patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
+            patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
+            return patient;
+          }));
       },
       error => reject({ code: 500, msg: error.message }));
   });

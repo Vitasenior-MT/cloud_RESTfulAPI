@@ -1,8 +1,8 @@
 var business = require('../../business/index').v1_0_0;
 
 /**
- * @api {get} /warning/:page 5) Get warning
- * @apiGroup User
+ * @api {get} /warning/:page 01) Get warning
+ * @apiGroup Warning
  * @apiName getWarnings
  * @apiDescription get warnings from page
  * @apiVersion 1.0.0
@@ -23,9 +23,9 @@ var business = require('../../business/index').v1_0_0;
  * }
  */
 /**
- * @api {get} /warning 6) Get warning to Vitabox
- * @apiGroup User
- * @apiName getWarnings
+ * @api {get} /warning 02) Get warning to Vitabox
+ * @apiGroup Warning
+ * @apiName getWarningsAsVitabox
  * @apiDescription get all unseen warnings from vitabox
  * @apiVersion 1.0.0
  * @apiUse box
@@ -88,9 +88,9 @@ exports.getWarnings = (req, res) => {
 }
 
 /**
-* @api {put} /warning 7) Check warning
-* @apiGroup User
-* @apiName getWarnings
+* @api {put} /warning 03) Check warning
+* @apiGroup Warning
+* @apiName checkWarnings
 * @apiDescription check all warnings, or a single warning by vitabox
 * @apiVersion 1.0.0
 * @apiUse box

@@ -40,8 +40,11 @@ module.exports = (app) => {
         .get('/doctor/patient', versioning({
             "1.0.0": controllers.v1_0_0.user.getPatients,
         }))
-        .get('/doctor/request', versioning({
+        .get('/doctor/request/list', versioning({
             "1.0.0": controllers.v1_0_0.user.getRequests,
+        }))
+        .get('/doctor/request/count', versioning({
+            "1.0.0": controllers.v1_0_0.user.getRequestsCount,
         }))
         /*________________________________________________
         *____________________ VITABOX_____________________

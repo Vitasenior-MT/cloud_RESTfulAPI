@@ -176,26 +176,6 @@ exports.removeUser = (current_user, vitabox_id, user_id) => {
   });
 }
 
-exports.addPatient = (current_user, vitabox_id, patient_id) => {
-  return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) if (current_user.admin)
-          vitabox.addPatient(patient_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message }));
-        else _isSponsor(vitabox, current_user).then(
-          () => {
-            vitabox.addPatient(patient_id).then(
-              () => resolve(),
-              error => reject({ code: 500, msg: error.message }));
-          }, error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message })
-    );
-  });
-}
-
 exports.getPatients = (vitabox, where_condiction) => {
   return new Promise((resolve, reject) => {
     vitabox.getPatients({
@@ -216,7 +196,10 @@ exports.getPatients = (vitabox, where_condiction) => {
       patients => {
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
-          patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
+          patient.Boards.forEach(board => {
+            board.dataValues.since = board.PatientBoard.created_at;
+            delete board.dataValues.PatientBoard;
+          });
           patient.Doctors.forEach(user => {
             user.name = utils.decrypt(user.name);
             user.email = utils.decrypt(user.email);

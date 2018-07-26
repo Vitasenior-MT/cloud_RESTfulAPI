@@ -320,7 +320,7 @@ exports.delete = (req, res) => {
 }
 
 /**
- * @api {post} /vitabox/:id/user 9) Add User
+ * @api {post} /vitabox/:id/user 09) Add User
  * @apiGroup Vitabox
  * @apiName addUser
  * @apiDescription add user to a specific vitabox if the requester is sponsor of it.
@@ -336,7 +336,11 @@ exports.delete = (req, res) => {
  *          "email": "user-example@some.thing",
  *          "sponsor": false
  *     }
- * @apiSuccess {boolean} result return true if was sucessfuly added
+ * @apiSuccessExample {json}Response example:
+ * {
+ *  "name": "User Name",
+ *  "id": "585402ef-68dd-44a4-a44b-04152e659d11"
+ * }
  */
 exports.addUser = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
@@ -344,7 +348,7 @@ exports.addUser = (req, res) => {
         business.user.findByEmail(req.body.email).then(
             user => business.vitabox.addUser(req.client, req.params.id, user.id, flag).then(
                 () => business.warning.setWarningCount(user.id, req.params.id).then(
-                    () => res.status(200).json({ result: true }),
+                    () => res.status(200).json({ name: user.name, id: user.id }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(500).send(error.msg));
@@ -497,6 +501,7 @@ exports.addPatient = (req, res) => {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
  *                  "description": "kitchen",
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
+ *                  "since": "2018-07-23T05:15:27.000Z",
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *                      "type": "environmental",
@@ -525,11 +530,27 @@ exports.addPatient = (req, res) => {
  *              }
  *          ],
  *          "Profiles":[
- *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25},
- *              {"id": "32443b5e-28cd-ab43-b86b-a423442401b8", "measure": "weight", "tag": "weight", "min": 58, "max": 64}
+ *              {
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
+ *                  "measure": "body fat", 
+ *                  "tag": "bodyfat", 
+ *                  "min": 19, 
+ *                  "max": 25
+ *              },
+ *              {
+ *                  "id": "32443b5e-28cd-ab43-b86b-a423442401b8", 
+ *                  "measure": "weight", 
+ *                  "tag": "weight", 
+ *                  "min": 58, 
+ *                  "max": 64
+ *              }
  *          ],
  *          "Doctors":[
- *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "name": "Julia Almeida", email: "jalme@a.aa"}
+ *              {
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
+ *                  "name": "Julia Almeida", 
+ *                  email: "jalme@a.aa"
+ *              }
  *          ]
  *      }
  *  ]

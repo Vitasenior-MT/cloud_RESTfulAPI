@@ -40,7 +40,30 @@ exports.create = (req, res) => {
  * @apiSuccess {string} name profile name
  * @apiSuccess {array} measures measures list of each profile
  * @apiSuccessExample {json} Response example:
- * {}
+ * {
+ * "profiles": [
+        {
+            "measures": [
+                {
+                    "min": 90,
+                    "max": 120,
+                    "tag": "pulse",
+                    "measure": "pulsação arterial",
+                    "id": "5b58452ca0b2a007d78f7974"
+                },
+                {
+                    "min": 95,
+                    "max": 100,
+                    "tag": "spo2",
+                    "measure": "oximetria do pulso",
+                    "id": "5b5845369e5e0807dc694fde"
+                }
+            ],
+            "name": "Diabetico",
+            "id": "5b5845209e5e0807dc694fdd"
+        }
+    ]
+ * }
  */
 exports.list = (req, res) => {
   if (req.client && req.client.constructor.name === "User") {

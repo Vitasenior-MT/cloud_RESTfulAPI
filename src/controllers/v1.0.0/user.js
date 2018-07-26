@@ -70,7 +70,8 @@ exports.register = (req, res) => {
  * @apiSuccess {boolean} is_admin flag indicating if is admin
  * @apiSuccess {boolean} is_doctor flag indicating if is doctor
  * @apiSuccess {string} photo user photo
- * @apiSuccess {number} warnings unseen warnings count
+ * @apiSuccess {number} warnings unseen warnings count,
+ * @apiSuccess {number} errors unseen errors count (if not admin always 0)
  * @apiSuccessExample {json} Response example:
  * {
  *      "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA",
@@ -80,7 +81,8 @@ exports.register = (req, res) => {
  *      "is_admin": true,
  *      "is_doctor": false,
  *      "photo": "8b2fe0d0-0311-494a-8e27-522407d21b0e44fe0662-1271-4f42-a764-eeb0ba87cd87a2d6f862-c7e9-43a1-8066-87f157da7147.jpeg",
- *      "warnings"_ 0
+ *      "warnings": 0,
+ *      "errors": 0
  * }
  */
 exports.login = (req, res) => {
@@ -332,8 +334,20 @@ exports.getLogs = (req, res) => {
  *              }
  *          ],
  *          "Profiles":[
- *              {"id": "950c8b5e-6f43-4686-b21b-a435e96401b7", "measure": "body fat", "tag": "bodyfat", "min": 19, "max": 25},
- *              {"id": "32443b5e-28cd-ab43-b86b-a423442401b8", "measure": "weight", "tag": "weight", "min": 58, "max": 64}
+ *              {
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
+ *                  "measure": "body fat", 
+ *                  "tag": "bodyfat", 
+ *                  "min": 19, 
+ *                  "max": 25
+ *              },
+ *              {
+ *                  "id": "32443b5e-28cd-ab43-b86b-a423442401b8", 
+ *                  "measure": "weight", 
+ *                  "tag": "weight", 
+ *                  "min": 58, 
+ *                  "max": 64
+ *              }
  *          ]
  *          "Vitabox": {
  *              "id": "a6abfa76-68f0-4325-b3ab-6c540a800284",
@@ -354,9 +368,30 @@ exports.getPatients = (req, res) => {
 }
 
 /**
- * @api {get} /doctor/request 04) Get patient resquests
+ * @api {get} /doctor/request/count 05) Count patient resquests
  * @apiGroup User
- * @apiName getPatientsAsDoctor
+ * @apiName getRequestsCountAsDoctor
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiHeader Authorization="< token >"
+ * @apiPermission doctor
+ * @apiSuccessExample {json} Response example:
+ * {
+ *  "count": 12
+ * }
+ */
+exports.getRequestsCount = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
+        business.doctor.countDoctorRequests(req.client.id).then(
+            count => res.status(200).json({ count: count }),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send(req.t("unauthorized")); }
+}
+
+/**
+ * @api {get} /doctor/request/list 06) Get patient resquests
+ * @apiGroup User
+ * @apiName getRequestsAsDoctor
  * @apiVersion 1.0.0
  * @apiUse auth
  * @apiHeader Authorization="< token >"
@@ -364,7 +399,11 @@ exports.getPatients = (req, res) => {
  * @apiSuccessExample {json} Response example:
  * {
  *  "requests": [
- *      {"created_at": "2018-07-23T05:15:27.000Z", "patient_id": "a6abfa76-68f0-4325-b3ab-6c540a800284", "patient":"José Manuel"}
+ *      {
+ *          "created_at": "2018-07-23T05:15:27.000Z", 
+ *          "patient_id": "a6abfa76-68f0-4325-b3ab-6c540a800284", 
+ *          "patient":"José Manuel"
+ *      }
  *  ]
  * }
  */
