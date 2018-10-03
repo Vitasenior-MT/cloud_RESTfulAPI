@@ -6,6 +6,7 @@
 	"cannot_remove_record": "Não foi possível remover os registos da board",
 	"cannot_find_sensor": "Não foi possível encontrar o sensor",
 	"cannot_update_sensor": "Não foi possível atualizar o sensor",
+	"cannot_update_board": "Não foi possível atualizar a board",
 	"cannot_find_board": "Não foi possível encontrar a board",
 	"warning_up_limit": "o valor de %s do(a) %s está acima do recomendado",
 	"warning_down_limit": "o valor de %s do(a) %s está abaixo do recomendado",
@@ -35,5 +36,11 @@
 	"monóxido de carbono": "monóxido de carbono",
 	"Quarto": "Quarto",
 	"humidade": "humidade",
-	"temperatura": "temperatura"
+	"temperatura": "temperatura",
+	"Cozinha": "Cozinha",
+	"Quarto old": "Quarto old",
+	"Sala old": "Sala old",
+	"dióxido de carbono": "dióxido de carbono",
+	"pressão arterial diastólica": "pressão arterial diastólica",
+	"José António": "José António"
 }

@@ -3,13 +3,22 @@ var amqp = require('amqplib/callback_api'),
 
 var uri = "";
 if (process.env.NODE_ENV === "production") {
-  uri = 'amqps://admin:EDWTTTFIPYYJTKHE@portal-ssl241-11.bmix-lon-yp-527bf6a8-196a-4434-bac2-20581b651b99.565374449.composedb.com:26654/bmix-lon-yp-527bf6a8-196a-4434-bac2-20581b651b99';
+  uri = '';
 } else {
   uri = 'amqp://root:123qwe@192.168.161.224:5672';
 }
 const parsedURI = url.parse(uri);
 
-var queues = ["insert_record", "remove_record", "log"];
+var queues = [
+  "insert_record",
+  "remove_record",
+  "log",
+  "update",
+  "remove_record_by_board",
+  "remove_record_by_patient",
+  "remove_record_by_sensors",
+  "remove_record_by_board_patient"
+];
 
 var channel, connection;
 
@@ -24,7 +33,9 @@ exports.connect = () => {
         channel = ch;
 
         queues.forEach(queue => channel.assertQueue(queue, { durable: true }));
-        resolve();
+        _connectToExchanges().then(
+          () => resolve(),
+          err => reject(err));
       });
 
     });
@@ -36,4 +47,29 @@ exports.getChannel = () => { return channel; }
 exports.disconnect = () => {
   channel.close();
   connection.close();
+}
+
+_connectToExchanges = () => {
+  return new Promise((resolve, reject) => {
+    require('../models/index').Vitabox.findAll().then(
+      list => {
+        let vitaboxes = list.map(x => x.id);
+        vitaboxes.push("admin");
+        Promise.all(vitaboxes.map(vitabox => _subscribeToVitabox(channel, vitabox))).then(
+          () => resolve(channel),
+          error => reject(error));
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+_subscribeToVitabox = (channel, vitabox) => {
+  return new Promise((resolve, reject) => {
+    channel.assertExchange(vitabox, 'fanout', { durable: true });
+    //setup a queue for receiving messages
+    channel.assertQueue('', { exclusive: true }, function (err, q) {
+      if (err) reject(err);
+      channel.bindQueue(q.queue, vitabox, '');
+      resolve();
+    });
+  });
 }

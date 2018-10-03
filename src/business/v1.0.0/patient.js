@@ -5,23 +5,29 @@ exports.createIfNotExists = (attributes, vitabox_id) => {
     return new Promise((resolve, reject) => {
         if (["male", "female", "undefined"].includes(attributes.gender))
             if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(attributes.name)) {
-                let encrypted = utils.encrypt([attributes.name.replace(/\b\w/g, l => l.toUpperCase())]);
-                if (!encrypted.error) {
-                    db.Patient.findOne({ where: { name: encrypted.value[0], birthdate: attributes.birthdate } }).then(
-                        patient => {
-                            if (patient) resolve(patient);
-                            else db.Patient.create({
-                                name: encrypted.value[0],
-                                birthdate: attributes.birthdate,
-                                gender: attributes.gender,
-                                vitabox_id: vitabox_id,
-                                active: false
-                            }).then(
-                                patient => resolve(patient),
-                                error => reject({ code: 500, msg: error.message })
-                            ), error => reject({ code: 500, msg: error.message })
-                        }, error => reject({ code: 500, msg: error.message }));
-                } else reject({ code: 500, msg: encrypted.error.message });
+                if (/[1256789]\d{8}$/.test(attributes.nif)) {
+                    if (/^[0-9]{8}([ -]*[0-9][ ]*[A-Z]{2}[0-9])*$/.test(attributes.cc)) {
+                        let encrypted = utils.encrypt([attributes.name.replace(/\b\w/g, l => l.toUpperCase()), attributes.cc, attributes.nif]);
+                        if (!encrypted.error) {
+                            db.Patient.findOne({ where: { name: encrypted.value[0], birthdate: attributes.birthdate } }).then(
+                                patient => {
+                                    if (patient) resolve(patient);
+                                    else db.Patient.create({
+                                        name: encrypted.value[0],
+                                        birthdate: attributes.birthdate,
+                                        gender: attributes.gender,
+                                        vitabox_id: vitabox_id,
+                                        active: false,
+                                        cc: encrypted.value[1],
+                                        nif: encrypted.value[2]
+                                    }).then(
+                                        patient => resolve(patient),
+                                        error => reject({ code: 500, msg: error.message })
+                                    ), error => reject({ code: 500, msg: error.message })
+                                }, error => reject({ code: 500, msg: error.message }));
+                        } else reject({ code: 500, msg: encrypted.error.message });
+                    } else reject({ code: 500, msg: "invalid cc" });
+                } else reject({ code: 500, msg: "invalid nif" });
             } else reject({ code: 500, msg: "invalid name" });
         else reject({ code: 500, msg: "invalid gender, must be 'male', 'female' or 'undefined'" });
     });
@@ -41,6 +47,7 @@ exports.setBiometricData = (patient_id, attributes) => {
     return new Promise((resolve, reject) => {
         db.Patient.findById(patient_id).then(
             patient => patient.update({
+                profile: attributes.profile,
                 height: attributes.height,
                 weight: attributes.weight,
                 active: true
@@ -119,6 +126,14 @@ exports.verifyDoctor = (current_user, patient_id) => {
                     error => reject(error));
                 else reject({ code: 500, msg: "Patient not found" });
             }, error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+exports.updatePhoto = (patient, filename) => {
+    return new Promise((resolve, reject) => {
+        patient.update({ photo: filename }).then(
+            () => resolve(),
+            error => reject({ code: 500, msg: error.message }));
     });
 }
 

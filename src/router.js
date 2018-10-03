@@ -157,6 +157,9 @@ module.exports = (app) => {
         .get('/board/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board.getSensorsFromBoard
         }))
+        .put('/board/:id', versioning({
+            "1.0.0": controllers.v1_0_0.board.exchange
+        }))
         /*________________________________________________
         *____________________PATIENT______________________
         *_________________________________________________*/
@@ -177,6 +180,12 @@ module.exports = (app) => {
         }))
         .delete('/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.removeDoctor
+        }))
+        .post('/patient/:id/photo', versioning({
+            "1.0.0": controllers.v1_0_0.patient.setPhoto
+        }))
+        .put('/patient/:id/exam', versioning({
+            "1.0.0": controllers.v1_0_0.patient.updateExamFrequency
         }))
         /*________________________________________________
         *__________________SENSOR MODEL___________________

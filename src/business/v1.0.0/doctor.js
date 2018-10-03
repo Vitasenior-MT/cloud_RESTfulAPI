@@ -61,7 +61,7 @@ exports.acceptAsDoctor = (doctor_id, patient_id, flag) => {
 exports.getPatients = (user) => {
   return new Promise((resolve, reject) => {
     user.getPatients({
-      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height'],
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif'],
       include: [
         {
           model: db.Board, attributes: ['id', 'mac_addr'],
@@ -77,20 +77,18 @@ exports.getPatients = (user) => {
       ]
     }, { through: { accepted: true } }).then(
       patients => {
-        // patients
-        //   .filter(patient => patient.DoctorPatient.accepted === true)
-        //   .map(patient => {
-        //     patient.name = utils.decrypt(patient.name);
-        //     patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
-        //     patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
-        //     return patient;
-        //   });
         resolve(patients
           .filter(patient => patient.DoctorPatient.accepted === true)
           .map(patient => {
             patient.name = utils.decrypt(patient.name);
+            patient.cc = utils.decrypt(patient.cc);
+            patient.nif = utils.decrypt(patient.nif);
             patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
-            patient.Boards.forEach(board => delete board.dataValues.PatientBoard);
+            patient.Boards.forEach(board => {
+              board.dataValues.since = board.PatientBoard.created_at;
+              board.dataValues.frequency = board.PatientBoard.frequency;
+              delete board.dataValues.PatientBoard
+            });
             return patient;
           }));
       },

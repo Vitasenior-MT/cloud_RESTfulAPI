@@ -1,4 +1,5 @@
-var business = require('../../business/index').v1_0_0;
+var business = require('../../business/index').v1_0_0,
+    worker = require('../../workers/index');
 
 /**
  * @api {post} /board 01) Create Board
@@ -37,8 +38,33 @@ exports.create = (req, res) => {
     } else { res.status(401).send("Unauthorized"); }
 }
 
+
 /**
- * @api {get} /board/:id 02) Get Board
+ * @api {put} /board/:id 02) Change MAC
+ * @apiGroup Board
+ * @apiName exchangeBoard
+ * @apiDescription alter MAC address to board exchange
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin
+ * @apiParam {string} id board id to exchange
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "mac_addr":"5d93585b-f511-4fa8-b69e-692c2474d5e8"
+ *     }
+ * @apiSuccess {booleam} result returns true if was successfuly updated
+ */
+exports.exchange = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        business.board.switchMac(req.params.id, req.body.mac_addr).then(
+            () => res.status(200).json({ result: true }),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send("Unauthorized"); }
+}
+
+/**
+ * @api {get} /board/:id 03) Get Board
  * @apiGroup Board
  * @apiName getBoardById
  * @apiDescription get Board
@@ -85,7 +111,7 @@ exports.getById = (req, res) => {
 }
 
 /**
- * @api {post} /board/:id/patient 03) Add Patient
+ * @api {post} /board/:id/patient 04) Add Patient
  * @apiGroup Board
  * @apiName addPatientToBoard
  * @apiDescription Associate a patient with a board
@@ -133,7 +159,7 @@ exports.addPatientToBoard = (req, res) => {
 }
 
 /**
- * @api {delete} /board/:id/patient 04) Remove Patient
+ * @api {delete} /board/:id/patient 05) Remove Patient
  * @apiGroup Board
  * @apiName removePatientFromBoard
  * @apiDescription Disassociate a patient from a board
@@ -154,13 +180,17 @@ exports.removePatientFromBoard = (req, res) => {
             board => {
                 if (req.client.admin) board.removePatient(req.body.patient_id).then(
                     () => Promise.all(board.Sensors.map(x => business.profile.remove(req.body.patient_id, x.Sensormodel.tag))).then(
-                        () => res.status(200).json({ result: true }),
+                        () => worker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
+                            () => res.status(200).json({ result: true }),
+                            error => res.status(error.code).send(error.msg)),
                         error => res.status(500).send("could not remove patient profile")),
                     error => res.status(500).send(error.message));
                 else business.vitabox.verifySponsor(req.client, board.vitabox_id).then(
                     () => board.removePatient(req.body.patient_id).then(
                         () => Promise.all(board.Sensors.map(x => business.profile.remove(req.body.patient_id, x.Sensormodel.tag))).then(
-                            () => res.status(200).json({ result: true }),
+                            () => worker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
+                                () => res.status(200).json({ result: true }),
+                                error => res.status(error.code).send(error.msg)),
                             error => res.status(500).send("could not remove patient profile")),
                         error => res.status(500).send(error.message)),
                     error => res.status(error.code).send(error.msg))
@@ -169,7 +199,7 @@ exports.removePatientFromBoard = (req, res) => {
 }
 
 /**
- * @api {get} /board/:id/sensor 05) Get Sensors
+ * @api {get} /board/:id/sensor 06) Get Sensors
  * @apiGroup Board
  * @apiName getSensorsFromBoard
  * @apiDescription Get sensors from a board

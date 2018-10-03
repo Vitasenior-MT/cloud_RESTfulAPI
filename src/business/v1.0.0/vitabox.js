@@ -19,14 +19,14 @@ exports.register = (vitabox_id, attributes, sponsor, is_admin) => {
     if (attributes.address) db.Vitabox.findOne({ where: { id: vitabox_id, registered: false } }).then(
       vitabox => {
         if (vitabox) {
-          console.log(attributes);
-          let encrypted = utils.encrypt([attributes.address, attributes.password]);
-          console.log(vitabox.password, encrypted.value[1], vitabox.password === encrypted.value[1])
+          let encrypted = utils.encrypt([attributes.address, attributes.password, attributes.district, attributes.locality]);
           if (!encrypted.error && (vitabox.password === encrypted.value[1] || is_admin)) {
-            vitabox.update({ registered: true, address: encrypted.value[0], longitude: attributes.longitude, latitude: attributes.latitude }).then(
+            vitabox.update({ registered: true, address: encrypted.value[0], longitude: attributes.longitude, latitude: attributes.latitude, district: encrypted.value[2], locality: encrypted.value[3] }).then(
               vitabox => vitabox.addUser(sponsor.id, { through: { sponsor: true } }).then(
                 () => {
                   vitabox.address = attributes.address;
+                  vitabox.district = attributes.district;
+                  vitabox.locality = attributes.locality;
                   resolve(vitabox)
                 },
                 error => reject({ code: 500, msg: error.message })),
@@ -60,7 +60,11 @@ exports.list = (current_user, own) => {
     if (current_user.admin && !own)
       db.Vitabox.findAll({ attributes: { exclude: ['password'] }, where: { registered: true } }).then(
         list => {
-          list.forEach(element => element.address = utils.decrypt(element.address));
+          list.forEach(element => {
+            element.address = utils.decrypt(element.address);
+            element.district = utils.decrypt(element.district);
+            element.locality = utils.decrypt(element.locality);
+          });
           resolve(list);
         }, error => reject({ code: 500, msg: error.message }));
     else current_user.getVitaboxes({ attributes: ['id', 'latitude', 'longitude', 'address', 'active'] }).then(
@@ -79,7 +83,12 @@ exports.find = (vitabox_id) => {
   return new Promise((resolve, reject) => {
     db.Vitabox.findById(vitabox_id, { attributes: { exclude: ['password'] } }).then(
       vitabox => {
-        if (vitabox) resolve(vitabox);
+        if (vitabox) {
+          vitabox.address = utils.decrypt(vitabox.address);
+          vitabox.district = utils.decrypt(vitabox.district);
+          vitabox.locality = utils.decrypt(vitabox.locality);
+          resolve(vitabox);
+        }
         else reject({ code: 500, msg: "Vitabox not found" });
       }, error => reject({ code: 500, msg: error.message }));
   });
@@ -89,12 +98,13 @@ exports.update = (current_user, vitabox_id, attributes) => {
   return new Promise((resolve, reject) => {
     db.Vitabox.findById(vitabox_id).then(
       vitabox => {
+        let encrypted = utils.encrypt([attributes.address, attributes.district, attributes.locality]);
         if (vitabox) if (current_user.admin)
-          vitabox.update({ latitude: attributes.latitude, longitude: attributes.longitude, address: attributes.address, settings: attributes.settings }).then(
+          vitabox.update({ latitude: attributes.latitude, longitude: attributes.longitude, address: encrypted.value[0], settings: attributes.settings, district: encrypted.value[1], locality: encrypted.value[2] }).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message }));
         else _isSponsor(vitabox, current_user).then(
-          () => vitabox.update({ latitude: attributes.latitude, longitude: attributes.longitude, address: attributes.address }).then(
+          () => vitabox.update({ latitude: attributes.latitude, longitude: attributes.longitude, address: encrypted.value[0], district: encrypted.value[1], locality: encrypted.value[2] }).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message })),
           error => reject(error));
@@ -180,24 +190,30 @@ exports.getPatients = (vitabox, where_condiction) => {
   return new Promise((resolve, reject) => {
     vitabox.getPatients({
       where: where_condiction,
-      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height'],
-      include: [{
-        model: db.Board, attributes: ['id', 'mac_addr'],
-        include: [
-          { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
-          {
-            model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
-            include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
-          }]
-      },
-      { model: db.Profile },
-      { model: db.User, as: 'Doctors', attributes: ['id', 'name', "email"] }],
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'photo'],
+      include: [
+        {
+          model: db.Board, attributes: ['id', 'mac_addr'],
+          include: [
+            { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
+            {
+              model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+              include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+            }]
+        },
+        { model: db.Profile },
+        { model: db.User, as: 'Doctors', attributes: ['id', 'name', "email"] }
+      ]
     }).then(
       patients => {
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
+          patient.cc = utils.decrypt(patient.cc);
+          patient.nif = utils.decrypt(patient.nif);
           patient.Boards.forEach(board => {
             board.dataValues.since = board.PatientBoard.created_at;
+            board.dataValues.frequency = board.PatientBoard.frequency;
+            board.dataValues.last_commit = board.PatientBoard.last_commit;
             delete board.dataValues.PatientBoard;
           });
           patient.Doctors.forEach(user => {

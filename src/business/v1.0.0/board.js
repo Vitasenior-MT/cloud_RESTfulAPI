@@ -169,3 +169,23 @@ exports.getSensors = (board_id) => {
       }, error => reject({ code: 500, msg: error.message }));
   });
 }
+
+exports.switchMac = (board_id, mac_addr) => {
+  return new Promise((resolve, reject) => {
+    db.Board.findById(board_id).then(
+      board => board.update({ mac_addr: mac_addr }).then(
+        () => resolve(),
+        error => reject({ code: 500, msg: error.message })),
+      error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.updateFrequency = (board_id, patient_id, frequency) => {
+  return new Promise((resolve, reject) => {
+    db.PatientBoard.findOne({ where: { board_id: board_id, patient_id: patient_id } }).then(
+      board => board.update({ frequency: frequency }).then(
+        () => resolve(),
+        error => reject({ code: 500, msg: error.message })),
+      error => reject({ code: 500, msg: error.message }));
+  });
+}

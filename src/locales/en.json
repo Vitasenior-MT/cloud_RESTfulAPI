@@ -6,6 +6,7 @@
 	"cannot_remove_record": "Could not remove sensor records",
 	"cannot_find_sensor": "Could not find sensor",
 	"cannot_update_sensor": "Could not update the sensor",
+	"cannot_update_board": "Could not update the board",
 	"cannot_find_board": "Could not find board",
 	"warning_up_limit": "the %s of %s is higher than recommended",
 	"warning_down_limit": "the %s of %s is lower than recommended",

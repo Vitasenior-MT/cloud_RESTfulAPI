@@ -25,7 +25,7 @@ exports.getFromDoctor = (page, user) => {
       patients => {
         db.Warning.find().where({ patient_id: { $in: patients.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
           if (err) reject({ code: 500, msg: err.message });
-          let promises = res.map(warning => _getPatientWarningInfoToDoctor(warning, patients.map(x => x.id === warning.patient_id)));
+          let promises = res.map(warning => _getPatientWarningInfoToDoctor(warning, patients.find(x => x.id === warning.patient_id)));
           Promise.all(promises).then(
             data => resolve(data.filter(x => x)),
             err => reject({ code: 500, msg: err.message }));

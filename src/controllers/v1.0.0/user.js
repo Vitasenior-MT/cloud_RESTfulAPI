@@ -40,7 +40,7 @@ var business = require('../../business/index').v1_0_0,
 exports.register = (req, res) => {
     business.user.register(req.body.email, req.body.password, req.body.name).then(
         user => business.utils.createToken(user, req.connection.remoteAddress).then(
-            token => broker.log.send(user.id, "login").then(
+            token => broker.notification.log(user.id, "login").then(
                 () => res.status(200).json({
                     token: token,
                     id: user.id,
@@ -49,8 +49,7 @@ exports.register = (req, res) => {
                     is_admin: user.admin,
                     is_doctor: user.doctor,
                     photo: user.photo
-                }),
-                error => res.status(500).send(error.msg)),
+                })),
             error => res.status(error.code).send(error.msg)),
         error => res.status(500).send(error.msg));
 }
@@ -88,7 +87,7 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
     business.user.login(req.body.email, req.body.password).then(
         user => business.utils.createToken(user, req.connection.remoteAddress).then(
-            token => broker.log.send(user.id, "login").then(
+            token => broker.notification.log(user.id, "login").then(
                 () => business.warning.getWarningCount(user.id).then(
                     warnings => {
                         if (!user.admin) res.status(200).json({
@@ -305,6 +304,8 @@ exports.getLogs = (req, res) => {
  *          "active": true,
  *          "weight": 79.6,
  *          "height": 1.74,
+ *          "cc": "123456789",
+ *          "nif": "987654321",
  *          "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",

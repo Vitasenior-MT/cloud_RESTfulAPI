@@ -1,5 +1,5 @@
 var business = require('../../business/index').v1_0_0,
-    worker = require('../../workers/index');
+    broker = require("../../workers/index");
 /**
  * @apiDefine box
  * 
@@ -348,7 +348,8 @@ exports.addUser = (req, res) => {
         business.user.findByEmail(req.body.email).then(
             user => business.vitabox.addUser(req.client, req.params.id, user.id, flag).then(
                 () => business.warning.setWarningCount(user.id, req.params.id).then(
-                    () => res.status(200).json({ name: user.name, id: user.id }),
+                    () => broker.notification.update(req.params.id).then(
+                        () => res.status(200).json({ name: user.name, id: user.id })),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(500).send(error.msg));
@@ -432,7 +433,8 @@ exports.removeUser = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.removeUser(req.client, req.params.id, req.body.user_id).then(
             () => business.warning.removeWarningCount(req.body.user_id, req.params.id).then(
-                () => res.status(200).json({ result: true }),
+                () => broker.notification.update(req.params.id).then(
+                    () => res.status(200).json({ result: true })),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -453,11 +455,15 @@ exports.removeUser = (req, res) => {
  * @apiParam {string} name patient name
  * @apiParam {date} birthdate patient birthdate (date only)
  * @apiParam {string} gender patient gender (must be 'male', 'female' or 'undefined')
+ * @apiParam {string} cc patient citizen card number
+ * @apiParam {string} nif patient fiscal number
  * @apiParamExample {json} Request example:
  *     {
  *          "name": "José António",
  *          "birthdate": "1987-02-28",
- *          "gender": "male"
+ *          "gender": "male",
+ *          "cc": "123456789",
+ *          "nif": "987654321"
  *     }
  * @apiSuccess {string} id new patient id
  */
@@ -465,7 +471,8 @@ exports.addPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.verifySponsor(req.client, req.params.id).then(
             vitabox => business.patient.createIfNotExists(req.body, vitabox.id).then(
-                patient => res.status(200).json({ id: patient.id }),
+                patient => broker.notification.update(req.params.id).then(
+                    () => res.status(200).json({ id: patient.id })),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -496,12 +503,15 @@ exports.addPatient = (req, res) => {
  *          "active": true,
  *          "weight": 79.6,
  *          "height": 1.74,
+ *          "cc": "123456789",
+ *          "nif": "987654321",
  *          "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
  *                  "description": "kitchen",
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *                  "since": "2018-07-23T05:15:27.000Z",
+ *                  "frequency": 2,
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *                      "type": "environmental",
@@ -549,7 +559,7 @@ exports.addPatient = (req, res) => {
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
  *                  "name": "Julia Almeida", 
- *                  email: "jalme@a.aa"
+ *                  "email": "jalme@a.aa"
  *              }
  *          ]
  *      }
@@ -597,12 +607,14 @@ exports.getPatients = (req, res) => {
 exports.disablePatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         if (req.client.admin) business.patient.disable(req.body.patient_id).then(
-            () => res.status(200).json({ result: true }),
+            () => broker.notification.update(req.params.id).then(
+                () => res.status(200).json({ result: true })),
             error => res.status(error.code).send(error.msg));
         else business.vitabox.verifySponsor(req.client, req.params.id).then(
             () => business.patient.disable(req.body.patient_id).then(
-                () => res.status(200).json({ result: true }),
-                error => res.status(error.code).send(error.msg)),
+                () => broker.notification.update(req.params.id).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg))),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -630,11 +642,13 @@ exports.disablePatient = (req, res) => {
 exports.enablePatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         if (req.client.admin) business.patient.enable(req.body.patient_id).then(
-            () => res.status(200).json({ result: true }),
+            () => broker.notification.update(req.params.id).then(
+                () => res.status(200).json({ result: true })),
             error => res.status(error.code).send(error.msg));
         else business.vitabox.verifySponsor(req.client, req.params.id).then(
             () => business.patient.enable(req.body.patient_id).then(
-                () => res.status(200).json({ result: true }),
+                () => broker.notification.update(req.params.id).then(
+                    () => res.status(200).json({ result: true })),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -664,7 +678,9 @@ exports.removePatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.verifySponsor(req.client, req.params.id).then(
             vitabox => vitabox.removePatient(req.body.patient_id).then(
-                () => resolve(),
+                () => broker.record.removeByPatient(req.body.patient_id).then(
+                    () => broker.notification.update(req.params.id).then(
+                        () => res.status(200).json({ result: true }))),
                 error => es.status(500).send(error.message)),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -696,13 +712,11 @@ exports.removePatient = (req, res) => {
 exports.addBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.authenticate(req.body.mac_addr, req.body.password).then(
-            board => {
-                business.vitabox.addBoard(req.client, req.params.id, board.id).then(
-                    () => business.board.setDescription(board, req.body.description ? req.body.description : null).then(
-                        () => res.status(200).json({ board: board }),
-                        error => res.status(error.code).send(error.msg)),
-                    error => res.status(error.code).send(error.msg))
-            },
+            board => business.vitabox.addBoard(req.client, req.params.id, board.id).then(
+                () => business.board.setDescription(board, req.body.description ? req.body.description : null).then(
+                    () => broker.notification.update(req.params.id).then(
+                        () => res.status(200).json({ board: board }))),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -800,11 +814,13 @@ exports.getBoards = (req, res) => {
 exports.disableBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         if (req.client.admin) business.board.disable(req.body.board_id).then(
-            () => res.status(200).json({ result: true }),
+            () => broker.notification.update(req.params.id).then(
+                () => res.status(200).json({ result: true })),
             error => res.status(error.code).send(error.msg));
         else business.vitabox.verifySponsor(req.client, req.params.id).then(
             () => business.board.disable(req.body.board_id).then(
-                () => res.status(200).json({ result: true }),
+                () => broker.notification.update(req.params.id).then(
+                    () => res.status(200).json({ result: true })),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -833,11 +849,13 @@ exports.disableBoard = (req, res) => {
 exports.enableBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         if (req.client) business.board.enable(req.body.board_id).then(
-            () => res.status(200).json({ result: true }),
+            () => broker.notification.update(req.params.id).then(
+                () => res.status(200).json({ result: true })),
             error => res.status(error.code).send(error.msg));
         else business.vitabox.verifySponsor(req.client, req.params.id).then(
             () => business.board.enable(req.body.board_id).then(
-                () => res.status(200).json({ result: true }),
+                () => broker.notification.update(req.params.id).then(
+                    () => res.status(200).json({ result: true })),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
@@ -868,18 +886,18 @@ exports.removeBoard = (req, res) => {
         if (req.client.admin) business.vitabox.find(req.params.id).then(
             vitabox => vitabox.removeBoard(req.body.board_id).then(
                 () => business.board.removeDescription(req.body.board_id).then(
-                    () => worker.record.remove(req.body.board_id).then(
-                        () => res.status(200).json({ result: true }),
-                        error => res.status(error.code).send(error.msg)),
+                    () => broker.record.removeByBoard(req.body.board_id).then(
+                        () => broker.notification.update(req.params.id).then(
+                            () => res.status(200).json({ result: true }))),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(500).send(error.message)),
             error => res.status(500).send(error.message));
         else business.vitabox.verifySponsor(req.client, req.params.id).then(
             vitabox => vitabox.removeBoard(req.body.board_id).then(
                 () => business.board.removeDescription(req.body.board_id).then(
-                    () => worker.record.remove(req.body.board_id).then(
-                        () => res.status(200).json({ result: true }),
-                        error => res.status(error.code).send(error.msg)),
+                    () => broker.record.removeByBoard(req.body.board_id).then(
+                        () => broker.notification.update(req.params.id).then(
+                            () => res.status(200).json({ result: true }))),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(500).send(error.message)),
             error => res.status(500).send(error.message));

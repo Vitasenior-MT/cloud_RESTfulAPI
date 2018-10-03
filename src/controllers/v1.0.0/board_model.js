@@ -1,4 +1,5 @@
-var business = require('../../business/index').v1_0_0;
+var business = require('../../business/index').v1_0_0,
+    worker = require('../../workers/index');
 
 /**
  * @api {post} /boardmodel 01) Create
@@ -204,7 +205,9 @@ exports.getSensors = (req, res) => {
 exports.removeSensor = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.removeSensor(req.params.id, req.body.sensor_id).then(
-            () => res.status(200).json({ result: true }),
+            sids => worker.record.removeBySensors(sids).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

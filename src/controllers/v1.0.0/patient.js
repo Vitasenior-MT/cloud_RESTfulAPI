@@ -12,10 +12,12 @@ var business = require('../../business/index').v1_0_0;
  * @apiParam {string} :id patient id
  * @apiParam {decimal} height patient height
  * @apiParam {decimal} weight patient weight
+ * @apiParam {string} profile clinical profile description
  * @apiParamExample {json} Request example:
  *     {
  *          "height": 1.72,
- *          "weight": 78.2
+ *          "weight": 78.2m
+ *          "profile": "Diabetes tipo 1"
  *     }
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
@@ -209,6 +211,66 @@ exports.getBoardsFromPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.patient.getBoards(req.params.id).then(
             result => res.status(200).json({ boards: result }),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send(req.t("unauthorized"));
+    }
+}
+
+/**
+ * @api {post} /patient/:id/photo 07) Update photo
+ * @apiGroup Patient
+ * @apiName setPhotoFromPatient
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiHeader Authorization="< token >"
+ * @apiPermission sponsor
+ * 
+ * @apiParam {string} :id patient id
+ * @apiParam {string} photo html name to input type file
+ * @apiSuccess {boolean} result return true if was sucessfuly reseted
+ */
+exports.setPhoto = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        business.patient.find(req.params.id).then(
+            patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
+                () => business.utils.upload('photo', req.client.id).then(
+                    upload => upload(req, res, (err) => {
+                        if (err) res.status(500).send(err.message);
+                        else business.patient.updatePhoto(req.client, req.file.filename).then(
+                            () => res.status(200).json({ filename: req.file.filename }),
+                            error => res.status(error.code).send(error.msg));
+                    }), error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg)),
+            error => res.status(error.code).send(error.msg));
+    } else { res.status(401).send(req.t("unauthorized")); }
+}
+
+/**
+ * @api {put} /patient/:id/exam 08) Update Exam
+ * @apiGroup Patient
+ * @apiName updateExamFrequency
+ * @apiDescription update exam frequency to patient
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin, sponsor
+ * @apiParam {string} :id patient id
+ * @apiParam {string} board_id board id
+ * @apiParam {integer} frequency time in days between exams (if null removes the scheduler)
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "board_id":"5d93585b-f511-4fa8-b69e-692c2474d5e8",
+ *          "frequency": 2
+ *     }
+ * @apiSuccess {booleam} result returns true if was successfuly updated
+ */
+exports.updateExamFrequency = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
+        business.patient.verifyDoctor(req.client, req.params.id).then(
+            () => business.board.updateFrequency(req.body.board_id, req.params.id, req.body.frequency).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(500).send("cannot update exame schedule")),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
