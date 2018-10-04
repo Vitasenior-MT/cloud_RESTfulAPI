@@ -257,7 +257,7 @@ exports.setPhoto = (req, res) => {
  * @apiPermission admin, sponsor
  * @apiParam {string} :id patient id
  * @apiParam {string} board_id board id
- * @apiParam {integer} frequency time in days between exams (if null removes the scheduler)
+ * @apiParam {integer} frequency time in hours between exams (if null removes the scheduler)
  * @apiParamExample {json} Request example:
  *     {
  *          "board_id":"5d93585b-f511-4fa8-b69e-692c2474d5e8",

@@ -2730,7 +2730,7 @@
             "type": "integer",
             "optional": false,
             "field": "frequency",
-            "description": "<p>time in days between exams (if null removes the scheduler)</p>"
+            "description": "<p>time in hours between exams (if null removes the scheduler)</p>"
           }
         ]
       },

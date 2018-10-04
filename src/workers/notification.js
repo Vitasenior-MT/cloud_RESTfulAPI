@@ -13,7 +13,7 @@ exports.log = (user_id, msg) => {
 
 exports.update = (vitabox_id) => {
   return new Promise((resolve, reject) => {
-    broker.getChannel().publish( vitabox_id, '', new Buffer(JSON.stringify("update")));
+    broker.getChannel().publish(vitabox_id, '', new Buffer(JSON.stringify({ content: "update", msg: "" })));
     resolve();
   });
 }

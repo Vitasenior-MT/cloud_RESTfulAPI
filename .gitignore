@@ -60,7 +60,7 @@ typings/
 # vagrant dependencies
 .vagrant/
 
-package-lock.json/coverage
+package-lock.json
 /build
 /files
 /docs
