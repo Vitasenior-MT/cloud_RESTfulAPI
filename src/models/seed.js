@@ -8,7 +8,7 @@ module.exports.seed = (db) => {
         if (count < 1) {
           if (process.env.NODE_ENV !== "test") // PRODUCTION and DEVELOPMENT ENV 
           {
-            console.log("will seed");
+            // console.log("will seed");
             let encrypted = utils.encrypt(["admin@a.aa", "jose@a.aa", "doctor@a.aa", "123qweASD", "passvita", "José António", "Administrator Exemple", "Doctor Exemple", "santarem", "tomar"])
             if (!encrypted.error) {
               db.User.bulkCreate([
