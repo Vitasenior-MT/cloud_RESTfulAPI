@@ -90,14 +90,14 @@ exports.getWarningCount = (user_id) => {
     let promise1 = new Promise((resolve, reject) => {
       db.WarningUser.find().where({ "user_id": user_id }).select("count").exec((err, res) => {
         if (err) reject();
-        else if (res.length > 0) resolve(res.reduce((a, v) => a + v));
+        else if (res.length > 0) resolve(res.map(x => x.count).reduce((a, v) => a + v));
         else resolve(0);
       });
     });
     let promise2 = new Promise((resolve, reject) => {
       db.WarningDoctor.find().where({ "user_id": user_id }).select("count").exec((err, res) => {
         if (err) reject();
-        else if (res.length > 0) resolve(res.reduce((a, v) => a + v));
+        else if (res.length > 0) resolve(res.map(x => x.count).reduce((a, v) => a + v));
         else resolve(0);
       });
     });

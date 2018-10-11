@@ -14,20 +14,18 @@ var queues = [
   "remove_record_by_board_patient"
 ];
 
-exports.connect = () => {
+exports.connectToBroker = () => {
   return new Promise((resolve, reject) => {
     amqp.connect(process.env.AMQP, { servername: url.parse(process.env.AMQP).hostname }, (err, conn) => {
-      if (err) { reject(err); }
-      conn.createChannel((err, ch) => {
+      if (err) reject(err);
+      else conn.createChannel((err, ch) => {
         if (err) { conn.close(); reject(err); }
 
         connection = conn;
         channel = ch;
 
         queues.forEach(queue => channel.assertQueue(queue, { durable: true }));
-        _connectToExchanges().then(
-          () => resolve(),
-          err => reject(err));
+        resolve();
       });
 
     });
@@ -41,7 +39,7 @@ exports.disconnect = () => {
   connection.close();
 }
 
-_connectToExchanges = () => {
+exports.connectToExchanges = () => {
   return new Promise((resolve, reject) => {
     require('../models/index').Vitabox.findAll().then(
       list => {

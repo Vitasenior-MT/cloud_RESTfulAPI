@@ -63,7 +63,9 @@ exports.register = (req, res) => {
         if (req.client.admin) {
             business.user.findByEmail(req.body.email).then(
                 user => business.vitabox.register(req.params.id, req.body, user, true).then(
-                    () => res.status(200).json({ result: true }),
+                    () => broker.utils.connectToExchange(req.params.id).then(
+                        () => res.status(200).json({ result: true }),
+                        error => res.status(error.code).send(error.msg)),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(500).send(error.msg));
         } else {
