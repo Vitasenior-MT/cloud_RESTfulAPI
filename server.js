@@ -28,7 +28,7 @@
 //                 }, error => { console.log('Unable to seed Databases.', error.message); process.exit(1); });
 //         }, error => { console.log('Unable to connect to Databases.', error); process.exit(1); });
 // } else {
-//     require("./src/workers/broker").connect().then(() => {
+//     require("./src/brokers/broker").connect().then(() => {
 //         // console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with RabbitMQ');
 
 //         // START THE SERVER
@@ -82,12 +82,9 @@ var db = require('./src/models/index');
 
 Promise.all([
     db.sequelize.sync(),
-    require("./src/workers/broker").connectToBroker()
+    require("./src/brokers/broker").connectToBroker()
 ]).then(
-    () => Promise.all([
-        require('./src/models/seed').seed(db),
-        require("./src/workers/broker").connectToExchanges()
-    ]).then(
+    () => require('./src/models/seed').seed(db).then(
         () => {
             // console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with MongoDB, MySQL and RabbitMQ');
 

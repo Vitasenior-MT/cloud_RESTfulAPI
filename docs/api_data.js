@@ -6875,10 +6875,10 @@ define({ "api": [
   {
     "type": "get",
     "url": "/vitabox/:own",
-    "title": "04) List",
+    "title": "04) Get info",
     "group": "Vitabox",
     "name": "list",
-    "description": "<p>list all vitaboxes related to the user.</p>",
+    "description": "<p>list all vitaboxes related to the user, or get info from the vitabox itself</p>",
     "version": "1.0.0",
     "permission": [
       {
@@ -6892,8 +6892,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": ":mine",
-            "description": "<p>(admin) indicate if are listing their own vitaboxes</p>"
+            "field": ":own",
+            "description": "<p>(optional just to admin or vitabox) user id indicate to list their own vitaboxes, or vitabox id to get info for itself</p>"
           }
         ]
       }
@@ -6966,6 +6966,20 @@ define({ "api": [
           },
           {
             "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "locality",
+            "description": "<p>locality tag to get local pharmacies</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "district",
+            "description": "<p>district tag to get local pharmacies</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "datetime",
             "optional": false,
             "field": "created_at",
@@ -6983,12 +6997,17 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example to common user:",
-          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"sponsor\": true\n     },\n     {\n         \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"sponsor\": false,\n         \"active\": false,\n     }\n ]\n}",
+          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"sponsor\": true,\n         \"active\": true\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n     },\n     {\n         \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"sponsor\": false,\n         \"active\": false,\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n     }\n ]\n}",
           "type": "json"
         },
         {
           "title": "Response example to admin:",
-          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"registered\": false,\n         \"active\": false,\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"registered\": false,\n         \"active\": false,\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n ]\n}",
+          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"registered\": false,\n         \"active\": false,\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"registered\": false,\n         \"active\": false,\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n ]\n}",
+          "type": "json"
+        },
+        {
+          "title": "Response example to vitabox:",
+          "content": "{\n \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n \"latitude\": \"38.8976763\",\n \"longitude\": \"-77.0387185\",\n \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n \"sponsor\": true,\n \"active\": false,\n \"locality\": \"tomar\",\n \"district\": \"santarem\"\n}",
           "type": "json"
         }
       ]

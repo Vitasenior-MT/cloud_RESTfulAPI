@@ -1,5 +1,5 @@
 var business = require('../../business/index').v1_0_0,
-    broker = require("../../workers/index");
+    broker = require("../../brokers/index");
 /**
  * @apiDefine box
  * 
@@ -63,9 +63,7 @@ exports.register = (req, res) => {
         if (req.client.admin) {
             business.user.findByEmail(req.body.email).then(
                 user => business.vitabox.register(req.params.id, req.body, user, true).then(
-                    () => broker.utils.connectToExchange(req.params.id).then(
-                        () => res.status(200).json({ result: true }),
-                        error => res.status(error.code).send(error.msg)),
+                    () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(500).send(error.msg));
         } else {
@@ -104,15 +102,15 @@ exports.requestToken = (req, res) => {
 }
 
 /**
- * @api {get} /vitabox/:own 04) List
+ * @api {get} /vitabox/:own 04) Get info
  * @apiGroup Vitabox
  * @apiName list
- * @apiDescription list all vitaboxes related to the user. 
+ * @apiDescription list all vitaboxes related to the user, or get info from the vitabox itself 
  * @apiVersion 1.0.0
  * @apiUse box
  * 
  * @apiPermission any user
- * @apiParam {string} :mine (admin) indicate if are listing their own vitaboxes
+ * @apiParam {string} :own (optional just to admin or vitabox) user id indicate to list their own vitaboxes, or vitabox id to get info for itself
  * @apiSuccess {array} vitaboxes list of vitaboxes
  * @apiSuccess {string} id id of each vitabox
  * @apiSuccess {decimal} latitude latitude of each vitabox, min: -90, max: 90 (based on google maps coordinates)
@@ -122,6 +120,8 @@ exports.requestToken = (req, res) => {
  * @apiSuccess {json} settings configuration's structure, defined by vitabox (only if admin)
  * @apiSuccess {boolean} registered flag indicating if the vitabox was already registered (only if admin)
  * @apiSuccess {boolean} active flag indicating if the vitabox was already activated (only if admin)
+ * @apiSuccess {string} locality locality tag to get local pharmacies
+ * @apiSuccess {string} district district tag to get local pharmacies
  * @apiSuccess {datetime} created_at date of production (only if admin)
  * @apiSuccess {datetime} updated_at date of last update (only if admin)
  * @apiSuccessExample {json} Response example to common user:
@@ -132,7 +132,10 @@ exports.requestToken = (req, res) => {
  *          "latitude": "38.8976763",
  *          "longitude": "-77.0387185",
  *          "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
- *          "sponsor": true
+ *          "sponsor": true,
+ *          "active": true
+ *          "locality": "tomar",
+ *          "district": "santarem"
  *      },
  *      {
  *          "id": "a6abfa76-68f0-4325-b3ab-6c540a800284",
@@ -141,6 +144,8 @@ exports.requestToken = (req, res) => {
  *          "address": "Kensington Gardens, London W8 4PX, Reino Unido",
  *          "sponsor": false,
  *          "active": false,
+ *          "locality": "tomar",
+ *          "district": "santarem"
  *      }
  *  ]
  * }
@@ -159,6 +164,8 @@ exports.requestToken = (req, res) => {
  *          "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
  *          "registered": false,
  *          "active": false,
+ *          "locality": "tomar",
+ *          "district": "santarem"
  *          "created_at": "2018-02-22T11:57:53.000Z",
  *          "updated_at": "2018-02-22T11:57:53.000Z"
  *      }
@@ -174,16 +181,33 @@ exports.requestToken = (req, res) => {
  *          "address": "Kensington Gardens, London W8 4PX, Reino Unido",
  *          "registered": false,
  *          "active": false,
+ *          "locality": "tomar",
+ *          "district": "santarem"
  *          "created_at": "2018-02-22T11:57:53.000Z",
  *          "updated_at": "2018-02-22T11:57:53.000Z"
  *      }
  *  ]
+ * }
+ * @apiSuccessExample {json} Response example to vitabox:
+ * {
+ *  "id": "d1d66ccb-e5a0-4bd4-8580-6218f452e580",
+ *  "latitude": "38.8976763",
+ *  "longitude": "-77.0387185",
+ *  "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
+ *  "sponsor": true,
+ *  "active": false,
+ *  "locality": "tomar",
+ *  "district": "santarem"
  * }
  */
 exports.list = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.list(req.client, req.params.own).then(
             data => res.status(200).json({ vitaboxes: data }),
+            error => res.status(error.code).send(error.msg));
+    } else if (req.client && req.client.constructor.name === "Vitabox") {
+        business.vitabox.find(req.client.id).then(
+            data => res.status(200).json(data),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

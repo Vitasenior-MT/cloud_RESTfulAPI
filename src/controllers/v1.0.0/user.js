@@ -1,5 +1,5 @@
 var business = require('../../business/index').v1_0_0,
-    broker = require("../../workers/index");
+    broker = require("../../brokers/index");
 /**
  * @apiDefine auth
  * 

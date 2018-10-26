@@ -1,5 +1,5 @@
 var business = require('../../business/index').v1_0_0,
-    worker = require('../../workers/index');
+    broker = require('../../brokers/index');
 
 /**
  * @api {post} /board 01) Create Board
@@ -180,7 +180,7 @@ exports.removePatientFromBoard = (req, res) => {
             board => {
                 if (req.client.admin) board.removePatient(req.body.patient_id).then(
                     () => Promise.all(board.Sensors.map(x => business.profile.remove(req.body.patient_id, x.Sensormodel.tag))).then(
-                        () => worker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
+                        () => broker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
                             () => res.status(200).json({ result: true }),
                             error => res.status(error.code).send(error.msg)),
                         error => res.status(500).send("could not remove patient profile")),
@@ -188,7 +188,7 @@ exports.removePatientFromBoard = (req, res) => {
                 else business.vitabox.verifySponsor(req.client, board.vitabox_id).then(
                     () => board.removePatient(req.body.patient_id).then(
                         () => Promise.all(board.Sensors.map(x => business.profile.remove(req.body.patient_id, x.Sensormodel.tag))).then(
-                            () => worker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
+                            () => broker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
                                 () => res.status(200).json({ result: true }),
                                 error => res.status(error.code).send(error.msg)),
                             error => res.status(500).send("could not remove patient profile")),

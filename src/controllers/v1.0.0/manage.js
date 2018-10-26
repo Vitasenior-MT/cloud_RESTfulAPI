@@ -45,7 +45,7 @@ exports.destroyAll = (req, res) => {
     }
 }
 
-var broker = require("../../workers/index");
+var broker = require("../../brokers/index");
 exports.ampqSend = (req, res) => {
     let records = [
         {
