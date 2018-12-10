@@ -52,7 +52,9 @@
       "Board",
       "Patient",
       "Record",
-      "Error"
+      "Warning",
+      "Error",
+      "Notification"
     ]
   }
 }

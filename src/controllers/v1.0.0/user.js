@@ -120,7 +120,24 @@ exports.login = (req, res) => {
 }
 
 /**
- * @api {post} /chpass 03) Change password
+ * @api {get} /check 03) Verify Token
+ * @apiGroup Authentication
+ * @apiName userVerifyToken
+ * @apiDescription endpoint to check token validity.
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiHeader Authorization="< token >"
+ */
+exports.verifyToken = (req, res) => {
+    if (req.client) {
+        res.status(200).send("authorized");
+    } else {
+        res.status(401).send(req.t("unauthorized"));
+    }
+}
+
+/**
+ * @api {post} /chpass 04) Change password
  * @apiGroup Authentication
  * @apiName changePassword
  * @apiVersion 1.0.0
@@ -138,7 +155,7 @@ exports.changePassword = (req, res) => {
 }
 
 /**
- * @api {post} /forgot 04) Forgot Password
+ * @api {post} /forgot 05) Forgot Password
  * @apiGroup Authentication
  * @apiName forgotPassword
  * @apiVersion 1.0.0
@@ -160,7 +177,7 @@ exports.forgotPassword = (req, res) => {
 }
 
 /**
- * @api {post} /reset 05) Reset password
+ * @api {post} /reset 06) Reset password
  * @apiGroup Authentication
  * @apiName resetPassword
  * @apiVersion 1.0.0

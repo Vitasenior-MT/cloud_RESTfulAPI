@@ -39,8 +39,18 @@ var business = require('../../business/index').v1_0_0;
             "message": "o valor de humidade do(a) Quarto está acima do recomendado",
             "sensor_id": "0e35251f-dd9c-4928-9b8d-a94a44f22770",
             "patient_id": null,
-            "seen_vitabox": null
-        }]
+            "seen_vitabox": null,
+            "entity": "Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal"
+        },
+        {
+            "datetime": "2018-07-16T13:36:23.149Z",
+            "message": "o valor de Pressão Arterial do(a) António está acima do recomendado",
+            "sensor_id": "0e35251f-dd9c-4928-9b8d-a94a44f22770",
+            "patient_id": "dd9c4928-9b8d-0e35-251f-22770a94a44f",
+            "seen_vitabox": "2018-07-16T13:38:45.175Z",
+            "entity": "Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal"
+        }
+      ]
  * }
  */
 exports.getWarnings = (req, res) => {
@@ -55,6 +65,7 @@ exports.getWarnings = (req, res) => {
             "sensor_id": x.sensor_id,
             "patient_id": x.patient_id,
             "seen_vitabox": x.seen_vitabox,
+            "entity": x.entity
           }
         })
       }), error => res.status(error.code).send(error.msg));
@@ -68,22 +79,26 @@ exports.getWarnings = (req, res) => {
             "sensor_id": x.sensor_id,
             "patient_id": x.patient_id,
             "seen_vitabox": x.seen_vitabox,
+            "entity": null
           }
         })
       }), error => res.status(error.code).send(error.msg));
     else business.warning.getFromUser(req.params.page ? req.params.page : 1, req.client).then(
-      data => res.status(200).json({
-        warnings: data.map(x => {
-          return {
-            "id": x._id,
-            "datetime": x.datetime,
-            "message": req.t(x.message, req.t(x.what), req.t(x.who)),
-            "sensor_id": x.sensor_id,
-            "patient_id": x.patient_id,
-            "seen_vitabox": x.seen_vitabox,
-          }
+      data => {
+        res.status(200).json({
+          warnings: data.map(x => {
+            return {
+              "id": x._id,
+              "datetime": x.datetime,
+              "message": req.t(x.message, req.t(x.what), req.t(x.who)),
+              "sensor_id": x.sensor_id,
+              "patient_id": x.patient_id,
+              "seen_vitabox": x.seen_vitabox,
+              "entity": x.entity
+            }
+          })
         })
-      }), error => res.status(error.code).send(error.msg));
+      }, error => res.status(error.code).send(error.msg));
   } else res.status(401).send(req.t("unauthorized"));
 }
 

@@ -35,9 +35,14 @@ exports.createIfNotExists = (attributes, vitabox_id) => {
 
 exports.find = function (patient_id) {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id).then(
+        db.Patient.findById(patient_id, { include: [{ model: db.Vitabox }] }).then(
             patient => {
-                if (patient) resolve(patient);
+                if (patient) {
+                    patient.name = utils.decrypt(patient.name);
+                    patient.cc = utils.decrypt(patient.cc);
+                    patient.nif = utils.decrypt(patient.nif);
+                    resolve(patient);
+                }
                 else reject({ code: 500, msg: "Patient not found" });
             }, error => reject({ code: 500, msg: error.message }));
     });
@@ -117,15 +122,19 @@ exports.removeDoctor = (patient, doctor_id) => {
     });
 }
 
-exports.verifyDoctor = (current_user, patient_id) => {
+exports.verifyDoctor = (current_user, patient) => {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id).then(
-            patient => {
-                if (patient) _isDoctor(patient, current_user).then(
-                    () => resolve(),
-                    error => reject(error));
-                else reject({ code: 500, msg: "Patient not found" });
-            }, error => reject({ code: 500, msg: error.message }));
+        if (typeof patient === "string") {
+            db.Patient.findById(patient).then(
+                patient => {
+                    if (patient) _verifyDoctor(current_user.id, patient).then(
+                        () => resolve(),
+                        error => reject(error));
+                    else reject({ code: 500, msg: "patient not found" });
+                }, error => reject({ code: 500, msg: error.message }));
+        } else _verifyDoctor(current_user.id, patient).then(
+            () => resolve(),
+            error => reject(error));
     });
 }
 
@@ -137,12 +146,12 @@ exports.updatePhoto = (patient, filename) => {
     });
 }
 
-// ________________________________________________________________________
-// Private
-// ________________________________________________________________________
-_isDoctor = (patient, user) => {
+//____________ PRIVATE ____________
+//_________________________________
+
+_verifyDoctor = (current_user_id, patient) => {
     return new Promise((resolve, reject) => {
-        patient.getDoctors({ where: { id: user.id }, through: { accepted: true } }).then(
+        patient.getDoctors({ where: { id: current_user_id }, through: { accepted: true } }).then(
             users => {
                 if (users.length > 0) resolve();
                 else reject({ code: 401, msg: "Unauthorized" });

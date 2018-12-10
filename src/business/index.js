@@ -3,6 +3,7 @@ module.exports.v1_0_0 = {
     'board': require('./v1.0.0/board'),
     'error': require('./v1.0.0/error'),
     'log': require('./v1.0.0/log'),
+    'notification': require('./v1.0.0/notification'),
     'patient': require('./v1.0.0/patient'),
     'profilemodel': require('./v1.0.0/profile_model'),
     'profile': require('./v1.0.0/profile'),

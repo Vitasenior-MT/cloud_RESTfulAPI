@@ -11,7 +11,9 @@ define({
     "Board",
     "Patient",
     "Record",
-    "Error"
+    "Warning",
+    "Error",
+    "Notification"
   ],
   "description": "",
   "sampleUrl": false,
@@ -19,7 +21,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-10-26T15:09:44.014Z",
+    "time": "2018-11-23T10:54:29.807Z",
     "url": "http://apidocjs.com",
     "version": "0.17.6"
   }

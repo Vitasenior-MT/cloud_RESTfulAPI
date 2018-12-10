@@ -63,7 +63,8 @@ const db = {
     'Record': require('./mongodb/record'),
     'Warning': require('./mongodb/warning'),
     'WarningUser': require('./mongodb/warning_user'),
-    'WarningDoctor': require('./mongodb/warning_doctor')
+    'WarningDoctor': require('./mongodb/warning_doctor'),
+    'Notification': require('./mongodb/notification'),
 }
 
 Object.keys(db).forEach(modelName => {

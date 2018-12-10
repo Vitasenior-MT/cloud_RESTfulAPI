@@ -3,34 +3,38 @@ var db = require('../../models/index'),
 
 exports.getFromUser = (page, user) => {
   return new Promise((resolve, reject) => {
-    user.getVitaboxes().then(
-      vitaboxes => {
-        db.Warning.find().where({ vitabox_id: { $in: vitaboxes.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
-          if (err) reject({ code: 500, msg: err.message });
-          let promises = res.map(warning => {
-            if (warning.patient_id === null) return _getSensorWarningInfo(warning);
-            else return _getPatientWarningInfo(warning);
+    if (page > 0) {
+      user.getVitaboxes().then(
+        vitaboxes => {
+          db.Warning.find().where({ vitabox_id: { $in: vitaboxes.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
+            if (err) reject({ code: 500, msg: err.message });
+            let promises = res.map(warning => {
+              if (warning.patient_id === null) return _getSensorWarningInfo(warning, vitaboxes.find(x => x.id == warning.vitabox_id).address);
+              else return _getPatientWarningInfo(warning);
+            });
+            Promise.all(promises).then(
+              data => resolve(data.filter(x => x)),
+              err => reject({ code: 500, msg: "Could not extract warnings" }));
           });
-          Promise.all(promises).then(
-            data => resolve(data.filter(x => x)),
-            err => reject({ code: 500, msg: "Could not extract warnings" }));
-        });
-      }, err => reject({ code: 500, msg: err.message }));
+        }, err => reject({ code: 500, msg: err.message }));
+    } else reject({ code: 500, msg: "invalid page" });
   })
 }
 
 exports.getFromDoctor = (page, user) => {
   return new Promise((resolve, reject) => {
-    user.getPatients().then(
-      patients => {
-        db.Warning.find().where({ patient_id: { $in: patients.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
-          if (err) reject({ code: 500, msg: err.message });
-          let promises = res.map(warning => _getPatientWarningInfoToDoctor(warning, patients.find(x => x.id === warning.patient_id)));
-          Promise.all(promises).then(
-            data => resolve(data.filter(x => x)),
-            err => reject({ code: 500, msg: err.message }));
-        }, error => reject({ code: 500, msg: "Could not extract warnings" }));
-      }, err => reject({ code: 500, msg: err.message }));
+    if (page > 0) {
+      user.getPatients().then(
+        patients => {
+          db.Warning.find().where({ patient_id: { $in: patients.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
+            if (err) reject({ code: 500, msg: err.message });
+            let promises = res.map(warning => _getPatientWarningInfoToDoctor(warning, patients.find(x => x.id === warning.patient_id)));
+            Promise.all(promises).then(
+              data => resolve(data.filter(x => x)),
+              err => reject({ code: 500, msg: err.message }));
+          }, error => reject({ code: 500, msg: "Could not extract warnings" }));
+        }, err => reject({ code: 500, msg: err.message }));
+    } else reject({ code: 500, msg: "invalid page" });
   });
 }
 
@@ -47,7 +51,7 @@ exports.getFromVitabox = (vitabox_id) => {
 
 exports.checkWarningByUser = (user) => {
   return new Promise((resolve, reject) => {
-    db.WarningUser.where({ user_id: user.id }).update({ "seen_date": new Date(), "count": 0 }, (err, res) => {
+    db.WarningUser.update({ user_id: user.id }, { "seen_date": new Date(), "count": 0 }, { multi: true }, (err, res) => {
       if (err) reject(err);
       if (user.doctor) db.WarningDoctor.where({ user_id: user.id }).update({ "seen_date": new Date(), "count": 0 }, (err, res) => {
         if (err) reject({ code: 500, msg: err.message });
@@ -88,14 +92,14 @@ exports.setWarningDoctor = (user_id, patient_id) => {
 exports.getWarningCount = (user_id) => {
   return new Promise((resolve, reject) => {
     let promise1 = new Promise((resolve, reject) => {
-      db.WarningUser.find().where({ "user_id": user_id }).select("count").exec((err, res) => {
+      db.WarningUser.find().where({ "user_id": user_id }).exec((err, res) => {
         if (err) reject();
         else if (res.length > 0) resolve(res.map(x => x.count).reduce((a, v) => a + v));
         else resolve(0);
       });
     });
     let promise2 = new Promise((resolve, reject) => {
-      db.WarningDoctor.find().where({ "user_id": user_id }).select("count").exec((err, res) => {
+      db.WarningDoctor.find().where({ "user_id": user_id }).exec((err, res) => {
         if (err) reject();
         else if (res.length > 0) resolve(res.map(x => x.count).reduce((a, v) => a + v));
         else resolve(0);
@@ -125,9 +129,12 @@ exports.removeWarningDoctor = (user_id, patient_id) => {
   })
 }
 
-_getSensorWarningInfo = (warning) => {
+//_____________ PRIVATE _________________
+//_______________________________________
+
+_getSensorWarningInfo = (warning, vitabox_address) => {
   return new Promise((resolve, reject) => {
-    db.Sensor.findById(warning.sensor_id, { include: [{ model: db.Sensormodel }, { model: db.Board }] }).then(
+    db.Sensor.findById(warning.sensor_id, { include: [{ model: db.Sensormodel }, { model: db.Board, include: [{ model: db.Boardmodel }] }] }).then(
       res => resolve({
         "id": warning._id,
         "datetime": warning.datetime,
@@ -136,7 +143,8 @@ _getSensorWarningInfo = (warning) => {
         "patient_id": null,
         "seen_vitabox": warning.seen_vitabox,
         "what": res.Sensormodel.to_read,
-        "who": res.Board.description
+        "who": res.Board.description ? res.Board.description : res.Board.Boardmodel.name,
+        "entity": utils.decrypt(vitabox_address),
       }),
       err => reject(err));
   });
@@ -157,7 +165,8 @@ _getPatientWarningInfo = (warning) => {
         "patient_id": warning.patient_id,
         "seen_vitabox": warning.seen_vitabox,
         "what": res[0].Sensormodel.to_read,
-        "who": utils.decrypt(res[1].name)
+        "who": utils.decrypt(res[1].name),
+        "entity": utils.decrypt(res[1].name)
       }),
       err => reject(err));
   });

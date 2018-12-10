@@ -16,6 +16,9 @@ module.exports = (app) => {
         .post('/login', versioning({
             "1.0.0": controllers.v1_0_0.user.login,
         }))
+        .get('/check', versioning({
+            "1.0.0": controllers.v1_0_0.user.verifyToken
+        }))
         .post('/chpass', versioning({
             "1.0.0": controllers.v1_0_0.user.changePassword,
         }))
@@ -270,6 +273,21 @@ module.exports = (app) => {
         }))
         .put('/warning', versioning({
             "1.0.0": controllers.v1_0_0.warning.checkWarnings
+        }))
+        /*________________________________________________
+        *_________________NOTIFICATION____________________
+        *_________________________________________________*/
+        .get('/notification/:page', versioning({
+            "1.0.0": controllers.v1_0_0.notification.getNotifications
+        }))
+        .get('/notification', versioning({
+            "1.0.0": controllers.v1_0_0.notification.getNotifications
+        }))
+        .post('/notification', versioning({
+            "1.0.0": controllers.v1_0_0.notification.postNotification
+        }))
+        .put('/notification', versioning({
+            "1.0.0": controllers.v1_0_0.notification.checkNotifications
         }))
         /*________________________________________________
         *_____________________TRASH_______________________

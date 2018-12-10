@@ -2190,6 +2190,283 @@
   },
   {
     "type": "put",
+    "url": "/notification",
+    "title": "03) Check notifications",
+    "group": "Notification",
+    "name": "checkNotifications",
+    "description": "<p>check notifications as seen</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "vitabox"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly checked</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/notification.js",
+    "groupTitle": "Notification",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/notification/:page",
+    "title": "01) Get Notifications",
+    "group": "Notification",
+    "name": "getNotifications",
+    "description": "<p>get sent notifications by page</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example to user:",
+          "content": "{\n    \"notifications\": [\n        {\n            \"vitabox_id\": \"4561ab4-9823-1fea-783d-a32764fab23\",\n            \"vitabox\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n            \"patient_id\": \"2561cdf-dd9c-4fea-783d-a327645236a\",\n            \"patient\": \"Maria Albertina\",\n            \"send_date\": \"2018-07-16T13:36:23.149Z\",\n            \"check_date\": \"2018-07-16T13:36:25.102Z\",\n            \"message\": \"Relembro que tem uma consulta dia 25 de Abril\"\n        }]\n}",
+          "type": "json"
+        },
+        {
+          "title": "Response example to Vitabox:",
+          "content": "{\n    \"notifications\": [\n        {\n            \"emitter_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"emitter\": \"Joaquim Simões\"\n            \"patient_id\": \"2561cdf-dd9c-4fea-783d-a327645236a\",\n            \"patient\": \"Maria Albertina\",\n            \"send_date\": \"2018-07-16T13:36:23.149Z\",\n            \"check_date\": \"2018-07-16T13:36:25.102Z\",\n            \"message\": \"Relembro que tem uma consulta dia 25 de Abril\"\n        }]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/notification.js",
+    "groupTitle": "Notification",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/notification",
+    "title": "02) Send Notification",
+    "group": "Notification",
+    "name": "postNotification",
+    "description": "<p>sent notificationto patient or to vitabox</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "receiver",
+            "description": "<p>patient id, if directed to a patient, or vitabox id, if directed to all patients at home</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>profile name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": false,
+            "field": "to_patient",
+            "description": "<p>flag indicating if the notification is to a patient or not</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly sent</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/notification.js",
+    "groupTitle": "Notification",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
     "url": "/patient/:id/doctor",
     "title": "04) Accept as Doctor",
     "group": "Patient",
@@ -8058,7 +8335,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null\n        }]\n}",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null,\n            \"entity\": \"Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal\"\n        },\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de Pressão Arterial do(a) António está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": \"dd9c4928-9b8d-0e35-251f-22770a94a44f\",\n            \"seen_vitabox\": \"2018-07-16T13:38:45.175Z\",\n            \"entity\": \"Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal\"\n        }\n      ]\n}",
           "type": "json"
         }
       ]

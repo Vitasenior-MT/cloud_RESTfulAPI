@@ -20,3 +20,13 @@ exports.update = (vitabox_id) => {
       }, error => reject(error));
   });
 }
+
+exports.message = (vitabox_id, message) => {
+  return new Promise((resolve, reject) => {
+    broker.subscribeToEntity(vitabox_id).then(
+      () => {
+        broker.getChannel().publish(vitabox_id, 'unicast', new Buffer(JSON.stringify({ content: "notification", msg: message })));
+        resolve();
+      }, error => reject(error));
+  });
+}
