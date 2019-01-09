@@ -16,25 +16,41 @@ exports.create = () => {
 
 exports.register = (vitabox_id, attributes, sponsor, is_admin) => {
   return new Promise((resolve, reject) => {
-    if (attributes.address) db.Vitabox.findOne({ where: { id: vitabox_id, registered: false } }).then(
-      vitabox => {
-        if (vitabox) {
-          let encrypted = utils.encrypt([attributes.address, attributes.password, attributes.district, attributes.locality]);
-          if (!encrypted.error && (vitabox.password === encrypted.value[1] || is_admin)) {
-            vitabox.update({ registered: true, address: encrypted.value[0], longitude: attributes.longitude, latitude: attributes.latitude, district: encrypted.value[2], locality: encrypted.value[3] }).then(
-              vitabox => vitabox.addUser(sponsor.id, { through: { sponsor: true } }).then(
-                () => {
-                  vitabox.address = attributes.address;
-                  vitabox.district = attributes.district;
-                  vitabox.locality = attributes.locality;
-                  resolve(vitabox)
-                },
-                error => reject({ code: 500, msg: error.message })),
-              error => reject({ code: 500, msg: error.message }));
-          } else reject({ code: 500, msg: "Vitabox id and password don´t match" });
-        } else reject({ code: 500, msg: "Vitabox already registered or doesn´t exist" });
-      }, error => reject({ code: 500, msg: error.message }));
-    else reject({ code: 500, msg: "Vitabox address must be defined" });
+    if (attributes.address && attributes.district && attributes.locality)
+      if (attributes.longitude && attributes.latitude && attributes.latitude > -90 && attributes.latitude < 90 && attributes.longitude > -180 && attributes.longitude < 180)
+        db.Vitabox.findOne({ where: { id: vitabox_id, registered: false } }).then(
+          vitabox => {
+            if (vitabox) {
+              let encrypted = utils.encrypt([
+                attributes.address,
+                attributes.password,
+                attributes.district,
+                attributes.locality,
+                attributes.latitude + "+" + attributes.longitude
+              ]);
+              if (!encrypted.error && (vitabox.password === encrypted.value[1] || is_admin)) {
+                vitabox.update({
+                  registered: true,
+                  address: encrypted.value[0],
+                  district: encrypted.value[2],
+                  locality: encrypted.value[3],
+                  coordinates: encrypted.value[4]
+                }).then(
+                  vitabox => vitabox.addUser(sponsor.id, { through: { sponsor: true } }).then(
+                    () => {
+                      vitabox.address = attributes.address;
+                      vitabox.district = attributes.district;
+                      vitabox.locality = attributes.locality;
+                      vitabox.dataValues.latitude = attributes.latitude;
+                      vitabox.dataValues.longitude = attributes.longitude;
+                      resolve(vitabox)
+                    }, error => reject({ code: 500, msg: error.message })),
+                  error => reject({ code: 500, msg: error.message }));
+              } else reject({ code: 500, msg: "Vitabox id and password don´t match" });
+            } else reject({ code: 500, msg: "Vitabox already registered or doesn´t exist" });
+          }, error => reject({ code: 500, msg: error.message }));
+      else reject({ code: 500, msg: "Vitabox map location must be valid" });
+    else reject({ code: 500, msg: "Vitabox address, locality and district must be defined" });
   });
 }
 
@@ -61,16 +77,22 @@ exports.list = (current_user, own) => {
       db.Vitabox.findAll({ attributes: { exclude: ['password'] }, where: { registered: true } }).then(
         list => {
           list.forEach(element => {
+            let coords = utils.decrypt(element.coordinates).split('+');
             element.address = utils.decrypt(element.address);
             element.district = utils.decrypt(element.district);
             element.locality = utils.decrypt(element.locality);
+            element.dataValues.latitude = coords[0];
+            element.dataValues.longitude = coords[1];
           });
           resolve(list);
         }, error => reject({ code: 500, msg: error.message }));
-    else current_user.getVitaboxes({ attributes: ['id', 'latitude', 'longitude', 'address', 'active'] }).then(
+    else current_user.getVitaboxes({ attributes: ['id', 'coordinates', 'address', 'active', 'registered'] }).then(
       list => {
         list.forEach(element => {
+          let coords = utils.decrypt(element.coordinates).split('+');
           element.address = utils.decrypt(element.address);
+          element.dataValues.latitude = coords[0];
+          element.dataValues.longitude = coords[1];
           element.dataValues.sponsor = element.UserVitabox.sponsor;
           delete element.dataValues.UserVitabox;
         });
@@ -79,14 +101,28 @@ exports.list = (current_user, own) => {
   });
 }
 
+exports.listInactive = (current_user, own) => {
+  return new Promise((resolve, reject) => {
+    db.Vitabox.findAll({ attributes: ['id', 'password', 'created_at'], where: { registered: false } }).then(
+      list => {
+        list.forEach(element => element.password = utils.decrypt(element.password));
+        resolve(list)
+      },
+      error => reject({ code: 500, msg: error.message }));
+  });
+}
+
 exports.find = (vitabox_id) => {
   return new Promise((resolve, reject) => {
     db.Vitabox.findById(vitabox_id, { attributes: { exclude: ['password'] } }).then(
       vitabox => {
         if (vitabox) {
+          let coords = utils.decrypt(vitabox.coordinates).split('+');
           vitabox.address = utils.decrypt(vitabox.address);
           vitabox.district = utils.decrypt(vitabox.district);
           vitabox.locality = utils.decrypt(vitabox.locality);
+          vitabox.dataValues.latitude = coords[0];
+          vitabox.dataValues.longitude = coords[1];
           resolve(vitabox);
         }
         else reject({ code: 500, msg: "Vitabox not found" });
@@ -96,20 +132,42 @@ exports.find = (vitabox_id) => {
 
 exports.update = (current_user, vitabox_id, attributes) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        let encrypted = utils.encrypt([attributes.address, attributes.district, attributes.locality]);
-        if (vitabox) if (current_user.admin)
-          vitabox.update({ latitude: attributes.latitude, longitude: attributes.longitude, address: encrypted.value[0], settings: attributes.settings, district: encrypted.value[1], locality: encrypted.value[2] }).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message }));
-        else _isSponsor(vitabox, current_user).then(
-          () => vitabox.update({ latitude: attributes.latitude, longitude: attributes.longitude, address: encrypted.value[0], district: encrypted.value[1], locality: encrypted.value[2] }).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message })),
-          error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found " });
-      }, error => reject({ code: 500, msg: error.message }));
+    if (attributes.address && attributes.district && attributes.locality)
+      if (attributes.longitude && attributes.latitude && attributes.latitude > -90 && attributes.latitude < 90 && attributes.longitude > -180 && attributes.longitude < 180)
+        db.Vitabox.findById(vitabox_id).then(
+          vitabox => {
+            if (vitabox) {
+              let encrypted = utils.encrypt([
+                attributes.address,
+                attributes.district,
+                attributes.locality,
+                attributes.latitude + "+" + attributes.longitude
+              ]);
+              if (!encrypted.error) if (current_user.admin)
+                vitabox.update({
+                  address: encrypted.value[0],
+                  settings: attributes.settings,
+                  district: encrypted.value[1],
+                  locality: encrypted.value[2],
+                  coordinates: encrypted.value[3]
+                }).then(
+                  () => resolve(),
+                  error => reject({ code: 500, msg: error.message }));
+              else _isSponsor(vitabox, current_user).then(
+                () => vitabox.update({
+                  address: encrypted.value[0],
+                  district: encrypted.value[1],
+                  locality: encrypted.value[2],
+                  coordinates: encrypted.value[3]
+                }).then(
+                  () => resolve(),
+                  error => reject({ code: 500, msg: error.message })),
+                error => reject(error));
+              else reject({ code: 500, msg: encrypted.error.message });
+            } else reject({ code: 500, msg: "Vitabox not found " });
+          }, error => reject({ code: 500, msg: error.message }));
+      else reject({ code: 500, msg: "Vitabox map location must be valid" });
+    else reject({ code: 500, msg: "Vitabox address, locality and district must be defined" });
   });
 }
 
@@ -259,7 +317,10 @@ exports.getBoards = (vitabox, where_condiction) => {
             [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
         }]
     }).then(
-      boards => resolve(boards),
+      boards => {
+        boards.map(board => board.description = board.description ? utils.decrypt(board.description) : null);
+        resolve(boards)
+      },
       error => reject({ code: 500, msg: error.message }));
   });
 }
@@ -281,6 +342,25 @@ exports.verifyUser = (current_user, vitabox) => {
     _isUser(vitabox, current_user).then(
       () => resolve(),
       error => reject(error));
+  });
+}
+
+exports.findToReset = (vitabox_id) => {
+  return new Promise((resolve, reject) => {
+    db.Vitabox.findById(vitabox_id, {
+      include: [
+        { model: db.Board },
+        { model: db.User },
+        {
+          model: db.Patient, include: [
+            { model: db.Board },
+            { model: db.Profile },
+            { model: db.User, as: 'Doctors' }
+          ]
+        }]
+    }).then(
+      vitabox => resolve(vitabox),
+      error => reject({ code: 500, msg: error.message }));
   });
 }
 

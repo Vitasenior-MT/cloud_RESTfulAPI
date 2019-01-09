@@ -1,7 +1,8 @@
-var business = require('../../business/index').v1_0_0;
+var business = require('../../business/index').v1_0_0,
+    broker = require("../../brokers/index");
 
 /**
- * @api {post} /sensor 01) Create
+ * @api {post} /sensormodel 01) Create
  * @apiGroup Sensormodel
  * @apiName createSensormodel
  * @apiDescription create a new sensor.
@@ -35,7 +36,9 @@ var business = require('../../business/index').v1_0_0;
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.sensormodel.create(req.body).then(
-            sensor => res.status(200).json({ id: sensor.id }),
+            sensormodel => broker.notification.log(req.client.id, ["sensormodel_create", sensormodel.to_read, sensormodel.id].join("+")).then(
+                () => res.status(200).json({ id: sensormodel.id }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -43,7 +46,7 @@ exports.create = (req, res) => {
 }
 
 /**
- * @api {get} /sensor 02) List
+ * @api {get} /sensormodel 02) List
  * @apiGroup Sensormodel
  * @apiName listSensormodels
  * @apiDescription list all sensors. 
@@ -86,7 +89,7 @@ exports.create = (req, res) => {
 exports.list = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.sensormodel.list().then(
-            sensors => res.status(200).json({ sensors: sensors }),
+            sensormodels => res.status(200).json({ sensors: sensormodels }),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -94,7 +97,7 @@ exports.list = (req, res) => {
 }
 
 /**
- * @api {put} /sensor/:id 03) Update
+ * @api {put} /sensormodel/:id 03) Update
  * @apiGroup Sensormodel
  * @apiName updateSensormodel
  * @apiDescription update a sensor.
@@ -121,7 +124,9 @@ exports.list = (req, res) => {
 exports.update = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.sensormodel.update(req.params.id, req.body).then(
-            () => res.status(200).json({ result: true }),
+            sensormodel => broker.notification.log(req.client.id, ["sensormodel_update", sensormodel.to_read, sensormodel.id].join("+")).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -129,7 +134,7 @@ exports.update = (req, res) => {
 }
 
 /**
- * @api {delete} /sensor/:id 04) Delete
+ * @api {delete} /sensormodel/:id 04) Delete
  * @apiGroup Sensormodel
  * @apiName deleteSensormodel
  * @apiDescription remove a sensor
@@ -143,7 +148,9 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.sensormodel.remove(req.params.id).then(
-            () => res.status(200).json({ result: true }),
+            sensormodel => broker.notification.log(req.client.id, ["sensormodel_delete", sensormodel.to_read].join("+")).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

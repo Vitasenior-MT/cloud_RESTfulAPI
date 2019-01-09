@@ -48,7 +48,7 @@ exports.createToken = (obj) => {
 exports.validateToken = (token) => {
   return new Promise((resolve, reject) => {
     let public_key = fs.readFileSync(__dirname + '/../../keys/cert.pem').toString();
-    if (public_key === undefined) reject("error on load public key");
+    if (public_key === undefined) reject({ code: 500, msg: "error on load public key" });
 
     let options = {
       algorithms: ["RS256"]
@@ -97,60 +97,5 @@ exports.download = (filename) => {
       let header = { 'Content-Type': mime.lookup(filename) }
       resolve({ file: file, header: header });
     } catch (err) { reject({ code: 500, msg: err.message }); }
-  });
-}
-
-
-// JUST TO DEVELOPMENT
-exports.deleteAll = () => {
-  return new Promise((resolve, reject) => {
-
-    var options = { raw: true };
-
-    db.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', options).then(() => {
-      db.UserVitabox.truncate().then(() => {
-        db.User.truncate().then(() => {
-          db.Vitabox.truncate().then(() => {
-            db.Boardmodel.truncate().then(() => {
-              db.Sensormodel.truncate().then(() => {
-                db.Sensor.truncate().then(() => {
-                  db.Board.truncate().then(() => {
-                    db.Patient.truncate().then(() => {
-                      db.Profile.truncate().then(() => {
-                        db.RecordTemp.remove({}, () => {
-                          db.RecordOld.remove({}, () => {
-                            db.RecordCheck.remove({}, () => {
-                              db.Log.remove({}, () => {
-                                db.Warning.remove({}, () => {
-                                  db.Profilemeasure.remove({}, () => {
-                                    db.Profilemodel.remove({}, () => {
-                                      db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options).then(
-                                        () => resolve(),
-                                        error => reject(error));
-                                    });
-                                  }, error => reject(error));
-                                }, error => reject(error));
-                              }, error => reject(error));
-                            }, error => reject(error));
-                          }, error => reject(error));
-                        }, error => reject(error));
-                      }, error => reject(error));
-                    }, error => reject(error));
-                  }, error => reject(error));
-                }, error => reject(error));
-              }, error => reject(error));
-            }, error => reject(error));
-          }, error => reject(error));
-        }, error => reject(error));
-      }, error => reject(error));
-    }, error => reject(error));
-  });
-}
-
-exports.testSeed = () => {
-  return new Promise((resolve, reject) => {
-    require('../../models/seed').seed(db).then(
-      () => resolve(),
-      error => reject(error));
   });
 }

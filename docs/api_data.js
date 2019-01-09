@@ -2,7 +2,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/chpass",
-    "title": "03) Change password",
+    "title": "04) Change password",
     "group": "Authentication",
     "name": "changePassword",
     "version": "1.0.0",
@@ -92,7 +92,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/forgot",
-    "title": "04) Forgot Password",
+    "title": "05) Forgot Password",
     "group": "Authentication",
     "name": "forgotPassword",
     "version": "1.0.0",
@@ -175,7 +175,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/reset",
-    "title": "05) Reset password",
+    "title": "06) Reset password",
     "group": "Authentication",
     "name": "resetPassword",
     "version": "1.0.0",
@@ -562,6 +562,71 @@ define({ "api": [
     }
   },
   {
+    "type": "get",
+    "url": "/check",
+    "title": "03) Verify Token",
+    "group": "Authentication",
+    "name": "userVerifyToken",
+    "description": "<p>endpoint to check token validity.</p>",
+    "version": "1.0.0",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "Authentication",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "post",
     "url": "/board/:id/patient",
     "title": "04) Add Patient",
@@ -798,14 +863,14 @@ define({ "api": [
   {
     "type": "put",
     "url": "/board/:id",
-    "title": "02) Change MAC",
+    "title": "02) Change MAC or description",
     "group": "Board",
     "name": "exchangeBoard",
     "description": "<p>alter MAC address to board exchange</p>",
     "version": "1.0.0",
     "permission": [
       {
-        "name": "admin"
+        "name": "admin, sponsor"
       }
     ],
     "parameter": {
@@ -817,13 +882,27 @@ define({ "api": [
             "optional": false,
             "field": "id",
             "description": "<p>board id to exchange</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "mac_addr",
+            "description": "<p>new MAC address (just for admin)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "description",
+            "description": "<p>new description (just for sponsor)</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"mac_addr\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\"\n}",
+          "content": "{\n     \"mac_addr\": \"45:44:54:65:65:16:51:31\",\n     \"description\": \"new description\"\n}",
           "type": "json"
         }
       ]
@@ -1021,6 +1100,124 @@ define({ "api": [
         {
           "title": "Response example:",
           "content": "{\n    \"sensors\": [\n        {\n            \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n            \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n            \"last_values\": [  17, 16, 13, 16, 15 ],\n            \"Sensormodel\": {\n                \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                \"transducer\": \"dht22\",\n                \"measure\": \"humidity\",\n                \"min_acceptable\": \"30.00000\",\n                \"max_acceptable\": \"50.00000\",\n                \"min_possible\": \"20.00000\",\n                \"max_possible\": \"60.00000\"\n            }\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/board.js",
+    "groupTitle": "Board",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/inactive/board",
+    "title": "07) Get inactive",
+    "group": "Board",
+    "name": "listInactive",
+    "description": "<p>list all inactive boards</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "boards",
+            "description": "<p>list of boards</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>id of each board</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "mac_addr",
+            "description": "<p>mac address of each board</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "password",
+            "description": "<p>password of each board</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "datetime",
+            "optional": false,
+            "field": "created_at",
+            "description": "<p>date of production</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"password\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"mac_addr\": \"45:44:54:65:65:16:51:31\"\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -3092,7 +3289,7 @@ define({ "api": [
   {
     "type": "put",
     "url": "patient/:id/biometric",
-    "title": "01) Update Biomatric Data",
+    "title": "01) Update Biometric Data",
     "group": "Patient",
     "name": "updateProfilesToPatient",
     "description": "<p>update height and weight from patient.</p>",
@@ -3125,20 +3322,13 @@ define({ "api": [
             "optional": false,
             "field": "weight",
             "description": "<p>patient weight</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "profile",
-            "description": "<p>clinical profile description</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"height\": 1.72,\n     \"weight\": 78.2m\n     \"profile\": \"Diabetes tipo 1\"\n}",
+          "content": "{\n     \"height\": 1.72,\n     \"weight\": 78.2m\n}",
           "type": "json"
         }
       ]
@@ -3215,7 +3405,7 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "patient/:paid/profile/:prid",
+    "url": "patient/:id/profile",
     "title": "02) Update profile",
     "group": "Patient",
     "name": "updateProfilesToPatient",
@@ -3240,25 +3430,32 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": ":prid",
+            "field": ":id",
             "description": "<p>profile id to update</p>"
           },
           {
             "group": "Parameter",
-            "type": "decimal",
+            "type": "string",
             "optional": false,
-            "field": "min",
-            "description": "<p>minimum value acceptable</p>"
+            "field": "description",
+            "description": "<p>clinical profile description</p>"
           },
           {
             "group": "Parameter",
-            "type": "decimal",
+            "type": "array",
             "optional": false,
-            "field": "max",
-            "description": "<p>maximum value acceptable</p>"
+            "field": "profiles",
+            "description": "<p>list of profiles to define with the minimum and maximum acceptable values and the profile id</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"profiles\":[\n         {\n           \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n           \"min\": 100,\n           \"max\": 110  \n         }\n     ],\n     \"description\": \"Diabetes tipo 1\"\n}",
+          "type": "json"
+        }
+      ]
     },
     "success": {
       "fields": {
@@ -4711,7 +4908,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/sensor",
+    "url": "/sensormodel",
     "title": "01) Create",
     "group": "Sensormodel",
     "name": "createSensormodel",
@@ -4870,7 +5067,7 @@ define({ "api": [
   },
   {
     "type": "delete",
-    "url": "/sensor/:id",
+    "url": "/sensormodel/:id",
     "title": "04) Delete",
     "group": "Sensormodel",
     "name": "deleteSensormodel",
@@ -4966,7 +5163,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/sensor",
+    "url": "/sensormodel",
     "title": "02) List",
     "group": "Sensormodel",
     "name": "listSensormodels",
@@ -5105,7 +5302,7 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "/sensor/:id",
+    "url": "/sensormodel/:id",
     "title": "03) Update",
     "group": "Sensormodel",
     "name": "updateSensormodel",
@@ -5764,13 +5961,27 @@ define({ "api": [
             "optional": false,
             "field": "mac_address",
             "description": "<p>board MAC address</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "type",
+            "description": "<p>board password</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "patient_id",
+            "description": "<p>board MAC address</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"description\": \"kitchen\",\n     \"password\":\"WkN1NNQiRD\",\n     \"mac_addr\": \"00:12:4b:00:06:0d:60:fb\"\n}",
+          "content": "{\n     \"description\": \"kitchen\",\n     \"password\":\"WkN1NNQiRD\",\n     \"mac_addr\": \"00:12:4b:00:06:0d:60:fb\",\n     \"patient_id\": \"\",\n     \"type\": \"wearable\"\n}",
           "type": "json"
         }
       ]
@@ -7347,6 +7558,117 @@ define({ "api": [
     }
   },
   {
+    "type": "get",
+    "url": "/inactive/vitabox",
+    "title": "22) Get inactive",
+    "group": "Vitabox",
+    "name": "listInactive",
+    "description": "<p>list all inactive vitaboxes</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "vitaboxes",
+            "description": "<p>list of vitaboxes</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>id of each vitabox</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "password",
+            "description": "<p>password of each vitabox</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "datetime",
+            "optional": false,
+            "field": "created_at",
+            "description": "<p>date of production</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"password\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\"\n     }\n ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "delete",
     "url": "/vitabox/:id/board",
     "title": "21) Remove Board",
@@ -7781,7 +8103,7 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "/vitabox/:id",
+    "url": "/vitabox/:id/update",
     "title": "07) Update",
     "group": "Vitabox",
     "name": "update",
@@ -8055,7 +8377,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example to admin:",
-          "content": "{\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"email\": \"sponsor@example.com\",\n     \"password\": \"1DlA2.d$\"\n}",
+          "content": "{\n     \"latitude\": 38.8976763,\n     \"longitude\": -77.0387185,\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"email\": \"sponsor@example.com\",\n     \"password\": \"1DlA2.d$\"\n}",
           "type": "json"
         }
       ]
@@ -8069,6 +8391,102 @@ define({ "api": [
             "optional": false,
             "field": "result",
             "description": "<p>return &quot;true&quot; if was sucessfuly registered</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/vitabox.js",
+    "groupTitle": "Vitabox",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/vitabox/:id/reset",
+    "title": "22) Reset",
+    "group": "Vitabox",
+    "name": "vitaboxReset",
+    "description": "<p>reset vitabox to reuse it.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>vitabox id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>return &quot;true&quot; if was sucessfuly reseted</p>"
           }
         ]
       }

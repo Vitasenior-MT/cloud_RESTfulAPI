@@ -22,7 +22,9 @@ var business = require('../../business/index').v1_0_0,
 exports.create = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.create(req.body).then(
-            model => res.status(200).json({ id: model.id }),
+            boardmodel => broker.notification.log(req.client.id, ["boardmodel_create", boardmodel.name, boardmodel.id].join("+")).then(
+                () => res.status(200).json({ id: boardmodel.id }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -88,7 +90,9 @@ exports.list = (req, res) => {
 exports.update = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.update(req.params.id, req.body).then(
-            () => res.status(200).json({ result: true }),
+            boardmodel => broker.notification.log(req.client.id, ["boardmodel_update", boardmodel.name, boardmodel.id].join("+")).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -110,7 +114,9 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.remove(req.params.id).then(
-            () => res.status(200).json({ result: true }),
+            boardmodel => broker.notification.log(req.client.id, ["boardmodel_delete", boardmodel.name].join("+")).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -136,7 +142,9 @@ exports.delete = (req, res) => {
 exports.setSensor = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.setSensor(req.params.id, req.body.sensor_id).then(
-            () => res.status(200).json({ result: true }),
+            res => broker.notification.log(req.client.id, ["boardmodel_add_sensormodel", res.sensormodel, res.boardmodel].join("+")).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
@@ -205,9 +213,14 @@ exports.getSensors = (req, res) => {
 exports.removeSensor = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.removeSensor(req.params.id, req.body.sensor_id).then(
-            sids => broker.record.removeBySensors(sids).then(
-                () => res.status(200).json({ result: true }),
-                error => res.status(error.code).send(error.msg)),
+            res => {
+                Promise.all([
+                    broker.record.removeBySensors(res.sids),
+                    broker.notification.log(req.client.id, ["boardmodel_rmv_sensormodel", res.sensormodel, res.boardmodel].join("+"))
+                ]).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg));
+            },
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

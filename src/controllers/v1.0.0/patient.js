@@ -1,7 +1,7 @@
 var business = require('../../business/index').v1_0_0;
 
 /**
- * @api {put} patient/:id/biometric 01) Update Biomatric Data
+ * @api {put} patient/:id/biometric 01) Update Biometric Data
  * @apiGroup Patient
  * @apiName updateProfilesToPatient
  * @apiDescription update height and weight from patient.
@@ -12,12 +12,10 @@ var business = require('../../business/index').v1_0_0;
  * @apiParam {string} :id patient id
  * @apiParam {decimal} height patient height
  * @apiParam {decimal} weight patient weight
- * @apiParam {string} profile clinical profile description
  * @apiParamExample {json} Request example:
  *     {
  *          "height": 1.72,
  *          "weight": 78.2m
- *          "profile": "Diabetes tipo 1"
  *     }
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
@@ -34,7 +32,7 @@ exports.updateBiometric = (req, res) => {
 }
 
 /**
- * @api {put} patient/:paid/profile/:prid 02) Update profile
+ * @api {put} patient/:id/profile 02) Update profile
  * @apiGroup Patient
  * @apiName updateProfilesToPatient
  * @apiDescription update profile from patient.
@@ -43,17 +41,31 @@ exports.updateBiometric = (req, res) => {
  * 
  * @apiPermission doctor
  * @apiParam {string} :paid patient id
- * @apiParam {string} :prid profile id to update
- * @apiParam {decimal} min minimum value acceptable
- * @apiParam {decimal} max maximum value acceptable
+ * @apiParam {string} :id profile id to update
+ * @apiParam {string} description clinical profile description
+ * @apiParam {array} profiles list of profiles to define with the minimum and maximum acceptable values and the profile id
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "profiles":[
+ *              {
+ *                "id": "585402ef-68dd-44a4-a44b-04152e659d11",
+ *                "min": 100,
+ *                "max": 110  
+ *              }
+ *          ],
+ *          "description": "Diabetes tipo 1"
+ *     }
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
 exports.updateProfile = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
-        business.patient.verifyDoctor(req.client, req.params.paid).then(
-            () => business.profile.update(req.params.prid, req.body.min, req.body.max).then(
+        business.patient.verifyDoctor(req.client, req.params.id).then(
+            () => Promise.all([
+                business.profile.update(req.params.id, req.body.profiles),
+                business.patient.updateProfile(req.params.id, req.body.description)
+            ]).then(
                 () => res.status(200).json({ result: true }),
-                error => res.status(500).send("cannot create profiles")),
+                error => res.status(500).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

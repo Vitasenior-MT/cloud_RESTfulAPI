@@ -63,12 +63,24 @@ exports.setBiometricData = (patient_id, attributes) => {
     });
 }
 
-exports.disable = (patient_id) => {
+exports.setBiometricData = (patient_id, attributes) => {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id).then(
-            patient => patient.update({ active: false }).then(
-                result => resolve(result),
-                error => reject({ code: 500, msg: error.message })),
+        db.Patient.update({
+            height: attributes.height,
+            weight: attributes.weight,
+            active: true
+        }, { where: { id: patient_id } }).then(
+            result => resolve(result),
+            error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+exports.updateProfile = (patient_id, profile) => {
+    return new Promise((resolve, reject) => {
+        db.Patient.update({
+            profile: profile
+        }, { where: { id: patient_id } }).then(
+            () => resolve(),
             error => reject({ code: 500, msg: error.message }));
     });
 }
@@ -79,6 +91,14 @@ exports.enable = (patient_id) => {
             patient => patient.update({ active: true }).then(
                 () => resolve(),
                 error => reject({ code: 500, msg: error.message })),
+            error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+exports.remove = (patient_id) => {
+    return new Promise((resolve, reject) => {
+        db.Patient.destroy({ where: { id: patient_id } }).then(
+            () => resolve(),
             error => reject({ code: 500, msg: error.message }));
     });
 }

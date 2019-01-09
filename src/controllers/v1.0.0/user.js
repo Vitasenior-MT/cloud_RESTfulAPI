@@ -40,7 +40,7 @@ var business = require('../../business/index').v1_0_0,
 exports.register = (req, res) => {
     business.user.register(req.body.email, req.body.password, req.body.name).then(
         user => business.utils.createToken(user, req.connection.remoteAddress).then(
-            token => broker.notification.log(user.id, "login").then(
+            token => broker.notification.log(user.id, "user_register").then(
                 () => res.status(200).json({
                     token: token,
                     id: user.id,
@@ -87,7 +87,7 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
     business.user.login(req.body.email, req.body.password).then(
         user => business.utils.createToken(user, req.connection.remoteAddress).then(
-            token => broker.notification.log(user.id, "login").then(
+            token => broker.notification.log(user.id, "user_login").then(
                 () => business.warning.getWarningCount(user.id).then(
                     warnings => {
                         if (!user.admin) res.status(200).json({
@@ -149,7 +149,9 @@ exports.verifyToken = (req, res) => {
 exports.changePassword = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.user.changePassword(req.client, req.body.password).then(
-            () => res.status(200).json({ result: true }),
+            () => broker.notification.log(req.client.id, "user_chgpass").then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else { res.status(401).send(req.t("unauthorized")); }
 }
@@ -167,7 +169,9 @@ exports.forgotPassword = (req, res) => {
     business.user.findByEmail(req.body.email).then(
         user => business.user.createRecoverToken(user).then(
             token => business.user.sendRecoverEmail(user, token).then(
-                () => res.status(200).json({ result: true }),
+                () => broker.notification.log(user.id, "user_fgtpass").then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg)),
         error => {
@@ -189,7 +193,9 @@ exports.forgotPassword = (req, res) => {
 exports.resetPassword = (req, res) => {
     business.user.verifyRecoverToken(req.body.token).then(
         user => business.user.changePassword(user, req.body.password).then(
-            () => res.status(200).json({ result: true }),
+            () => broker.notification.log(user.id, "user_rstpass").then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg)),
         error => res.status(error.code).send(error.msg));
 }
@@ -293,7 +299,7 @@ exports.getLogs = (req, res) => {
             logs => {
                 logs.forEach(x => {
                     x.toJSON();
-                    x.message = req.t(x.message);
+                    x.message = req.t.apply(this, x.message.split("+"));
                 });
                 res.status(200).json({ logs: logs });
             },

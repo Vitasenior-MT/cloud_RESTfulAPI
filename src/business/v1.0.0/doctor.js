@@ -61,7 +61,7 @@ exports.acceptAsDoctor = (doctor_id, patient_id, flag) => {
 exports.getPatients = (user) => {
   return new Promise((resolve, reject) => {
     user.getPatients({
-      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif'],
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'profile'],
       include: [
         {
           model: db.Board, attributes: ['id', 'mac_addr'],
@@ -73,7 +73,7 @@ exports.getPatients = (user) => {
             }]
         },
         { model: db.Profile },
-        { model: db.Vitabox, attributes: ['id', 'latitude', 'longitude', 'address'] }
+        { model: db.Vitabox, attributes: ['id', 'coordinates', 'address'] }
       ]
     }, { through: { accepted: true } }).then(
       patients => {
@@ -84,6 +84,10 @@ exports.getPatients = (user) => {
             patient.cc = utils.decrypt(patient.cc);
             patient.nif = utils.decrypt(patient.nif);
             patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
+            let coords = utils.decrypt(patient.Vitabox.coordinates).split('+');
+            patient.Vitabox.dataValues.latitude = coords[0];
+            patient.Vitabox.dataValues.longitude = coords[1];
+            delete patient.Vitabox.dataValues.coordinates;
             patient.Boards.forEach(board => {
               board.dataValues.since = board.PatientBoard.created_at;
               board.dataValues.frequency = board.PatientBoard.frequency;

@@ -86,7 +86,7 @@ Promise.all([
 ]).then(
     () => require('./src/models/seed').seed(db).then(
         () => {
-            // console.log('\x1b[32m%s\x1b[0m.', '(PLAIN) Connection established with MongoDB, MySQL and RabbitMQ');
+            console.log('\x1b[32m(PLAIN) Connection established with External Services\x1b[0m.');
 
             // START THE SERVER
             // =============================================================================
@@ -116,4 +116,4 @@ Promise.all([
             });
 
         }, error => { console.log('Unable to seed Databases.', error.message); process.exit(1); }),
-    error => { console.log('Unable to connect to Broker and Databases.', error); process.exit(1); });
+    error => { console.log('Unable to connect to External Services.', error); process.exit(1); });

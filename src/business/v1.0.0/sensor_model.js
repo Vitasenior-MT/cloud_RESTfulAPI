@@ -13,7 +13,7 @@ exports.create = (attributes) => {
       unit: attributes.unit ? attributes.unit : "",
       to_read: attributes.to_read
     }).then(
-      model => resolve(model),
+      sensormodel => resolve(sensormodel),
       error => reject({ code: 500, msg: error.message }));
   });
 }
@@ -41,7 +41,7 @@ exports.update = (sensor_id, attributes) => {
           unit: attributes.unit ? attributes.unit : "",
           to_read: attributes.to_read
         }).then(
-          () => resolve(),
+          sensormodel => resolve(sensormodel),
           error => reject({ code: 500, msg: error.message }));
         else reject({ code: 500, msg: "sensor model not found" });
       }, error => reject({ code: 500, msg: error.message }));
@@ -51,9 +51,9 @@ exports.update = (sensor_id, attributes) => {
 exports.remove = (sensor_id) => {
   return new Promise((resolve, reject) => {
     db.Sensormodel.findById(sensor_id).then(
-      model => {
-        if (model) model.destroy().then(
-          () => resolve(),
+      sensormodel => {
+        if (sensormodel) sensormodel.destroy().then(
+          () => resolve(sensormodel),
           error => reject({ code: 500, msg: error.message }));
         else reject({ code: 500, msg: "sensor model not found" });
       }, error => reject({ code: 500, msg: error.message }));

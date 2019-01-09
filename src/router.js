@@ -61,23 +61,26 @@ module.exports = (app) => {
         .get('/vitabox/:own', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.list
         }))
+        .post('/vitabox/:id/register', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.register
+        }))
+        .post('/vitabox/:id/connect', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.requestToken
+        }))
         .get('/vitabox/:id/settings', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getSettings
         }))
         .put('/vitabox/:id/settings', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.setSettings
         }))
-        .put('/vitabox/:id', versioning({
+        .put('/vitabox/:id/update', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.update
+        }))
+        .put('/vitabox/:id/reset', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.reset
         }))
         .delete('/vitabox/:id', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.delete
-        }))
-        .post('/vitabox/:id/register', versioning({
-            "1.0.0": controllers.v1_0_0.vitabox.register
-        }))
-        .post('/vitabox/:id/connect', versioning({
-            "1.0.0": controllers.v1_0_0.vitabox.requestToken
         }))
         .get('/vitabox/:id/user', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getUsers
@@ -117,6 +120,9 @@ module.exports = (app) => {
         }))
         .delete('/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removeBoard
+        }))
+        .get('/inactive/vitabox', versioning({
+            "1.0.0": controllers.v1_0_0.vitabox.listInactive
         }))
         /*________________________________________________
         *__________________ BOARD MODEL___________________
@@ -163,6 +169,9 @@ module.exports = (app) => {
         .put('/board/:id', versioning({
             "1.0.0": controllers.v1_0_0.board.exchange
         }))
+        .get('/inactive/board', versioning({
+            "1.0.0": controllers.v1_0_0.board.listInactive
+        }))
         /*________________________________________________
         *____________________PATIENT______________________
         *_________________________________________________*/
@@ -172,7 +181,7 @@ module.exports = (app) => {
         .get('/patient/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.patient.getBoardsFromPatient
         }))
-        .put('/patient/:paid/profile/:prid', versioning({
+        .put('/patient/:id/profile', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateProfile
         }))
         .post('/patient/:id/doctor', versioning({

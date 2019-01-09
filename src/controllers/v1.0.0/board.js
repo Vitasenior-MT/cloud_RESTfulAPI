@@ -40,26 +40,39 @@ exports.create = (req, res) => {
 
 
 /**
- * @api {put} /board/:id 02) Change MAC
+ * @api {put} /board/:id 02) Change MAC or description
  * @apiGroup Board
  * @apiName exchangeBoard
  * @apiDescription alter MAC address to board exchange
  * @apiVersion 1.0.0
  * @apiUse box
  * 
- * @apiPermission admin
+ * @apiPermission admin, sponsor
  * @apiParam {string} id board id to exchange
+ * @apiParam {string} mac_addr new MAC address (just for admin)
+ * @apiParam {string} description new description (just for sponsor)
  * @apiParamExample {json} Request example:
  *     {
- *          "mac_addr":"5d93585b-f511-4fa8-b69e-692c2474d5e8"
+ *          "mac_addr": "45:44:54:65:65:16:51:31",
+ *          "description": "new description"
  *     }
  * @apiSuccess {booleam} result returns true if was successfuly updated
  */
 exports.exchange = (req, res) => {
-    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.board.switchMac(req.params.id, req.body.mac_addr).then(
-            () => res.status(200).json({ result: true }),
-            error => res.status(error.code).send(error.msg));
+    if (req.client && req.client.constructor.name === "User") {
+        if (req.client.admin) {
+            business.board.switchMac(req.params.id, req.body.mac_addr).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        } else {
+            business.board.get(req.params.id).then(
+                board => business.vitabox.verifySponsor(req.client, board.vitabox_id).then(
+                    () => business.board.updateDescription(board, req.body.description).then(
+                        () => res.status(200).json({ result: true }),
+                        error => res.status(error.code).send(error.msg)),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg));
+        }
     } else { res.status(401).send("Unauthorized"); }
 }
 
@@ -130,30 +143,17 @@ exports.addPatientToBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.get(req.params.id).then(
             board => {
-                if (req.client.admin) business.board.addPatient(board, req.body.patient_id).then(
-                    () => Promise.all(board.Sensors.map(x => business.profile.create({
-                        patient_id: req.body.patient_id,
-                        min: x.Sensormodel.min_acceptable,
-                        max: x.Sensormodel.max_acceptable,
-                        tag: x.Sensormodel.tag,
-                        measure: x.Sensormodel.measure
-                    }))).then(
-                        () => res.status(200).json({ result: true }),
-                        error => res.status(500).send("could not set patient profile")),
+                let promises = board.Sensors.map(x => business.profile.create(req.body.patient_id, x.Sensormodel));
+                promises.push(business.board.addPatient(board, req.body.patient_id));
+
+                if (req.client.admin) Promise.all(promises).then(
+                    () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg));
                 else business.vitabox.verifySponsor(req.client, board.vitabox_id).then(
-                    vitabox => business.board.addPatient(board, req.body.patient_id).then(
-                        () => Promise.all(board.Sensors.map(x => business.profile.create({
-                            patient_id: req.body.patient_id,
-                            min: x.Sensormodel.min_acceptable,
-                            max: x.Sensormodel.max_acceptable,
-                            tag: x.Sensormodel.tag,
-                            measure: x.Sensormodel.measure
-                        }))).then(
-                            () => res.status(200).json({ result: true }),
-                            error => res.status(500).send("could not set patient profile")),
+                    () => Promise.all(promises).then(
+                        () => res.status(200).json({ result: true }),
                         error => res.status(error.code).send(error.msg)),
-                    error => res.status(error.code).send(error.msg))
+                    error => res.status(error.code).send(error.msg));
             }, error => res.status(error.code).send(error.msg));
     } else res.status(401).send(req.t("unauthorized"));
 }
@@ -178,21 +178,20 @@ exports.removePatientFromBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.get(req.params.id).then(
             board => {
-                if (req.client.admin) board.removePatient(req.body.patient_id).then(
-                    () => Promise.all(board.Sensors.map(x => business.profile.remove(req.body.patient_id, x.Sensormodel.tag))).then(
-                        () => broker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
-                            () => res.status(200).json({ result: true }),
-                            error => res.status(error.code).send(error.msg)),
-                        error => res.status(500).send("could not remove patient profile")),
-                    error => res.status(500).send(error.message));
+                let promises = [
+                    board.removePatient(req.body.patient_id),
+                    broker.record.removeByBoardPatient(req.body.patient_id, req.params.id),
+                ];
+                board.Sensors.map(x => promises.push(business.profile.removeByTag(req.body.patient_id, x.Sensormodel.tag)));
+                if (board.Boardmodel.type === "wearable") promises.push(business.board.updateDescription(board, ""));
+                
+                if (req.client.admin) Promise.all(promises).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(error.code).send(error.msg));
                 else business.vitabox.verifySponsor(req.client, board.vitabox_id).then(
-                    () => board.removePatient(req.body.patient_id).then(
-                        () => Promise.all(board.Sensors.map(x => business.profile.remove(req.body.patient_id, x.Sensormodel.tag))).then(
-                            () => broker.record.removeByBoardPatient(req.body.patient_id, req.params.id).then(
-                                () => res.status(200).json({ result: true }),
-                                error => res.status(error.code).send(error.msg)),
-                            error => res.status(500).send("could not remove patient profile")),
-                        error => res.status(500).send(error.message)),
+                    () => Promise.all(promises).then(
+                        () => res.status(200).json({ result: true }),
+                        error => res.status(error.code).send(error.msg)),
                     error => res.status(error.code).send(error.msg))
             }, error => res.status(error.code).send(error.msg));
     } else res.status(401).send(req.t("unauthorized"));
@@ -232,6 +231,42 @@ exports.getSensorsFromBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.getSensors(req.params.id).then(
             sensors => res.status(200).json({ sensors: sensors }),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send(req.t("unauthorized"));
+    }
+}
+
+/**
+ * @api {get} /inactive/board 07) Get inactive
+ * @apiGroup Board
+ * @apiName listInactive
+ * @apiDescription list all inactive boards 
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin
+ * @apiSuccess {array} boards list of boards
+ * @apiSuccess {string} id id of each board
+ * @apiSuccess {string} mac_addr mac address of each board
+ * @apiSuccess {string} password password of each board
+ * @apiSuccess {datetime} created_at date of production
+ * @apiSuccessExample {json} Response example:
+ * {
+ *  "vitaboxes": [
+ *      {
+ *          "id": "d1d66ccb-e5a0-4bd4-8580-6218f452e580",
+ *          "created_at": "2018-02-22T11:57:53.000Z",
+ *          "password": "d1d66ccb-e5a0-4bd4-8580-6218f452e580",
+ *          "mac_addr": "45:44:54:65:65:16:51:31"
+ *      }
+ *  ]
+ * }
+ */
+exports.listInactive = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        business.board.listInactive().then(
+            data => res.status(200).json({ boards: data }),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
