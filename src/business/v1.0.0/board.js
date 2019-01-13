@@ -76,19 +76,21 @@ exports.authenticate = (mac_addr, password) => {
 
 exports.setDescription = (board, description) => {
   return new Promise((resolve, reject) => {
-    let encrypted = (description !== "" && description !== null) ? utils.encrypt([description]) : [null];
-    board.update({ description: encrypted[0], active: true }).then(
+    let encrypted = (description !== "" && description !== null) ? utils.encrypt([description]) : { value: [null], error: null };
+    if (!encrypted.error) board.update({ description: encrypted.value[0], active: true }).then(
       () => resolve(),
       error => reject({ code: 500, msg: error.message }));
+    else reject({ code: 500, msg: encrypted.error.message });
   });
 }
 
 exports.updateDescription = (board, description) => {
   return new Promise((resolve, reject) => {
-    let encrypted = (description !== "" && description !== null) ? utils.encrypt([description]) : [null];
-    board.update({ description: encrypted[0] }).then(
+    let encrypted = (description !== "" && description !== null) ? utils.encrypt([description]) : { value: [null], error: null };
+    if (!encrypted.error) board.update({ description: encrypted.value[0] }).then(
       () => resolve(),
       error => reject({ code: 500, msg: error.message }));
+    else reject({ code: 500, msg: encrypted.error.message });
   });
 }
 

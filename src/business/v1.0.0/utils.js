@@ -11,7 +11,7 @@ exports.encrypt = (to_encrypt) => {
   try {
     return {
       value: to_encrypt.map(element => {
-        let cipher = crypto.createCipher(process.env.ALGORITHM, process.env.KEY);
+        let cipher = crypto.createCipher(process.env.CIPHER_ALGORITHM, process.env.CIPHER_KEY);
         return element = cipher.update(Buffer.from(element), 'utf8', 'hex') + cipher.final('hex');
       }), error: null
     };
@@ -21,15 +21,12 @@ exports.encrypt = (to_encrypt) => {
 }
 
 exports.decrypt = (to_decrypt) => {
-  let decipher = crypto.createDecipher(process.env.ALGORITHM, process.env.KEY);
+  let decipher = crypto.createDecipher(process.env.CIPHER_ALGORITHM, process.env.CIPHER_KEY);
   return decipher.update(to_decrypt, 'hex', 'utf8') + decipher.final('utf8');
 }
 
 exports.createToken = (obj) => {
   return new Promise((resolve, reject) => {
-    let private_key = fs.readFileSync(__dirname + '/../../keys/key.pem').toString();
-    if (private_key === undefined) reject({ code: 500, msg: "error on load private key" });
-
     let payload = {
       id: obj.id,
       role: obj.constructor.name
@@ -38,7 +35,7 @@ exports.createToken = (obj) => {
       expiresIn: "8h",
       algorithm: "RS256"
     };
-    jwt.sign(payload, private_key, options, (error, token) => {
+    jwt.sign(payload, process.env.PRIVATE_KEY, options, (error, token) => {
       if (error) reject({ code: 500, msg: error.message });
       resolve(token);
     });
@@ -47,14 +44,11 @@ exports.createToken = (obj) => {
 
 exports.validateToken = (token) => {
   return new Promise((resolve, reject) => {
-    let public_key = fs.readFileSync(__dirname + '/../../keys/cert.pem').toString();
-    if (public_key === undefined) reject({ code: 500, msg: "error on load public key" });
-
     let options = {
       algorithms: ["RS256"]
     };
 
-    jwt.verify(token, public_key, options, (error, payload) => {
+    jwt.verify(token, process.env.PUBLIC_KEY, options, (error, payload) => {
       if (error) reject({ code: 500, msg: error.message });
       db[payload.role].findById(payload.id).then(
         obj => resolve(obj),

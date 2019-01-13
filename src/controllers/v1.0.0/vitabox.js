@@ -778,20 +778,20 @@ exports.removePatient = (req, res) => {
 exports.addBoard = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.board.authenticate(req.body.mac_addr, req.body.password).then(
-            board => {
-                let promises = [
-                    business.vitabox.addBoard(req.client, req.params.id, board.id),
-                    business.board.setDescription(board, req.body.description ? req.body.description : null)
-                ];
+            board => business.vitabox.find(req.params.id).then(
+                vitabox => {
+                    let promises = [
+                        business.vitabox.addBoard(req.client, vitabox, board.id),
+                        business.board.setDescription(board, req.body.description ? req.body.description : null)
+                    ];
 
-                if (req.body.type === "environmental") {
-                    Promise.all(promises).then(
-                        () => broker.notification.update(req.params.id).then(
-                            () => res.status(200).json({ board: board })),
-                        error => res.status(500).send(error.message));
-                } else {
-                    business.vitabox.find(req.params.id).then(
-                        vitabox => business.vitabox.getPatients(vitabox, {}).then(
+                    if (req.body.type === "environmental") {
+                        Promise.all(promises).then(
+                            () => broker.notification.update(req.params.id).then(
+                                () => res.status(200).json({ board: board })),
+                            error => res.status(500).send(error.message));
+                    } else {
+                        business.vitabox.getPatients(vitabox, {}).then(
                             patients => {
                                 if (req.body.type === "non-wearable") {
                                     patients.map(patient => {
@@ -805,15 +805,14 @@ exports.addBoard = (req, res) => {
                                         board.Sensors.map(x => promises.push(business.profile.create(req.body.patient_id, x.Sensormodel)));
                                     } else res.status(500).send("Invalid patient");
                                 }
-                                console.log(board);
                                 Promise.all(promises).then(
                                     () => broker.notification.update(req.params.id).then(
                                         () => res.status(200).json({ board: board })),
                                     error => res.status(500).send(error.message));
-                            }, error => res.status(error.code).send(error.msg)),
-                        error => res.status(error.code).send(error.msg));
-                }
-            }, error => res.status(error.code).send(error.msg));
+                            }, error => res.status(error.code).send(error.msg));
+                    }
+                }, error => res.status(error.code).send(error.msg)),
+            error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));
     }

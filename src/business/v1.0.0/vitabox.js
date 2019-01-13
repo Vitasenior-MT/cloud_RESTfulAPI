@@ -287,22 +287,18 @@ exports.getPatients = (vitabox, where_condiction) => {
   });
 }
 
-exports.addBoard = (current_user, vitabox_id, board_id) => {
+exports.addBoard = (current_user, vitabox, board_id) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
-      vitabox => {
-        if (vitabox) if (current_user.admin)
-          vitabox.addBoard(board_id).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message }));
-        else _isSponsor(vitabox, current_user).then(
-          () => {
-            vitabox.addBoard(board_id).then(
-              () => resolve(),
-              error => reject({ code: 500, msg: error.message }));
-          }, error => reject(error));
-        else reject({ code: 500, msg: "Vitabox not found" });
-      }, error => reject({ code: 500, msg: error.message }));
+    if (current_user.admin)
+      vitabox.addBoard(board_id).then(
+        () => resolve(),
+        error => reject({ code: 500, msg: error.message }));
+    else _isSponsor(vitabox, current_user).then(
+      () => {
+        vitabox.addBoard(board_id).then(
+          () => resolve(),
+          error => reject({ code: 500, msg: error.message }));
+      }, error => reject(error));
   });
 }
 

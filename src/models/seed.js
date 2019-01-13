@@ -8,7 +8,7 @@ module.exports.seed = (db) => {
         if (count < 1) if (process.env.NODE_ENV !== "production") // DEVELOPMENT ENV 
         {
           // console.log("will seed");
-          let encrypted = utils.encrypt(["admin@a.aa", "jose@a.aa", "doctor@a.aa", "123qweASD", "passvita", "José António", "Administrator Exemple", "Doctor Exemple", "santarem", "tomar", "39.6003075+-8.3906627"])
+          let encrypted = utils.encrypt(["admin@a.aa", "jose@a.aa", "doctor@a.aa", "123qweASD", "passvita", "José António", "Administrator Exemple", "Doctor Exemple", "santarem", "tomar", "39.6003075+-8.3906627", "Rua teste"])
           if (!encrypted.error) {
             db.User.bulkCreate([
               { "email": encrypted.value[0], "admin": true, "password": encrypted.value[3], "name": encrypted.value[6] },
@@ -16,7 +16,7 @@ module.exports.seed = (db) => {
               { "email": encrypted.value[2], "doctor": true, "password": encrypted.value[3], "name": encrypted.value[7] }
             ]).then(
               users => db.Vitabox.bulkCreate([
-                { "coordinates": encrypted.value[10], "address": "f9bbee048f63bde52792a1ce009d0951ae52c1bc8033cfd5fbce839607f7f88c72e0e08fd4b363ac6dc2ef24185565a6", "registered": true, "active": true, "password": encrypted.value[4], district: encrypted.value[8], locality: encrypted.value[9] },
+                { "coordinates": encrypted.value[10], "address": encrypted.value[11], "registered": true, "active": true, "password": encrypted.value[4], district: encrypted.value[8], locality: encrypted.value[9] },
               ]).then(
                 vitaboxes => vitaboxes[0].addUser(users[1].id, { through: { sponsor: true } }).then(
                   () => db.Boardmodel.bulkCreate([

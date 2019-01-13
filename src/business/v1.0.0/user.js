@@ -84,26 +84,40 @@ exports.createRecoverToken = (user) => {
 
 exports.sendRecoverEmail = (user, token) => {
     return new Promise((resolve, reject) => {
-        var nodemailer = require('nodemailer');
-        var transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: {
-                user: 'vitamailtester@gmail.com',
-                pass: '1qazXSW"'
-            }
-        });
-        var mailOptions = {
-            to: utils.decrypt(user.email),
-            from: 'vitamailtester@gmail.com',
-            subject: 'Vitasenior Password Reset',
-            html: '<h2>Reset Password</h2><hr><p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p><p>Please use this code to reset your password: <b>' + token + '</b></p><p>If you did not request this, please ignore this email and your password will remain unchanged.</p>'
-        };
-        transporter.sendMail(mailOptions, (err) => {
-            if (err) reject({ code: 500, msg: err.message });
-            else resolve();
-        });
+        try {
+            var nodemailer = require('nodemailer');
+            console.log({
+                host: process.env.MAIL_HOST,
+                port: parseInt(process.env.MAIL_PORT),
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS
+            });
+
+            var transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",//process.env.MAIL_HOST,
+                port: 465,//parseInt(process.env.MAIL_PORT),
+                secure: true,
+                // service: 'gmail',
+                auth: {
+                    user: "vitamailtester@gmail.com",//process.env.MAIL_USER,
+                    pass: "123qweASDzXc"//process.env.MAIL_PASS
+                },
+                debug: true,
+                logger: true
+            });
+            var mailOptions = {
+                to: "farruscamendes@gmail.com",//utils.decrypt(user.email),
+                from: "vitamailtester@gmail.com",//process.env.MAIL_USER,
+                subject: 'Vitasenior Password Reset',
+                html: '<h2>Reset Password</h2><hr><p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p><p>Please use this code to reset your password: <b>' + token + '</b></p><p>If you did not request this, please ignore this email and your password will remain unchanged.</p>'
+            };
+            transporter.sendMail(mailOptions, (err) => {
+                if (err) reject({ code: 500, msg: err.message });
+                else resolve();
+            });
+
+        } catch (err) { reject({ code: 500, msg: error }); }
+
     });
 }
 
