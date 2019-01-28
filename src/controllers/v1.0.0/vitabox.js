@@ -533,13 +533,22 @@ exports.addPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.verifySponsor(req.client, req.params.id).then(
             vitabox => business.patient.createIfNotExists(req.body, vitabox.id).then(
-                patient => broker.notification.update(req.params.id).then(
-                    () => res.status(200).json({ id: patient.id })),
+                patient => business.vitabox.getBoards(vitabox, {}).then(
+                    boards => {
+                        let promises = [];
+                        boards.filter(x => x.Boardmodel.type === "non-wearable").map(board => {
+                            promises.push(business.board.addPatient(board, patient.id));
+                            board.Sensors.map(x => promises.push(business.profile.create(patient.id, x.Sensormodel)));
+                        });
+                        Promise.all(promises).then(
+                            () => broker.notification.update(req.params.id).then(
+                                () => res.status(200).json({ id: patient.id }),
+                                error => res.status(500).send(error.message)),
+                            error => res.status(500).send(error.message));
+                    }, error => res.status(500).send(error.message)),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
-    } else {
-        res.status(401).send(req.t("unauthorized"));
-    }
+    } else res.status(401).send(req.t("unauthorized"));
 }
 
 /**
@@ -567,6 +576,7 @@ exports.addPatient = (req, res) => {
  *          "height": 1.74,
  *          "cc": "123456789",
  *          "nif": "987654321",
+ *          "photo": "h43gj2h34j2B34hg342jhhsu46SAkwKsR1.jpg"
  *          "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
@@ -606,15 +616,17 @@ exports.addPatient = (req, res) => {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
  *                  "measure": "body fat", 
  *                  "tag": "bodyfat", 
- *                  "min": 19, 
- *                  "max": 25
+ *                  "min": 19,
+ *                  "max": 25,
+ *                  "last_values": [22, 23, 25, 23]
  *              },
  *              {
  *                  "id": "32443b5e-28cd-ab43-b86b-a423442401b8", 
  *                  "measure": "weight", 
  *                  "tag": "weight", 
  *                  "min": 58, 
- *                  "max": 64
+ *                  "max": 64,
+ *                  "last_value": [63, 64]
  *              }
  *          ],
  *          "Doctors":[
@@ -739,11 +751,17 @@ exports.enablePatient = (req, res) => {
 exports.removePatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.verifySponsor(req.client, req.params.id).then(
-            () => business.patient.remove(req.body.patient_id).then(
-                () => broker.record.removeByPatient(req.body.patient_id).then(
+            () => business.patient.find(req.body.patient_id).then(
+                patient => Promise.all([
+                    business.patient.remove(patient.id),
+                    broker.record.removeByPatient(patient.id),
+                    business.profile.removeByIds(patient.Profiles.map(x => x.id))
+                ]).then(
                     () => broker.notification.update(req.params.id).then(
-                        () => res.status(200).json({ result: true }))),
-                error => es.status(500).send(error.message)),
+                        () => res.status(200).json({ result: true }),
+                        error => res.status(error.code).send(error.msg)),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

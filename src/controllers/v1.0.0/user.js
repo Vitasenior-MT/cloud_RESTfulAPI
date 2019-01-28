@@ -1,5 +1,9 @@
 var business = require('../../business/index').v1_0_0,
-    broker = require("../../brokers/index");
+    broker = require("../../brokers/index"),
+    store = require('../../storage/index'),
+    multiparty = require('multiparty'),
+    path = require('path'),
+    fs = require('fs');
 /**
  * @apiDefine auth
  * 
@@ -38,24 +42,33 @@ var business = require('../../business/index').v1_0_0,
  * }
  */
 exports.register = (req, res) => {
-    business.user.register(req.body.email, req.body.password, req.body.name).then(
-        user => business.utils.createToken(user, req.connection.remoteAddress).then(
-            token => broker.notification.log(user.id, "user_register").then(
-                () => res.status(200).json({
-                    token: token,
-                    id: user.id,
-                    name: business.utils.decrypt(user.name),
-                    email: business.utils.decrypt(user.email),
-                    is_admin: user.admin,
-                    is_doctor: user.doctor,
-                    photo: user.photo
-                })),
+    business.user.tempRegister(req.body.email, req.body.password, req.body.name).then(
+        temp_user => business.user.sendEmail("confirm_email", temp_user.email, temp_user._id).then(
+            () => res.status(200).json({ result: true }),
             error => res.status(error.code).send(error.msg)),
-        error => res.status(500).send(error.msg));
+        error => res.status(error.code).send(error.msg));
 }
 
 /**
- * @api {post} /login 02) Login user
+ * @api {post} /validate/:token 02) Validate Email
+ * @apiGroup Authentication
+ * @apiName validateEmail
+ * @apiVersion 1.0.0
+ * @apiUse auth
+ * @apiParam {string} token token provided to validate the eamil
+ * @apiSuccess {html} web page to confirm the reception
+ */
+exports.validateEmail = (req, res) => {
+    let path = require('path');
+    business.user.definitiveRegister(req.params.token).then(
+        user => broker.notification.log(user.id, "user_register").then(
+            () => res.status(200).sendfile(path.resolve(__dirname, '..', '..', '..', 'public', 'confirm_email.html')),
+            error => res.status(error.code).sendfile(path.resolve(__dirname, '..', '..', '..', 'public', 'error.html'))),
+        error => res.status(error.code).sendfile(path.resolve(__dirname, '..', '..', '..', 'public', 'error.html')));
+}
+
+/**
+ * @api {post} /login 03) Login user
  * @apiGroup Authentication
  * @apiName userLogin
  * @apiVersion 1.0.0
@@ -120,7 +133,7 @@ exports.login = (req, res) => {
 }
 
 /**
- * @api {get} /check 03) Verify Token
+ * @api {get} /check 04) Verify Token
  * @apiGroup Authentication
  * @apiName userVerifyToken
  * @apiDescription endpoint to check token validity.
@@ -137,7 +150,7 @@ exports.verifyToken = (req, res) => {
 }
 
 /**
- * @api {post} /chpass 04) Change password
+ * @api {post} /chpass 05) Change password
  * @apiGroup Authentication
  * @apiName changePassword
  * @apiVersion 1.0.0
@@ -157,7 +170,7 @@ exports.changePassword = (req, res) => {
 }
 
 /**
- * @api {post} /forgot 05) Forgot Password
+ * @api {post} /forgot 06) Forgot Password
  * @apiGroup Authentication
  * @apiName forgotPassword
  * @apiVersion 1.0.0
@@ -168,7 +181,7 @@ exports.changePassword = (req, res) => {
 exports.forgotPassword = (req, res) => {
     business.user.findByEmail(req.body.email).then(
         user => business.user.createRecoverToken(user).then(
-            token => business.user.sendRecoverEmail(user, token).then(
+            token => business.user.sendEmail("recover_pass", user.email, token).then(
                 () => broker.notification.log(user.id, "user_fgtpass").then(
                     () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg)),
@@ -181,7 +194,7 @@ exports.forgotPassword = (req, res) => {
 }
 
 /**
- * @api {post} /reset 06) Reset password
+ * @api {post} /reset 07) Reset password
  * @apiGroup Authentication
  * @apiName resetPassword
  * @apiVersion 1.0.0
@@ -207,19 +220,38 @@ exports.resetPassword = (req, res) => {
  * @apiVersion 1.0.0
  * @apiUse auth
  * @apiHeader Authorization="< token >"
- * @apiParam {string} photo html name to input type file
- * @apiSuccess {boolean} result return true if was sucessfuly reseted
+ * @apiParam {FormData} image FormData type file (max 70KB allowed)
+ * @apiSuccess {boolean} result return true if was sucessfuly updated
  */
 exports.setPhoto = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
-        business.utils.upload('photo', req.client.id).then(
-            upload => upload(req, res, (err) => {
+        let form = new multiparty.Form({ autoFiles: true, maxFilesSize: 1024 * 70 });
+        form.on('file', (name, file) =>
+            fs.readFile(file.path, (err, fileData) => {
                 if (err) res.status(500).send(err.message);
-                else business.user.updatePhoto(req.client, req.file.filename).then(
-                    () => res.status(200).json({ filename: req.file.filename }),
-                    error => res.status(error.code).send(error.msg));
-            }),
-            error => res.status(error.code).send(error.msg));
+                else {
+                    let filename = business.utils.generatePassword(32) + path.extname(file.originalFilename);
+                    let promises = [
+                        business.utils.encrypt([filename]),
+                        store.uploadFile(process.env.STORE_BUCKET, filename, fileData)
+                    ];
+                    if (req.client.photo) {
+                        promises.push(store.deleteFile(process.env.STORE_BUCKET, business.utils.decrypt(req.client.photo)));
+                    }
+                    Promise.all(promises).then(response => {
+                        if (!response[0].error) business.user.updatePhoto(req.client, response[0].value[0])
+                            .then(() => res.status(200).json({ filename: filename }))
+                            .catch(error => store.deleteFile(process.env.STORE_BUCKET, filename)
+                                .then(() => res.status(error.code).send(error.message))
+                                .catch(error => res.status(error.code).send(error.msg)));
+                        else store.deleteFile(process.env.STORE_BUCKET, filename)
+                            .then(() => res.status(500).send(response[0].error.message))
+                            .catch(error => res.status(error.code).send(error.msg));
+                    }).catch(error => res.status(error.code).send(error.msg));
+                }
+            }));
+        form.on('error', (err) => res.status(500).send(err.message));
+        form.parse(req);
     } else { res.status(401).send(req.t("unauthorized")); }
 }
 

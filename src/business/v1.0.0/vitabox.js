@@ -86,11 +86,13 @@ exports.list = (current_user, own) => {
           });
           resolve(list);
         }, error => reject({ code: 500, msg: error.message }));
-    else current_user.getVitaboxes({ attributes: ['id', 'coordinates', 'address', 'active', 'registered'] }).then(
+    else current_user.getVitaboxes({ attributes: { exclude: ['password'] } }).then(
       list => {
         list.forEach(element => {
           let coords = utils.decrypt(element.coordinates).split('+');
           element.address = utils.decrypt(element.address);
+          element.district = utils.decrypt(element.district);
+          element.locality = utils.decrypt(element.locality);
           element.dataValues.latitude = coords[0];
           element.dataValues.longitude = coords[1];
           element.dataValues.sponsor = element.UserVitabox.sponsor;
@@ -266,6 +268,7 @@ exports.getPatients = (vitabox, where_condiction) => {
       patients => {
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
+          patient.photo = patient.photo ? utils.decrypt(patient.photo) : null;
           patient.cc = utils.decrypt(patient.cc);
           patient.nif = utils.decrypt(patient.nif);
           patient.Boards.forEach(board => {

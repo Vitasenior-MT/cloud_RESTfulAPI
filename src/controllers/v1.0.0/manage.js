@@ -1,19 +1,5 @@
-var business = require('../../business/index').v1_0_0,
+var store = require('../../storage/index'),
     path = require("path");
-
-// exports.fileUpload = (req, res) => {
-//     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-//         business.utils.upload('file').then(
-//             upload => upload(req, res, (err) => {
-//                 let path=req.file.path.split('/');
-//                 if (err) res.status(500).send(err.message);
-//                 else res.status(200).json({ filename: path[path.length-1] });
-//             }),
-//             error => res.status(error.code).send(error.msg));
-//     } else {
-//         res.status(401).send("Unauthorized");
-//     }
-// }
 
 /**
  * @api {get} /file/:id 01) Download
@@ -25,50 +11,9 @@ var business = require('../../business/index').v1_0_0,
  * @apiParam {String} :id filename
  */
 exports.fileDownload = (req, res) => {
-    business.utils.download(req.params.id).then(
-        download => {
-            res.writeHead(200, download.header);
-            res.end(download.file, 'binary');
-        }, error => res.status(error.code).send(error.msg));
-}
-
-// To development
-
-exports.destroyAll = (req, res) => {
-    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
-        business.utils.deleteAll().then(
-            () => res.status(200).json({ success: true }),
-            error => res.status(500).send(error.msg)
-        );
-    } else {
-        res.status(401).send(req.t("unauthorized"));
-    }
-}
-
-var broker = require("../../brokers/index");
-exports.ampqSend = (req, res) => {
-    let records = [
-        {
-            "value": 10,
-            "datetime": "2018-03-02T15:40:23.000Z",
-            "sensor_id": "2a2f5839-6b68-41a6-ada7-f9cd4c66cf38"
-        },
-        {
-            "value": 13,
-            "datetime": "2018-03-02T15:36:26.000Z",
-            "sensor_id": "2a2f5839-6b68-41a6-ada7-f9cd4c66cf38"
-        }
-    ]
-    broker.record.insert(records).then(
-        () => res.status(200).json({ success: true }),
-        error => res.status(500).send(error.msg)
-    );
-}
-
-exports.testDb = (req, res) => {
-    business.utils.deleteAll().then(
-        () => business.utils.testSeed().then(
-            () => res.status(200).json({ success: true }),
-            error => res.status(500).send(error.msg)),
-        error => res.status(500).send(error.msg));
+    store.downloadFile(process.env.STORE_BUCKET, req.params.id)
+        .then(img => {
+            res.writeHead(200, { 'Content-Type': path.extname(req.params.id) });
+            res.end(img, 'binary');
+        }).catch(error => res.status(500).send(error.msg));
 }

@@ -1,19 +1,39 @@
 var db = require('../../models/index'),
     utils = require('./utils');
 
-exports.register = (email, password, name) => {
+exports.tempRegister = (email, password, name) => {
     return new Promise((resolve, reject) => {
-        if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(name))
-            if (/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d$@$!%*#?&-.]{8,}$/.test(password))
-                if (/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(email)) {
-                    let encrypted = utils.encrypt([email, password, name]);
-                    if (!encrypted.error) db.User.create({ email: encrypted.value[0], password: encrypted.value[1], name: encrypted.value[2] }).then(
-                        new_user => resolve(new_user),
-                        error => reject({ code: 500, msg: error.message }));
-                    else reject({ code: 500, msg: encrypted.error.message });
-                } else reject({ code: 500, msg: "invalid email" });
-            else reject({ code: 500, msg: "invalid password, must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters" });
-        else reject({ code: 500, msg: "invalid name" });
+        let encrypted = utils.encrypt([email]);
+        if (!encrypted.error) db.User.findOne({ where: { email: encrypted.value[0] } }).then(
+            user => {
+                if (!user)
+                    if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(name))
+                        if (/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d$@$!%*#?&-.]{8,}$/.test(password))
+                            if (/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(email)) {
+                                let encrypted = utils.encrypt([email, password, name]);
+                                if (!encrypted.error) db.TempUser.create({ email: encrypted.value[0], password: encrypted.value[1], name: encrypted.value[2], datetime: new Date() }).then(
+                                    temp_user => resolve(temp_user),
+                                    error => reject({ code: 500, msg: error.message }));
+                                else reject({ code: 500, msg: encrypted.error.message });
+                            } else reject({ code: 500, msg: "invalid email" });
+                        else reject({ code: 500, msg: "invalid password, must have at least one uppercase letter, one lowercase, one digit and a minimum 8 characters" });
+                    else reject({ code: 500, msg: "invalid name" });
+                else reject({ code: 500, msg: "email already in use" });
+            }, error => reject({ code: 500, msg: error.message }));
+        else reject({ code: 500, msg: encrypted.error.message });
+    });
+}
+
+exports.definitiveRegister = (token) => {
+    return new Promise((resolve, reject) => {
+        db.TempUser.findOne({ _id: token }).then(
+            temp_user => {
+                if (temp_user) db.User.create({ email: temp_user.email, password: temp_user.password, name: temp_user.name }).then(
+                    new_user => resolve(new_user),
+                    error => reject({ code: 500 }));
+                else reject({ code: 500 })
+            },
+            error => reject({ code: 500 }));
     });
 }
 
@@ -22,7 +42,10 @@ exports.login = (email, password) => {
         let encrypted = utils.encrypt([email, password]);
         if (!encrypted.error) db.User.findOne({ where: { email: encrypted.value[0], password: encrypted.value[1] } }).then(
             user => {
-                if (user) resolve(user);
+                if (user) {
+                    user.photo = user.photo ? utils.decrypt(user.photo) : null;
+                    resolve(user);
+                }
                 else reject({ code: 500, msg: "email and password don't match" });
             }, error => reject({ code: 500, msg: error.message }));
         else reject({ code: 500, msg: encrypted.error.message });
@@ -82,35 +105,41 @@ exports.createRecoverToken = (user) => {
     });
 }
 
-exports.sendRecoverEmail = (user, token) => {
+exports.sendEmail = (type, to, token) => {
     return new Promise((resolve, reject) => {
         try {
-            var nodemailer = require('nodemailer');
-            console.log({
+            var transporter = require('nodemailer').createTransport({
                 host: process.env.MAIL_HOST,
                 port: parseInt(process.env.MAIL_PORT),
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS
+                secure: false,
+                auth: {
+                    user: process.env.MAIL_USER,
+                    pass: process.env.MAIL_PASS
+                },
+                tls: {
+                    ciphers: 'SSLv3'
+                }
             });
 
-            var transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",//process.env.MAIL_HOST,
-                port: 465,//parseInt(process.env.MAIL_PORT),
-                secure: true,
-                // service: 'gmail',
-                auth: {
-                    user: "vitamailtester@gmail.com",//process.env.MAIL_USER,
-                    pass: "123qweASDzXc"//process.env.MAIL_PASS
-                },
-                debug: true,
-                logger: true
-            });
-            var mailOptions = {
-                to: "farruscamendes@gmail.com",//utils.decrypt(user.email),
-                from: "vitamailtester@gmail.com",//process.env.MAIL_USER,
-                subject: 'Vitasenior Password Reset',
-                html: '<h2>Reset Password</h2><hr><p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p><p>Please use this code to reset your password: <b>' + token + '</b></p><p>If you did not request this, please ignore this email and your password will remain unchanged.</p>'
-            };
+            let mailOptions = null;
+            switch (type) {
+                case "recover_pass":
+                    mailOptions = {
+                        to: utils.decrypt(to),
+                        from: process.env.MAIL_USER,
+                        subject: "Vitasenior-MT Password Reset",
+                        html: "<h2>Reset Password</h2><hr><p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p><p>Please use this code to reset your password: <b>' + token + '</b></p><p>If you did not request this, please ignore this email and your password will remain unchanged.</p>"
+                    }; break;
+                case "confirm_email":
+                    mailOptions = {
+                        to: utils.decrypt(to),
+                        from: process.env.MAIL_USER,
+                        subject: "Vitasenior-MT Email Confirmation",
+                        html: '<h2>Confirm Email</h2><hr><p>You are receiving this because you (or someone else) have registered to Vitasenior-MT service.</p><p>Please click <a href="' + process.env.OWN_ADDRESS + 'validate/' + token + '">here</a> to confirm the email</p><p>If you did not request this, please ignore this email and the registration will be removed.</p>'
+                    }; break;
+                default: break;
+            }
+
             transporter.sendMail(mailOptions, (err) => {
                 if (err) reject({ code: 500, msg: err.message });
                 else resolve();

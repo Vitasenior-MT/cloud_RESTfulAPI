@@ -1,4 +1,8 @@
-var business = require('../../business/index').v1_0_0;
+var business = require('../../business/index').v1_0_0,
+    multiparty = require('multiparty'),
+    path = require('path'),
+    fs = require('fs'),
+    store = require('../../storage/index');
 
 /**
  * @api {put} patient/:id/biometric 01) Update Biometric Data
@@ -239,21 +243,44 @@ exports.getBoardsFromPatient = (req, res) => {
  * @apiPermission sponsor
  * 
  * @apiParam {string} :id patient id
- * @apiParam {string} photo html name to input type file
+ * @apiParam {FormData} image FormData type file (max 70KB allowed)
  * @apiSuccess {boolean} result return true if was sucessfuly reseted
  */
 exports.setPhoto = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.patient.find(req.params.id).then(
             patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
-                () => business.utils.upload('photo', req.client.id).then(
-                    upload => upload(req, res, (err) => {
-                        if (err) res.status(500).send(err.message);
-                        else business.patient.updatePhoto(req.client, req.file.filename).then(
-                            () => res.status(200).json({ filename: req.file.filename }),
-                            error => res.status(error.code).send(error.msg));
-                    }), error => res.status(error.code).send(error.msg)),
-                error => res.status(error.code).send(error.msg)),
+                () => {
+                    let form = new multiparty.Form({ autoFiles: true, maxFilesSize: 1024 * 70 });
+                    form.on('file', (name, file) => {
+                        fs.readFile(file.path, (err, fileData) => {
+                            if (err) res.status(500).send(err.message);
+                            else {
+                                let filename = business.utils.generatePassword(32) + path.extname(file.originalFilename);
+                                let promises = [
+                                    business.utils.encrypt([filename]),
+                                    store.uploadFile(process.env.STORE_BUCKET, filename, fileData)
+                                ];
+                                if (patient.photo) {
+                                    promises.push(store.deleteFile(process.env.STORE_BUCKET, business.utils.decrypt(patient.photo)));
+                                }
+                                Promise.all(promises).then(response => {
+                                    if (!response[0].error) business.patient.updatePhoto(patient, response[0].value[0])
+                                        .then(() => res.status(200).json({ filename: filename }))
+                                        .catch(error => store.deleteFile(process.env.STORE_BUCKET, filename)
+                                            .then(() => res.status(error.code).send(error.message))
+                                            .catch(error => res.status(error.code).send(error.msg)));
+                                    else store.deleteFile(process.env.STORE_BUCKET, filename)
+                                        .then(() => res.status(500).send(res[0].error.message))
+                                        .catch(error => res.status(error.code).send(error.msg));
+
+                                }).catch(error => res.status(error.code).send(error.msg));
+                            }
+                        })
+                    });
+                    form.on('error', (err) => res.status(500).send(err.message));
+                    form.parse(req);
+                }, error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else { res.status(401).send(req.t("unauthorized")); }
 }

@@ -1,11 +1,6 @@
 var db = require('../../models/index'),
   crypto = require("crypto"),
-  fs = require("fs"),
-  jwt = require('jsonwebtoken'),
-  path = require("path"),
-  mime = require('mime-types'),
-  multer = require('multer'),
-  uuidv4 = require('uuid/v4');
+  jwt = require('jsonwebtoken');
 
 exports.encrypt = (to_encrypt) => {
   try {
@@ -62,34 +57,4 @@ exports.generatePassword = (n_char) => {
   let sk = "", i, j, base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   for (i = 0; i < n_char; i++) sk += base[Math.floor(Math.random() * 61)];
   return sk;
-}
-
-exports.upload = (html_name) => {
-  return new Promise((resolve, reject) => {
-    try {
-      let obj = multer({
-        storage: multer.diskStorage(
-          {
-            destination: path.resolve(__dirname, '..', '..', '..', 'files'),
-            filename: (req, file, cb) => cb(null, uuidv4() + uuidv4() + uuidv4() + '.' + mime.extension(file.mimetype))
-          }
-        ),
-        fileFilter: (req, file, cb) => {
-          if (!file.originalname.match(/\.(jpg|jpeg|png|gif|svg)$/)) return cb(new Error('Only image files are allowed!'), false);
-          cb(null, true);
-        }
-      }).single(html_name);
-      resolve(obj);
-    } catch (err) { reject({ code: 500, msg: err.message }); }
-  });
-}
-
-exports.download = (filename) => {
-  return new Promise((resolve, reject) => {
-    try {
-      let file = fs.readFileSync(path.resolve(__dirname, '..', '..', '..', 'files', filename));
-      let header = { 'Content-Type': mime.lookup(filename) }
-      resolve({ file: file, header: header });
-    } catch (err) { reject({ code: 500, msg: err.message }); }
-  });
 }

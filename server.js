@@ -82,7 +82,8 @@ var db = require('./src/models/index');
 
 Promise.all([
     db.sequelize.sync(),
-    require("./src/brokers/broker").connectToBroker()
+    require("./src/brokers/broker").connectToBroker(),
+    require("./src/storage/index").connectToStorage()
 ]).then(
     () => require('./src/models/seed').seed(db).then(
         () => {

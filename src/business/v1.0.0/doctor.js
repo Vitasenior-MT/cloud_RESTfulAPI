@@ -61,7 +61,7 @@ exports.acceptAsDoctor = (doctor_id, patient_id, flag) => {
 exports.getPatients = (user) => {
   return new Promise((resolve, reject) => {
     user.getPatients({
-      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'profile'],
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'profile', 'photo'],
       include: [
         {
           model: db.Board, attributes: ['id', 'mac_addr'],
@@ -73,7 +73,7 @@ exports.getPatients = (user) => {
             }]
         },
         { model: db.Profile },
-        { model: db.Vitabox, attributes: ['id', 'coordinates', 'address'] }
+        { model: db.Vitabox, attributes: ['id', 'coordinates', 'address', 'locality'] }
       ]
     }, { through: { accepted: true } }).then(
       patients => {
@@ -83,7 +83,9 @@ exports.getPatients = (user) => {
             patient.name = utils.decrypt(patient.name);
             patient.cc = utils.decrypt(patient.cc);
             patient.nif = utils.decrypt(patient.nif);
+            patient.photo = patient.photo ? utils.decrypt(patient.photo) : null;
             patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
+            patient.Vitabox.locality = utils.decrypt(patient.Vitabox.locality);
             let coords = utils.decrypt(patient.Vitabox.coordinates).split('+');
             patient.Vitabox.dataValues.latitude = coords[0];
             patient.Vitabox.dataValues.longitude = coords[1];

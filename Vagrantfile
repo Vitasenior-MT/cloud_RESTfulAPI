@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
     sudo service mysql restart
     
     # mysql -u root -p123qwe -h localhost -e "DROP DATABASE IF EXISTS test; DROP USER IF EXISTS 'api'@'%'; CREATE DATABASE IF NOT EXISTS test; GRANT ALL PRIVILEGES ON test.* TO 'api'@'%' IDENTIFIED BY '123qwe'; FLUSH PRIVILEGES;"
-    # mysql -u root -p123qwe -h localhost node < ../../vagrant/db_dump.sql
+    # mysql -u root -p123qwe -h localhost test < ../../vagrant/db_dump.sql
     
     # to get in mysql terminal
     # mysql -u root -p123qwe test

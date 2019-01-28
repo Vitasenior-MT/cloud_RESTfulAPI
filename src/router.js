@@ -13,6 +13,9 @@ module.exports = (app) => {
             "1.0.0": controllers.v1_0_0.user.register,
             "2.0.0": (req, res) => res.json({ error: 'invalid version' })
         }))
+        .get('/validate/:token', versioning({
+            "1.0.0": controllers.v1_0_0.user.validateEmail
+        }))
         .post('/login', versioning({
             "1.0.0": controllers.v1_0_0.user.login,
         }))
@@ -27,9 +30,6 @@ module.exports = (app) => {
         }))
         .post('/reset', versioning({
             "1.0.0": controllers.v1_0_0.user.resetPassword,
-        }))
-        .get('/photo', versioning({
-            "1.0.0": controllers.v1_0_0.user.getPhoto,
         }))
         .post('/photo', versioning({
             "1.0.0": controllers.v1_0_0.user.setPhoto,
@@ -235,9 +235,6 @@ module.exports = (app) => {
         /*________________________________________________
         *_____________________FILES_______________________
         *_________________________________________________*/
-        .post('/file', versioning({
-            "1.0.0": controllers.v1_0_0.manage.fileUpload
-        }))
         .get('/file/:id', versioning({
             "1.0.0": controllers.v1_0_0.manage.fileDownload
         }))
@@ -301,12 +298,6 @@ module.exports = (app) => {
         /*________________________________________________
         *_____________________TRASH_______________________
         *_________________________________________________*/
-        .get('/destroy', versioning({
-            "1.0.0": controllers.v1_0_0.manage.destroyAll
-        }))
-        .get('/amqp', versioning({
-            "1.0.0": controllers.v1_0_0.manage.ampqSend
-        }))
         .get('/testdb', versioning({
             "1.0.0": controllers.v1_0_0.manage.testDb
         }))

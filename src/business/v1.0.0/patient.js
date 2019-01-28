@@ -35,7 +35,7 @@ exports.createIfNotExists = (attributes, vitabox_id) => {
 
 exports.find = function (patient_id) {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id, { include: [{ model: db.Vitabox }] }).then(
+        db.Patient.findById(patient_id, { include: [{ model: db.Vitabox }, { model: db.Profile }] }).then(
             patient => {
                 if (patient) {
                     patient.name = utils.decrypt(patient.name);

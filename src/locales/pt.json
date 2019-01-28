@@ -69,5 +69,7 @@
 	"patient_chg_exams": "atualizou agendamento de exames do paciente '%s' (%s)",
 	"patient_add_doctor": "nomeou o utilizador '%s' (%s) como responsável clínico do paciente '%s' (%s)",
 	"patient_rmv_doctor": "removeu o utilizador '%s' (%s) de responsável clínico do paciente '%s' (%s)",
-	"login": "login"
+	"login": "login",
+	"peso": "peso",
+	"Jose AntóNio": "Jose AntóNio"
 }

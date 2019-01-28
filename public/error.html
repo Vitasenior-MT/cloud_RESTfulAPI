@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Vitasenior-MT</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/img/icons/favicon-32x32.png">
+  <style>
+    html {
+      min-height: 100% !important;
+      height: 100%;
+      font-family: "Avenir", Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100% !important;
+      height: 100%;
+    }
+
+    #navbar {
+      list-style-type: none;
+      top: 0;
+      left: 0;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #212120;
+      box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12);
+      transform: translateY(0px);
+    }
+
+    #navbar .item {
+      -webkit-font-smoothing: antialiased;
+      height: 64px;
+      color: #F37027;
+      padding: 0 24px;
+      align-items: center;
+      display: flex;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #avatar {
+      height: 25px;
+      width: 25px;
+      align-items: center;
+      border-radius: 50%;
+      display: inline-flex;
+      justify-content: center;
+      position: relative;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    #avatar img {
+      height: inherit;
+      width: inherit;
+    }
+
+    #navpanel {
+      padding-top: 25px;
+      padding-right: 50px;
+      padding-left: 50px;
+      height: calc(100% - 89px);
+      background-image: linear-gradient(to right top,
+        #845ec2,
+        #d65db1,
+        #d65db1,
+        #ff9671,
+        #ffc75f,
+        #f9f871);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="navbar">
+    <div class="item">
+      <div id="avatar"><img src="/static/img/icons/favicon-32x32.png"></div>
+      Vitasenior-MT
+    </div>
+  </div>
+  <div id="navpanel">
+    <h2>Error</h2>
+    <hr>
+    <p>Something wrong happened</p>
+  </div>
+</body>
+
+</html>
