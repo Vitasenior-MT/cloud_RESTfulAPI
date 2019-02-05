@@ -5,7 +5,129 @@ var business = require('../../business/index').v1_0_0,
     store = require('../../storage/index');
 
 /**
- * @api {put} patient/:id/biometric 01) Update Biometric Data
+ * @api {get} patient/:id/info 01) Get patient info
+ * @apiGroup Patient
+ * @apiName getPatientInfo
+ * @apiDescription get patient info.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission doctor
+ * @apiParam {string} :id patient id
+ * @apiSuccessExample {json} Response example:
+ * {
+ *  patient:{
+ *      "name": "José António",
+ *      "Boards": [
+ *              {
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
+ *                  "description": "kitchen",
+ *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
+ *                  "since": "2018-07-23T05:15:27.000Z",
+ *                  "frequency": 2,
+ *                  "Boardmodel": {
+ *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
+ *                      "type": "environmental",
+ *                      "name": "Zolertia RE-Mote",
+ *                      "tag": "zolertiaremote"
+ *                  },
+ *                  "Sensors": [
+ *                      {
+ *                          "id": "9cd77116-6edb-4072-9d66-204fca3d5a07",
+ *                          "last_values": [ 17, 16, 13, 16, 15 ],
+ *                          "last_commit": "2018-07-23T05:15:27.000Z",
+ *                          "Sensormodel": {
+ *                              "id": "1f8eab67-d39e-439e-b508-6ef6f2c6794a",
+ *                              "transducer": "dht22",
+ *                              "measure": "humidity",
+ *                              "unit": "%",
+ *                              "min_acceptable": "30.00000",
+ *                              "max_acceptable": "50.00000",
+ *                              "min_possible": "20.00000",
+ *                              "max_possible": "60.00000",
+ *                              "to_read": "temperature",
+ *                              "tag": "humi"
+ *                          }
+ *                      }
+ *                  ]
+ *              }
+ *          ],
+ *          "Profiles":[
+ *              {
+ *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
+ *                  "measure": "body fat", 
+ *                  "tag": "bodyfat", 
+ *                  "min": 19,
+ *                  "max": 25,
+ *                  "last_values": [22, 23, 25, 23]
+ *              },
+ *              {
+ *                  "id": "32443b5e-28cd-ab43-b86b-a423442401b8", 
+ *                  "measure": "weight", 
+ *                  "tag": "weight", 
+ *                  "min": 58, 
+ *                  "max": 64,
+ *                  "last_value": [63, 64]
+ *              }
+ *          ],
+ *  }
+ * }
+ */
+exports.getPatientInfo = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        business.patient.getInfo(req.params.id).then(
+            patient => business.vitabox.verifyUser(req.client, patient.Vitabox).then(
+                () => {
+                    delete patient.Vitabox;
+                    res.status(200).json({ patient: patient })
+                }, error => res.status(500).send(error.msg)),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send(req.t("unauthorized"));
+    }
+}
+
+/**
+ * @api {put} patient/:id/info 01) Update personal data
+ * @apiGroup Patient
+ * @apiName updateInfoToPatient
+ * @apiDescription update profile from patient.
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission doctor
+ * @apiParam {string} :id patient id
+ * @apiParam {string} name patient name
+ * @apiParam {date} birthdate patient birthdate (date only)
+ * @apiParam {string} gender patient gender (must be 'male', 'female' or 'undefined')
+ * @apiParam {string} cc patient citizen card number
+ * @apiParam {string} nif patient fiscal number
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "name": "José António",
+ *          "birthdate": "1987-02-28",
+ *          "gender": "male",
+ *          "cc": "123456789",
+ *          "nif": "987654321"
+ *     }
+ * @apiSuccess {boolean} result returns true if was successfuly updated
+ */
+exports.updateInfo = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        business.patient.find(req.params.id).then(
+            patient => business.vitabox.verifySponsor(req.client, patient.vitabox_id).then(
+                () => business.patient.setInfoData(patient, req.body).then(
+                    () => res.status(200).json({ result: true }),
+                    error => res.status(500).send(error.msg)),
+                error => res.status(500).send(error.msg)),
+            error => res.status(error.code).send(error.msg));
+    } else {
+        res.status(401).send(req.t("unauthorized"));
+    }
+}
+
+/**
+ * @api {put} patient/:id/biometric 02) Update Biometric Data
  * @apiGroup Patient
  * @apiName updateProfilesToPatient
  * @apiDescription update height and weight from patient.
@@ -36,7 +158,7 @@ exports.updateBiometric = (req, res) => {
 }
 
 /**
- * @api {put} patient/:id/profile 02) Update profile
+ * @api {put} patient/:id/profile 03) Update profile
  * @apiGroup Patient
  * @apiName updateProfilesToPatient
  * @apiDescription update profile from patient.
@@ -44,8 +166,7 @@ exports.updateBiometric = (req, res) => {
  * @apiUse box
  * 
  * @apiPermission doctor
- * @apiParam {string} :paid patient id
- * @apiParam {string} :id profile id to update
+ * @apiParam {string} :id patient id
  * @apiParam {string} description clinical profile description
  * @apiParam {array} profiles list of profiles to define with the minimum and maximum acceptable values and the profile id
  * @apiParamExample {json} Request example:
@@ -77,7 +198,7 @@ exports.updateProfile = (req, res) => {
 }
 
 /**
- * @api {post} /patient/:id/doctor 03) Add Doctor
+ * @api {post} /patient/:id/doctor 04) Add Doctor
  * @apiGroup Patient
  * @apiName addDoctor
  * @apiDescription add doctor to a specific patient if the requester is sponsor of him.
@@ -121,7 +242,7 @@ exports.addDoctor = (req, res) => {
 }
 
 /**
- * @api {put} /patient/:id/doctor 04) Accept as Doctor
+ * @api {put} /patient/:id/doctor 05) Accept as Doctor
  * @apiGroup Patient
  * @apiName acceptAsDoctor
  * @apiDescription doctor accept patient
@@ -148,7 +269,7 @@ exports.acceptAsDoctor = (req, res) => {
 }
 
 /**
- * @api {delete} /patient/:id/doctor 05) Remove Doctor
+ * @api {delete} /patient/:id/doctor 06) Remove Doctor
  * @apiGroup Patient
  * @apiName removeDoctor
  * @apiDescription remove doctor from a patient if the requester is sponsor of him.
@@ -183,7 +304,7 @@ exports.removeDoctor = (req, res) => {
 }
 
 /**
- * @api {get} /patient/:id/board 06) Get Boards
+ * @api {get} /patient/:id/board 07) Get Boards
  * @apiGroup Patient
  * @apiName getBoardsFromPatient
  * @apiDescription Get boards from a patient
@@ -234,7 +355,7 @@ exports.getBoardsFromPatient = (req, res) => {
 }
 
 /**
- * @api {post} /patient/:id/photo 07) Update photo
+ * @api {post} /patient/:id/photo 08) Update photo
  * @apiGroup Patient
  * @apiName setPhotoFromPatient
  * @apiVersion 1.0.0
@@ -286,7 +407,7 @@ exports.setPhoto = (req, res) => {
 }
 
 /**
- * @api {put} /patient/:id/exam 08) Update Exam
+ * @api {put} /patient/:id/exam 09) Update Exam
  * @apiGroup Patient
  * @apiName updateExamFrequency
  * @apiDescription update exam frequency to patient

@@ -39,7 +39,10 @@ const operatorsAliases = {
 };
 
 // Create a new conntection to MongoDB server
-mongoose.connect(process.env.MONGODB, { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB, {
+    useCreateIndex: true,
+    useNewUrlParser: true
+});
 // Create a new connection to MySQL server
 var sequelize = new Sequelize(process.env.MYSQL, { operatorsAliases: operatorsAliases, logging: false });
 

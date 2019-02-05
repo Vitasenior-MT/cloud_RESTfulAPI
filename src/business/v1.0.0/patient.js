@@ -7,7 +7,7 @@ exports.createIfNotExists = (attributes, vitabox_id) => {
             if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(attributes.name)) {
                 if (/[1256789]\d{8}$/.test(attributes.nif)) {
                     if (/^[0-9]{8}([ -]*[0-9][ ]*[A-Z]{2}[0-9])*$/.test(attributes.cc)) {
-                        let encrypted = utils.encrypt([attributes.name.replace(/\b\w/g, l => l.toUpperCase()), attributes.cc, attributes.nif]);
+                        let encrypted = utils.encrypt([utils.capitalString(attributes.name), attributes.cc, attributes.nif]);
                         if (!encrypted.error) {
                             db.Patient.findOne({ where: { name: encrypted.value[0], birthdate: attributes.birthdate } }).then(
                                 patient => {
@@ -35,7 +35,7 @@ exports.createIfNotExists = (attributes, vitabox_id) => {
 
 exports.find = function (patient_id) {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id, { include: [{ model: db.Vitabox }, { model: db.Profile }] }).then(
+        db.Patient.findOne({ where: { id: patient_id }, include: [{ model: db.Vitabox }, { model: db.Profile }] }).then(
             patient => {
                 if (patient) {
                     patient.name = utils.decrypt(patient.name);
@@ -48,17 +48,48 @@ exports.find = function (patient_id) {
     });
 }
 
-exports.setBiometricData = (patient_id, attributes) => {
+exports.getInfo = function (patient_id) {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id).then(
-            patient => patient.update({
-                profile: attributes.profile,
-                height: attributes.height,
-                weight: attributes.weight,
-                active: true
-            }).then(
-                result => resolve(result),
-                error => reject({ code: 500, msg: error.message })),
+        db.Patient.findOne({
+            where: { id: patient_id }, attributes: ['name', 'vitabox_id'], include: [{ model: db.Vitabox }, { model: db.Profile }, {
+                model: db.Board,
+                attributes: ['id', 'mac_addr'],
+                include: [
+                    { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
+                    {
+                        model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                        include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+                    }]
+            }]
+        }).then(
+            patient => {
+                if (patient) {
+                    patient.name = utils.decrypt(patient.name);
+                    patient.Boards.forEach(board => {
+                        delete board.dataValues.PatientBoard;
+                    });
+                    resolve(patient);
+                }
+                else reject({ code: 500, msg: "Patient not found" });
+            }, error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+exports.setInfoData = (patient, attributes) => {
+    return new Promise((resolve, reject) => {
+        let encrypted = utils.encrypt([
+            attributes.name ? utils.capitalString(attributes.name) : patient.name,
+            attributes.cc ? attributes.cc : patient.cc,
+            attributes.nif ? attributes.nif : patient.nif
+        ]);
+        patient.update({
+            name: encrypted.value[0],
+            birthdate: attributes.birthdate ? attributes.birthdate : patient.birthdate,
+            gender: attributes.gender ? attributes.gender : patient.gender,
+            cc: encrypted.value[1],
+            nif: encrypted.value[2]
+        }).then(
+            () => resolve(),
             error => reject({ code: 500, msg: error.message }));
     });
 }
@@ -77,20 +108,35 @@ exports.setBiometricData = (patient_id, attributes) => {
 
 exports.updateProfile = (patient_id, profile) => {
     return new Promise((resolve, reject) => {
-        db.Patient.update({
-            profile: profile
-        }, { where: { id: patient_id } }).then(
+        db.Patient.update({ profile: profile }, { where: { id: patient_id } }).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message }));
     });
 }
 
-exports.enable = (patient_id) => {
+exports.enable = (params) => {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id).then(
-            patient => patient.update({ active: true }).then(
-                () => resolve(),
-                error => reject({ code: 500, msg: error.message })),
+        db.Patient.findOne({ where: { id: params.patient_id } }).then(
+            patient => {
+                if (patient) {
+                    if (patient.height && patient.weight)
+                        patient.update({ active: true }).then(
+                            () => resolve(),
+                            error => reject({ code: 500, msg: error.message }));
+                    else if (params.height && params.weight) {
+                        patient.update({ active: true, height: params.height, weight: params.weight }).then(
+                            () => resolve(),
+                            error => reject({ code: 500, msg: error.message }));
+                    } else reject({ code: 500, msg: "params height and weight must be defined" });
+                } else reject({ code: 500, msg: "patient not found" })
+            }, error => reject({ code: 500, msg: error.message }));
+    });
+}
+
+exports.disable = (patient_id) => {
+    return new Promise((resolve, reject) => {
+        db.Patient.update({ active: false }, { where: { id: patient_id } }).then(
+            () => resolve(),
             error => reject({ code: 500, msg: error.message }));
     });
 }
@@ -105,19 +151,21 @@ exports.remove = (patient_id) => {
 
 exports.getBoards = function (patient_id) {
     return new Promise((resolve, reject) => {
-        db.Patient.findById(patient_id).then(
+        db.Patient.findOne({
+            where: { id: patient_id },
+            include: [{
+                model: db.Board,
+                attributes: ['id', 'mac_addr'],
+                include: [
+                    { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+                    {
+                        model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                        include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+                    }]
+            }]
+        }).then(
             patient => {
-                if (patient) patient.getBoards({
-                    attributes: ['id', 'mac_addr'],
-                    include: [
-                        { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
-                        {
-                            model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
-                            include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
-                        }]
-                }).then(
-                    result => resolve(result),
-                    error => reject({ code: 500, msg: error.message }));
+                if (patient) resolve(patient.Boards)
                 else reject({ code: 500, msg: "Patient not found" });
             }, error => reject({ code: 500, msg: error.message }));
     });
@@ -145,7 +193,7 @@ exports.removeDoctor = (patient, doctor_id) => {
 exports.verifyDoctor = (current_user, patient) => {
     return new Promise((resolve, reject) => {
         if (typeof patient === "string") {
-            db.Patient.findById(patient).then(
+            db.Patient.findOne({ where: { id: patient } }).then(
                 patient => {
                     if (patient) _verifyDoctor(current_user.id, patient).then(
                         () => resolve(),

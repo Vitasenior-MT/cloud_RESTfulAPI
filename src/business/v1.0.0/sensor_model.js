@@ -9,6 +9,8 @@ exports.create = (attributes) => {
       max_acceptable: attributes.max_acceptable,
       min_possible: attributes.min_possible,
       max_possible: attributes.max_possible,
+      min_graph: attributes.min_graph,
+      max_graph: attributes.max_graph,
       tag: attributes.tag,
       unit: attributes.unit ? attributes.unit : "",
       to_read: attributes.to_read
@@ -28,7 +30,7 @@ exports.list = () => {
 
 exports.update = (sensor_id, attributes) => {
   return new Promise((resolve, reject) => {
-    db.Sensormodel.findById(sensor_id).then(
+    db.Sensormodel.findOne({ where: { id: sensor_id } }).then(
       model => {
         if (model) model.update({
           transducer: attributes.transducer,
@@ -37,6 +39,8 @@ exports.update = (sensor_id, attributes) => {
           max_acceptable: attributes.max_acceptable,
           min_possible: attributes.min_possible,
           max_possible: attributes.max_possible,
+          min_graph: attributes.min_graph,
+          max_graph: attributes.max_graph,
           tag: attributes.tag,
           unit: attributes.unit ? attributes.unit : "",
           to_read: attributes.to_read
@@ -50,7 +54,7 @@ exports.update = (sensor_id, attributes) => {
 
 exports.remove = (sensor_id) => {
   return new Promise((resolve, reject) => {
-    db.Sensormodel.findById(sensor_id).then(
+    db.Sensormodel.findOne({ where: { id: sensor_id } }).then(
       sensormodel => {
         if (sensormodel) sensormodel.destroy().then(
           () => resolve(sensormodel),

@@ -22,7 +22,8 @@ exports.create = (attributes) => {
 
 exports.get = (id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(id, {
+    db.Board.findOne({
+      where: { id: id },
       attributes: ['id', 'mac_addr', 'vitabox_id', 'description'],
       include: [
         { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
@@ -96,10 +97,8 @@ exports.updateDescription = (board, description) => {
 
 exports.switchMac = (board_id, mac_addr) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id).then(
-      board => board.update({ mac_addr: mac_addr }).then(
-        () => resolve(),
-        error => reject({ code: 500, msg: error.message })),
+    db.Board.update({ mac_addr: mac_addr }), { where: { id: board_id } }.then(
+      () => resolve(),
       error => reject({ code: 500, msg: error.message }));
   });
 }
@@ -116,7 +115,8 @@ exports.updateFrequency = (board_id, patient_id, frequency) => {
 
 exports.removeDescription = (board_id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id, {
+    db.Board.findOne({
+      where: { id: board_id },
       include: [
         { model: db.Patient, attributes: ['id'] },
         {
@@ -143,20 +143,16 @@ exports.removeDescription = (board_id) => {
 
 exports.enable = (board_id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id).then(
-      board => board.update({ active: true }).then(
-        () => resolve(),
-        error => reject({ code: 500, msg: error.message })),
+    db.Board.update({ active: true }, { where: { id: board_id } }).then(
+      () => resolve(),
       error => reject({ code: 500, msg: error.message }));
   });
 }
 
 exports.disable = (board_id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id).then(
-      board => board.update({ active: false }).then(
-        () => resolve(),
-        error => reject({ code: 500, msg: error.message })),
+    db.Board.update({ active: false }, { where: { id: board_id } }).then(
+      () => resolve(),
       error => reject({ code: 500, msg: error.message }));
   });
 }
@@ -166,7 +162,7 @@ exports.addPatient = (board, patient_id) => {
     board.hasPatient(patient_id).then(
       success => {
         if (!success) {
-          db.Patient.findById(patient_id).then(
+          db.Patient.findOne({ where: { id: patient_id } }).then(
             patient => {
               let promises = [board.addPatient(patient_id)];
               if (board.Boardmodel.type === "wearable" && !board.description)
@@ -183,38 +179,28 @@ exports.addPatient = (board, patient_id) => {
 
 exports.getPatients = (current_user, board_id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id).then(
+    db.Board.findOne({
+      where: { id: board_id }, include: [
+        {
+          model: db.Patient,
+          attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active'],
+          include: [{
+            model: db.Board, attributes: ['id', 'mac_addr'],
+            include: [
+              { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
+              {
+                model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+                include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+              }]
+          }]
+        }
+      ]
+    }).then(
       board => {
         if (board) if (current_user.admin)
-          board.getPatients({
-            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active'],
-            include: [{
-              model: db.Board, attributes: ['id', 'mac_addr'],
-              include: [
-                { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
-                {
-                  model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
-                  include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
-                }]
-            }],
-          }).then(
-            result => resolve(result),
-            error => reject({ code: 500, msg: error.message }));
+          resolve(board.Patients);
         else vitabox.verifySponsor(current_user, board.vitabox_id).then(
-          () => board.getPatients({
-            attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active'],
-            include: [{
-              model: db.Board, attributes: ['id', 'mac_addr'],
-              include: [
-                { model: db.Boardmodel, attributes: ['id', 'type', 'name'] },
-                {
-                  model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
-                  include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
-                }]
-            }],
-          }).then(
-            () => resolve(),
-            error => reject({ code: 500, msg: error.message })),
+          () => resolve(board.Patients),
           error => reject(error));
         else reject({ code: 500, msg: "Board not found" });
       }, error => reject({ code: 500, msg: error.message }));
@@ -223,15 +209,16 @@ exports.getPatients = (current_user, board_id) => {
 
 exports.getSensors = (board_id) => {
   return new Promise((resolve, reject) => {
-    db.Board.findById(board_id).then(
+    db.Board.findOne({
+      where: { id: board_id },
+      include: [{
+        model: db.Sensor, attributes: ['id', 'last_commit', 'last_values'],
+        include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at', 'tag'] } }]
+      }]
+    }).then(
       board => {
-        if (board) board.getSensors({
-          attributes: ['id', 'last_commit', 'last_values'],
-          include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at', 'tag'] } }]
-        }).then(
-          sensors => resolve(sensors),
-          error => reject({ code: 500, msg: error.message }));
-        else reject({ code: 500, msg: "board model not found" });
+        if (board) resolve(board.Sensors);
+        else reject({ code: 500, msg: "board not found" });
       }, error => reject({ code: 500, msg: error.message }));
   });
 }

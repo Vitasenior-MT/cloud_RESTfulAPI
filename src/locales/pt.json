@@ -5,6 +5,7 @@
 	"cannot_insert_record": "Não foi possível encontrar os registos do sensor",
 	"cannot_remove_record": "Não foi possível remover os registos da board",
 	"cannot_find_sensor": "Não foi possível encontrar o sensor",
+	"cannot_update_profile": "Não foi possível atualizar o perfil",
 	"cannot_update_sensor": "Não foi possível atualizar o sensor",
 	"cannot_update_board": "Não foi possível atualizar a board",
 	"cannot_find_board": "Não foi possível encontrar a board",
@@ -71,5 +72,10 @@
 	"patient_rmv_doctor": "removeu o utilizador '%s' (%s) de responsável clínico do paciente '%s' (%s)",
 	"login": "login",
 	"peso": "peso",
-	"Jose AntóNio": "Jose AntóNio"
+	"Jose AntóNio": "Jose AntóNio",
+	"monóxido de carbono": "monóxido de carbono",
+	"154c1d9b86370a239cbbd8eace0a892a": "154c1d9b86370a239cbbd8eace0a892a",
+	"Cozinha": "Cozinha",
+	"humidade": "humidade",
+	"temperatura": "temperatura"
 }

@@ -96,7 +96,7 @@ exports.requestToken = (req, res) => {
     business.vitabox.requestToken(req.params.id, req.body.password).then(
         data => {
             business.utils.createToken(data).then(
-                token => res.status(200).json({ token: token }),
+                token => res.status(200).json({ token: token, vitabox: data }),
                 error => res.status(500).send({ error: error.msg }));
         },
         error => res.status(error.code).send(error.msg)
@@ -706,21 +706,25 @@ exports.disablePatient = (req, res) => {
  * @apiPermission sponsor
  * @apiParam {string} :id vitabox unique ID
  * @apiParam {string} patient_id patient unique ID
+ * @apiParam {number} height (only the first time if dont associate doctor) patient height
+ * @apiParam {number} weight (only the first time if dont associate doctor) patient weight
  * @apiParamExample {json} Request example:
  *     {
- *          "patient_id": "9f846ccb-e5a0-4bd4-94ac-621847dfa780"
+ *          "patient_id": "9f846ccb-e5a0-4bd4-94ac-621847dfa780",
+ *          "height": 1.72,
+ *          "weight": 78.2m
  *     }
  * 
  * @apiSuccess {boolean} result return true if was sucessfuly enabled
  */
 exports.enablePatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
-        if (req.client.admin) business.patient.enable(req.body.patient_id).then(
+        if (req.client.admin) business.patient.enable(req.body).then(
             () => broker.notification.update(req.params.id).then(
                 () => res.status(200).json({ result: true })),
             error => res.status(error.code).send(error.msg));
         else business.vitabox.verifySponsor(req.client, req.params.id).then(
-            () => business.patient.enable(req.body.patient_id).then(
+            () => business.patient.enable(req.body).then(
                 () => broker.notification.update(req.params.id).then(
                     () => res.status(200).json({ result: true })),
                 error => res.status(error.code).send(error.msg)),

@@ -16,7 +16,19 @@ exports.create = (board_id, board_model_id) => {
 
 exports.find = (sensor_id) => {
   return new Promise((resolve, reject) => {
-    db.Sensor.findById(sensor_id, { include: [{ model: db.Board, include: [{ model: db.Vitabox }, { model: db.Patient }] }] }).then(
+    db.Sensor.findOne({
+      where: { id: sensor_id },
+      include: [
+        {
+          model: db.Board, include: [
+            { model: db.Vitabox },
+            { model: db.Patient },
+            { model: db.Boardmodel }
+          ]
+        },
+        { model: db.Sensormodel }
+      ]
+    }).then(
       sensor => {
         if (sensor) resolve(sensor);
         else reject({ code: 500, msg: "Sensor not found" });

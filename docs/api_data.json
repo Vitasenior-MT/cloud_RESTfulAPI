@@ -2,7 +2,7 @@
   {
     "type": "post",
     "url": "/chpass",
-    "title": "04) Change password",
+    "title": "05) Change password",
     "group": "Authentication",
     "name": "changePassword",
     "version": "1.0.0",
@@ -92,7 +92,7 @@
   {
     "type": "post",
     "url": "/forgot",
-    "title": "05) Forgot Password",
+    "title": "06) Forgot Password",
     "group": "Authentication",
     "name": "forgotPassword",
     "version": "1.0.0",
@@ -175,7 +175,7 @@
   {
     "type": "post",
     "url": "/reset",
-    "title": "06) Reset password",
+    "title": "07) Reset password",
     "group": "Authentication",
     "name": "resetPassword",
     "version": "1.0.0",
@@ -265,7 +265,7 @@
   {
     "type": "post",
     "url": "/login",
-    "title": "02) Login user",
+    "title": "03) Login user",
     "group": "Authentication",
     "name": "userLogin",
     "version": "1.0.0",
@@ -564,7 +564,7 @@
   {
     "type": "get",
     "url": "/check",
-    "title": "03) Verify Token",
+    "title": "04) Verify Token",
     "group": "Authentication",
     "name": "userVerifyToken",
     "description": "<p>endpoint to check token validity.</p>",
@@ -605,6 +605,89 @@
     },
     "filename": "src/controllers/v1.0.0/user.js",
     "groupTitle": "Authentication",
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/validate/:token",
+    "title": "02) Validate Email",
+    "group": "Authentication",
+    "name": "validateEmail",
+    "version": "1.0.0",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "token",
+            "description": "<p>token provided to validate the eamil</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "html",
+            "optional": false,
+            "field": "web",
+            "description": "<p>page to confirm the reception</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/user.js",
+    "groupTitle": "Authentication",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      }
+    },
     "error": {
       "fields": {
         "Error 4xx": [
@@ -2665,7 +2748,7 @@
   {
     "type": "put",
     "url": "/patient/:id/doctor",
-    "title": "04) Accept as Doctor",
+    "title": "05) Accept as Doctor",
     "group": "Patient",
     "name": "acceptAsDoctor",
     "description": "<p>doctor accept patient</p>",
@@ -2775,7 +2858,7 @@
   {
     "type": "post",
     "url": "/patient/:id/doctor",
-    "title": "03) Add Doctor",
+    "title": "04) Add Doctor",
     "group": "Patient",
     "name": "addDoctor",
     "description": "<p>add doctor to a specific patient if the requester is sponsor of him.</p>",
@@ -2881,7 +2964,7 @@
   {
     "type": "get",
     "url": "/patient/:id/board",
-    "title": "06) Get Boards",
+    "title": "07) Get Boards",
     "group": "Patient",
     "name": "getBoardsFromPatient",
     "description": "<p>Get boards from a patient</p>",
@@ -2960,7 +3043,7 @@
   {
     "type": "delete",
     "url": "/patient/:id/doctor",
-    "title": "05) Remove Doctor",
+    "title": "06) Remove Doctor",
     "group": "Patient",
     "name": "removeDoctor",
     "description": "<p>remove doctor from a patient if the requester is sponsor of him.</p>",
@@ -3070,7 +3153,7 @@
   {
     "type": "post",
     "url": "/patient/:id/photo",
-    "title": "07) Update photo",
+    "title": "08) Update photo",
     "group": "Patient",
     "name": "setPhotoFromPatient",
     "version": "1.0.0",
@@ -3125,10 +3208,10 @@
           },
           {
             "group": "Parameter",
-            "type": "string",
+            "type": "FormData",
             "optional": false,
-            "field": "photo",
-            "description": "<p>html name to input type file</p>"
+            "field": "image",
+            "description": "<p>FormData type file (max 70KB allowed)</p>"
           }
         ]
       }
@@ -3172,7 +3255,7 @@
   {
     "type": "put",
     "url": "/patient/:id/exam",
-    "title": "08) Update Exam",
+    "title": "09) Update Exam",
     "group": "Patient",
     "name": "updateExamFrequency",
     "description": "<p>update exam frequency to patient</p>",
@@ -3288,11 +3371,11 @@
   },
   {
     "type": "put",
-    "url": "patient/:id/biometric",
-    "title": "01) Update Biometric Data",
+    "url": "patient/:id/info",
+    "title": "01) Update personal data",
     "group": "Patient",
-    "name": "updateProfilesToPatient",
-    "description": "<p>update height and weight from patient.</p>",
+    "name": "updateInfoToPatient",
+    "description": "<p>update profile from patient.</p>",
     "version": "1.0.0",
     "permission": [
       {
@@ -3311,24 +3394,45 @@
           },
           {
             "group": "Parameter",
-            "type": "decimal",
+            "type": "string",
             "optional": false,
-            "field": "height",
-            "description": "<p>patient height</p>"
+            "field": "name",
+            "description": "<p>patient name</p>"
           },
           {
             "group": "Parameter",
-            "type": "decimal",
+            "type": "date",
             "optional": false,
-            "field": "weight",
-            "description": "<p>patient weight</p>"
+            "field": "birthdate",
+            "description": "<p>patient birthdate (date only)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "gender",
+            "description": "<p>patient gender (must be 'male', 'female' or 'undefined')</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "cc",
+            "description": "<p>patient citizen card number</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "nif",
+            "description": "<p>patient fiscal number</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"height\": 1.72,\n     \"weight\": 78.2m\n}",
+          "content": "{\n     \"name\": \"José António\",\n     \"birthdate\": \"1987-02-28\",\n     \"gender\": \"male\",\n     \"cc\": \"123456789\",\n     \"nif\": \"987654321\"\n}",
           "type": "json"
         }
       ]
@@ -3406,7 +3510,7 @@
   {
     "type": "put",
     "url": "patient/:id/profile",
-    "title": "02) Update profile",
+    "title": "03) Update profile",
     "group": "Patient",
     "name": "updateProfilesToPatient",
     "description": "<p>update profile from patient.</p>",
@@ -3423,15 +3527,8 @@
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": ":paid",
-            "description": "<p>patient id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
             "field": ":id",
-            "description": "<p>profile id to update</p>"
+            "description": "<p>patient id</p>"
           },
           {
             "group": "Parameter",
@@ -3453,6 +3550,123 @@
         {
           "title": "Request example:",
           "content": "{\n     \"profiles\":[\n         {\n           \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n           \"min\": 100,\n           \"max\": 110  \n         }\n     ],\n     \"description\": \"Diabetes tipo 1\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "patient/:id/biometric",
+    "title": "02) Update Biometric Data",
+    "group": "Patient",
+    "name": "updateProfilesToPatient",
+    "description": "<p>update height and weight from patient.</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "doctor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "height",
+            "description": "<p>patient height</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "weight",
+            "description": "<p>patient weight</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"height\": 1.72,\n     \"weight\": 78.2m\n}",
           "type": "json"
         }
       ]
@@ -4980,6 +5194,20 @@
           },
           {
             "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "min_graph",
+            "description": "<p>minimum value to graph thresholds</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "max_graph",
+            "description": "<p>maximum value to graph thresholds</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "string",
             "optional": false,
             "field": "to_read",
@@ -4990,7 +5218,7 @@
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"transducer\": \"dht22\",\n     \"measure\":\"temperature\",\n     \"unit\": \"ºC\",\n     \"tag\": \"temp\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\",\n    \"to_read\": \"temperature\"\n}",
+          "content": "{\n     \"transducer\": \"dht22\",\n     \"measure\":\"temperature\",\n     \"unit\": \"ºC\",\n     \"tag\": \"temp\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\",\n     \"to_read\": \"temperature\",\n     \"min_graph\": \"0\",\n     \"max_graph\": \"13\",\n}",
           "type": "json"
         }
       ]
@@ -5228,6 +5456,20 @@
           },
           {
             "group": "Success 200",
+            "type": "decimal",
+            "optional": false,
+            "field": "min_graph",
+            "description": "<p>minimum value to graph thresholds</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "decimal",
+            "optional": false,
+            "field": "max_graph",
+            "description": "<p>maximum value to graph thresholds</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "string",
             "optional": false,
             "field": "to_read",
@@ -5238,7 +5480,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"sensors\": [\n     {\n         \"transducer\": \"dht22\",\n         \"measure\":\"temperature\",\n         \"tag\": \"temp\",\n         \"min_acceptable\": \"10\",\n         \"max_acceptable\": \"25\",\n         \"min_possible\": \"-20\",\n         \"max_possible\": \"50\"\n     },\n     {\n         \"transducer\": \"mq-7\",\n         \"measure\":\"carbon_monoxide\",\n         \"tag\": \"mono\",\n         \"min_acceptable\": \"2\",\n         \"max_acceptable\": \"10\",\n         \"min_possible\": \"10\",\n         \"max_possible\": \"500\"\n     }\n ]\n}",
+          "content": "{\n \"sensors\": [\n     {\n         \"transducer\": \"dht22\",\n         \"measure\":\"temperature\",\n         \"tag\": \"temp\",\n         \"min_acceptable\": \"10\",\n         \"max_acceptable\": \"25\",\n         \"min_possible\": \"-20\",\n         \"max_possible\": \"50\",\n         \"min_graph\": \"5\",\n         \"max_graph\": \"30\",\n     },\n     {\n         \"transducer\": \"mq-7\",\n         \"measure\":\"carbon_monoxide\",\n         \"tag\": \"mono\",\n         \"min_acceptable\": \"2\",\n         \"max_acceptable\": \"10\",\n         \"min_possible\": \"10\",\n         \"max_possible\": \"500\",\n         \"min_graph\": \"0\",\n         \"max_graph\": \"13\",\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -5357,13 +5599,27 @@
             "optional": false,
             "field": "max_possible",
             "description": "<p>maximum possible value to sensor</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "min_graph",
+            "description": "<p>minimum value to graph thresholds</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "decimal",
+            "optional": false,
+            "field": "max_graph",
+            "description": "<p>maximum value to graph thresholds</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"transducer\": \"dht22\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\"\n}",
+          "content": "{\n     \"transducer\": \"dht22\",\n     \"min_acceptable\": \"10\",\n     \"max_acceptable\": \"25\",\n     \"min_possible\": \"-20\",\n     \"max_possible\": \"50\",\n     \"min_graph\": \"0\",\n     \"max_graph\": \"13\",\n}",
           "type": "json"
         }
       ]
@@ -5874,10 +6130,10 @@
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "string",
+            "type": "FormData",
             "optional": false,
-            "field": "photo",
-            "description": "<p>html name to input type file</p>"
+            "field": "image",
+            "description": "<p>FormData type file (max 70KB allowed)</p>"
           }
         ]
       }
@@ -5890,7 +6146,7 @@
             "type": "boolean",
             "optional": false,
             "field": "result",
-            "description": "<p>return true if was sucessfuly reseted</p>"
+            "description": "<p>return true if was sucessfuly updated</p>"
           }
         ]
       }
@@ -6852,13 +7108,27 @@
             "optional": false,
             "field": "patient_id",
             "description": "<p>patient unique ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "height",
+            "description": "<p>(only the first time if dont associate doctor) patient height</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "weight",
+            "description": "<p>(only the first time if dont associate doctor) patient weight</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"patient_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\"\n}",
+          "content": "{\n     \"patient_id\": \"9f846ccb-e5a0-4bd4-94ac-621847dfa780\",\n     \"height\": 1.72,\n     \"weight\": 78.2m\n}",
           "type": "json"
         }
       ]
@@ -7077,7 +7347,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"frequency\": 2,\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19, \n                 \"max\": 25\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64\n             }\n         ],\n         \"Doctors\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"name\": \"Julia Almeida\", \n                 \"email\": \"jalme@a.aa\"\n             }\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"photo\": \"h43gj2h34j2B34hg342jhhsu46SAkwKsR1.jpg\"\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"frequency\": 2,\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n         \"Doctors\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"name\": \"Julia Almeida\", \n                 \"email\": \"jalme@a.aa\"\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -8551,7 +8821,7 @@
   {
     "type": "put",
     "url": "/warning",
-    "title": "03) Check warning",
+    "title": "05) Check warning",
     "group": "Warning",
     "name": "checkWarnings",
     "description": "<p>check all warnings, or a single warning by vitabox</p>",
@@ -8646,15 +8916,173 @@
   },
   {
     "type": "get",
-    "url": "/warning/:page",
-    "title": "01) Get warning",
+    "url": "/warning/:page/environment",
+    "title": "04) Get warning from environment to User",
     "group": "Warning",
-    "name": "getWarnings",
-    "description": "<p>get warnings from page</p>",
+    "name": "getEnvironmentWarningsAsUser",
+    "description": "<p>get warning from environment sensors to User by page</p>",
     "version": "1.0.0",
     "permission": [
       {
         "name": "user"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de Temperature de Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"seen_vitabox\": \"2018-07-16T13:38:45.175Z\",\n            \"entity\": \"Av. Manuel Teixeira Nº48\",\n            \"tag\": \"humi\"\n        }\n      ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/warning.js",
+    "groupTitle": "Warning",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/warning/:page/patient",
+    "title": "03) Get warning from patients to User",
+    "group": "Warning",
+    "name": "getPatientWarningsAsUser",
+    "description": "<p>get warning from patients to User by page</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de Pressão Arterial do(a) António está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": \"dd9c4928-9b8d-0e35-251f-22770a94a44f\",\n            \"seen_vitabox\": \"2018-07-16T13:38:45.175Z\",\n            \"entity\": \"José Manuel\",\n            \"tag\": \"bodytemp\"\n        }\n      ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/warning.js",
+    "groupTitle": "Warning",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/warning/:page",
+    "title": "01) Get warning to Doctor",
+    "group": "Warning",
+    "name": "getWarningsAsDoctor",
+    "description": "<p>get warnings from page</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user (with doctor role)"
       }
     ],
     "parameter": {
@@ -8674,7 +9102,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null\n        }]\n}",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": \"dd9c4928-9b8d-0e35-251f-22770a94a44f\",\n            \"seen_vitabox\": \"2018-07-16T13:38:45.175Z\",\n            \"entity\": \"José Manuel\",\n            \"tag\": \"bodytemp\"\n        }]\n}",
           "type": "json"
         }
       ]
@@ -8753,7 +9181,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de humidade do(a) Quarto está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": null,\n            \"seen_vitabox\": null,\n            \"entity\": \"Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal\"\n        },\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de Pressão Arterial do(a) António está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": \"dd9c4928-9b8d-0e35-251f-22770a94a44f\",\n            \"seen_vitabox\": \"2018-07-16T13:38:45.175Z\",\n            \"entity\": \"Av. Dr. Aurélio Ribeiro 3, Tomar, Portugal\"\n        }\n      ]\n}",
+          "content": "{\n    \"warnings\": [\n        {\n            \"datetime\": \"2018-07-16T13:36:23.149Z\",\n            \"message\": \"o valor de Pressão Arterial do(a) António está acima do recomendado\",\n            \"sensor_id\": \"0e35251f-dd9c-4928-9b8d-a94a44f22770\",\n            \"patient_id\": \"dd9c4928-9b8d-0e35-251f-22770a94a44f\",\n            \"seen_vitabox\": \"2018-07-16T13:38:45.175Z\",\n            \"entity\": \"José Manuel\",\n            \"tag\": \"bodytemp\"\n        }\n      ]\n}",
           "type": "json"
         }
       ]

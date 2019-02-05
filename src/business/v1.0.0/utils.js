@@ -45,7 +45,7 @@ exports.validateToken = (token) => {
 
     jwt.verify(token, process.env.PUBLIC_KEY, options, (error, payload) => {
       if (error) reject({ code: 500, msg: error.message });
-      db[payload.role].findById(payload.id).then(
+      db[payload.role].findOne({ where: { id: payload.id } }).then(
         obj => resolve(obj),
         error => reject({ code: 500, msg: error.message })
       );
@@ -57,4 +57,8 @@ exports.generatePassword = (n_char) => {
   let sk = "", i, j, base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   for (i = 0; i < n_char; i++) sk += base[Math.floor(Math.random() * 61)];
   return sk;
+}
+
+exports.capitalString = (str) => {
+  return str.split(" ").map(x => x[0].toUpperCase() + x.substring(1)).join(" ");
 }

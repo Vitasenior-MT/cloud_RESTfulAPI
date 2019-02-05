@@ -3,7 +3,7 @@ var db = require('../../models/index'),
 
 exports.countUnseen = () => {
   return new Promise((resolve, reject) => {
-    db.Error.count({ seen_date: null }).exec((err, res) => {
+    db.Error.countDocuments({ seen_date: null }).exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
       resolve(res);
     });
@@ -17,7 +17,7 @@ exports.getFromPage = (page) => {
 
       let promises = res.map(to_send => {
         if (to_send.seen_user !== null) return new Promise(resolve => {
-          db.User.findById(to_send.seen_user, { attributes: ["name"] }).then(
+          db.User.findOne({ where: { id: to_send.seen_user }, attributes: ["name"] }).then(
             user => {
               user.name = utils.decrypt(user.name);
               to_send.seen_user = user.name;

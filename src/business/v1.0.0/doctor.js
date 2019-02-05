@@ -21,7 +21,7 @@ exports.listDoctorRequests = (doctor_id) => {
     db.DoctorPatient.findAll({ where: { user_id: doctor_id, accepted: false } }).then(
       requests => {
         let promises = requests.map(request =>
-          new Promise((resolve, reject) => db.Patient.findById(request.patient_id).then(
+          new Promise((resolve, reject) => db.Patient.findOne({ where: { id: request.patient_id }}).then(
             patient => resolve({
               created_at: request.created_at,
               patient_id: patient.id,

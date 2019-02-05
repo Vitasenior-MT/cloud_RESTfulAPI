@@ -108,7 +108,9 @@ exports.exchange = (req, res) => {
                     "min_acceptable": "30.00000",
                     "max_acceptable": "50.00000",
                     "min_possible": "20.00000",
-                    "max_possible": "60.00000"
+                    "max_possible": "60.00000",
+                    "min_graph": "20.00000",
+                    "max_graph": "60.00000",
                 }
             }
         ]
@@ -184,7 +186,7 @@ exports.removePatientFromBoard = (req, res) => {
                 ];
                 board.Sensors.map(x => promises.push(business.profile.removeByTag(req.body.patient_id, x.Sensormodel.tag)));
                 if (board.Boardmodel.type === "wearable") promises.push(business.board.updateDescription(board, ""));
-                
+
                 if (req.client.admin) Promise.all(promises).then(
                     () => res.status(200).json({ result: true }),
                     error => res.status(error.code).send(error.msg));

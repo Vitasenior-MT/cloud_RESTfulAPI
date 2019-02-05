@@ -18,25 +18,17 @@ exports.list = () => {
 
 exports.update = (board_model_id, attributes) => {
     return new Promise((resolve, reject) => {
-        db.Boardmodel.findById(board_model_id).then(
-            model => {
-                if (model) model.update({ type: attributes.type, name: attributes.name, tag: attributes.tag }).then(
-                    boardmodel => resolve(boardmodel),
-                    error => reject(error));
-                else reject({ code: 500, msg: "board model not found" });
-            }, error => reject({ code: 500, msg: error.message }));
+        db.Boardmodel.update({ type: attributes.type, name: attributes.name, tag: attributes.tag }, { where: { id: board_model_id } }).then(
+            boardmodel => resolve(boardmodel),
+            error => reject(error));
     });
 }
 
 exports.remove = (board_model_id) => {
     return new Promise((resolve, reject) => {
-        db.Boardmodel.findById(board_model_id).then(
-            boardmodel => {
-                if (boardmodel) boardmodel.destroy().then(
-                    () => resolve(boardmodel),
-                    error => reject({ code: 500, msg: error.message }));
-                else reject({ code: 500, msg: "board model not found" });
-            }, error => reject({ code: 500, msg: error.message }));
+        db.Boardmodel.destroy({ where: { id: board_model_id } }).then(
+            () => resolve(boardmodel),
+            error => reject({ code: 500, msg: error.message }));
     });
 }
 
@@ -46,7 +38,7 @@ exports.setSensor = (board_model_id, sensor_model_id) => {
             db.Boardmodel.findOne({ where: { id: board_model_id }, include: [{ model: db.Board }, { model: db.Sensormodel }] }).then(
                 boardmodel => {
                     if (boardmodel) if (!!boardmodel.Sensormodels.filter(x => x.id === sensor_model_id)) {
-                        db.Sensormodel.findById(sensor_model_id).then(
+                        db.Sensormodel.findOne({ where: { id: sensor_model_id } }).then(
                             sensormodel => {
                                 if (sensormodel) boardmodel.addSensormodel(sensor_model_id).then(
                                     () => Promise.all(boardmodel.Boards.map(board => db.Sensor.create({ board_id: board.id, sensormodel_id: sensor_model_id }))).then(
@@ -64,15 +56,13 @@ exports.setSensor = (board_model_id, sensor_model_id) => {
 
 exports.getSensors = (board_model_id) => {
     return new Promise((resolve, reject) => {
-        db.Boardmodel.findById(board_model_id).then(
+        db.Boardmodel.findOne({
+            where: { id: board_model_id },
+            include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+        }).then(
             model => {
-                if (model) model.getSensormodels({ attributes: { exclude: ['created_at', 'updated_at'] } }).then(
-                    models => {
-                        models.forEach(element => delete element.dataValues.BoardmodelSensor);
-                        resolve(models)
-                    },
-                    error => reject({ code: 500, msg: error.message }));
-                else reject({ code: 500, msg: "board model not found" });
+                model.Sensormodels.forEach(element => delete element.dataValues.BoardmodelSensor);
+                resolve(model.Sensormodels);
             }, error => reject({ code: 500, msg: error.message }));
     });
 }
@@ -81,7 +71,7 @@ exports.removeSensor = (board_model_id, sensor_model_id) => {
     return new Promise((resolve, reject) => {
         if (sensor_model_id) db.Boardmodel.findOne({ where: { id: board_model_id }, include: [{ model: db.Board }] }).then(
             boardmodel => {
-                if (boardmodel) db.Sensormodel.findById(sensor_model_id).then(
+                if (boardmodel) db.Sensormodel.findOne({ where: { id: sensor_model_id } }).then(
                     sensormodel => {
                         if (sensormodel) boardmodel.removeSensormodel(sensor_model_id).then(
                             () => Promise.all(boardmodel.Boards.map(board => {

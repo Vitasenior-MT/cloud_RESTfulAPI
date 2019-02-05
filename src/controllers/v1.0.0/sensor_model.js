@@ -18,6 +18,8 @@ var business = require('../../business/index').v1_0_0,
  * @apiParam {decimal} max_acceptable maximum acceptable value to sensor
  * @apiParam {decimal} min_possible minimum possible value to sensor
  * @apiParam {decimal} max_possible maximum possible value to sensor
+ * @apiParam {decimal} min_graph minimum value to graph thresholds
+ * @apiParam {decimal} max_graph maximum value to graph thresholds
  * @apiParam {string} to_read text to text-to-speech
  * @apiParamExample {json} Request example:
  *      {
@@ -29,7 +31,9 @@ var business = require('../../business/index').v1_0_0,
  *           "max_acceptable": "25",
  *           "min_possible": "-20",
  *           "max_possible": "50",
- *          "to_read": "temperature"
+ *           "to_read": "temperature",
+ *           "min_graph": "0",
+ *           "max_graph": "13",
  *      }
  * @apiSuccess {string} id created sensor id
  */
@@ -61,6 +65,8 @@ exports.create = (req, res) => {
  * @apiSuccess {decimal} max_acceptable maximum acceptable value to sensor
  * @apiSuccess {decimal} min_possible minimum possible value to sensor
  * @apiSuccess {decimal} max_possible maximum possible value to sensor
+ * @apiSuccess {decimal} min_graph minimum value to graph thresholds
+ * @apiSuccess {decimal} max_graph maximum value to graph thresholds
  * @apiSuccess {string} to_read text to text-to-speech
  * @apiSuccessExample {json} Response example:
  * {
@@ -72,7 +78,9 @@ exports.create = (req, res) => {
  *          "min_acceptable": "10",
  *          "max_acceptable": "25",
  *          "min_possible": "-20",
- *          "max_possible": "50"
+ *          "max_possible": "50",
+ *          "min_graph": "5",
+ *          "max_graph": "30",
  *      },
  *      {
  *          "transducer": "mq-7",
@@ -81,7 +89,9 @@ exports.create = (req, res) => {
  *          "min_acceptable": "2",
  *          "max_acceptable": "10",
  *          "min_possible": "10",
- *          "max_possible": "500"
+ *          "max_possible": "500",
+ *          "min_graph": "0",
+ *          "max_graph": "13",
  *      }
  *  ]
  * }
@@ -111,13 +121,17 @@ exports.list = (req, res) => {
  * @apiParam {decimal} max_acceptable maximum acceptable value to sensor
  * @apiParam {decimal} min_possible minimum possible value to sensor
  * @apiParam {decimal} max_possible maximum possible value to sensor
+ * @apiParam {decimal} min_graph minimum value to graph thresholds
+ * @apiParam {decimal} max_graph maximum value to graph thresholds
  * @apiParamExample {json} Request example:
  *      {
  *           "transducer": "dht22",
  *           "min_acceptable": "10",
  *           "max_acceptable": "25",
  *           "min_possible": "-20",
- *           "max_possible": "50"
+ *           "max_possible": "50",
+ *           "min_graph": "0",
+ *           "max_graph": "13",
  *      }
  * @apiSuccess {boolean} result return "true" if was sucessfuly updated
  */

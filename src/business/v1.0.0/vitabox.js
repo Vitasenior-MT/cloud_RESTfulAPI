@@ -59,11 +59,19 @@ exports.requestToken = (vitabox_id, password) => {
     let encrypted = utils.encrypt([password]);
     if (!encrypted.error) db.Vitabox.findOne({ where: { password: encrypted.value[0], id: vitabox_id, registered: true } }).then(
       vitabox => {
-        if (vitabox) if (vitabox.registered) if (!vitabox.active)
-          vitabox.update({ active: true }).then(
-            vitabox => resolve(vitabox),
-            error => reject({ code: 500, msg: error.message }));
-        else resolve(vitabox);
+        if (vitabox) if (vitabox.registered) {
+          let coords = utils.decrypt(vitabox.coordinates).split('+');
+          vitabox.address = utils.decrypt(vitabox.address);
+          vitabox.district = utils.decrypt(vitabox.district);
+          vitabox.locality = utils.decrypt(vitabox.locality);
+          vitabox.dataValues.latitude = coords[0];
+          vitabox.dataValues.longitude = coords[1];
+          if (!vitabox.active)
+            vitabox.update({ active: true }).then(
+              vitabox => resolve(vitabox),
+              error => reject({ code: 500, msg: error.message }));
+          else resolve(vitabox);
+        }
         else reject({ code: 401, msg: "vitabox not registered" });
         else reject({ code: 401, msg: "invalid credentials or not registered" });
       }, error => reject({ code: 500, msg: error.message }));
@@ -116,7 +124,7 @@ exports.listInactive = (current_user, own) => {
 
 exports.find = (vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id, { attributes: { exclude: ['password'] } }).then(
+    db.Vitabox.findOne({ where: { id: vitabox_id }, attributes: { exclude: ['password'] } }).then(
       vitabox => {
         if (vitabox) {
           let coords = utils.decrypt(vitabox.coordinates).split('+');
@@ -136,7 +144,7 @@ exports.update = (current_user, vitabox_id, attributes) => {
   return new Promise((resolve, reject) => {
     if (attributes.address && attributes.district && attributes.locality)
       if (attributes.longitude && attributes.latitude && attributes.latitude > -90 && attributes.latitude < 90 && attributes.longitude > -180 && attributes.longitude < 180)
-        db.Vitabox.findById(vitabox_id).then(
+        db.Vitabox.findOne({ where: { id: vitabox_id } }).then(
           vitabox => {
             if (vitabox) {
               let encrypted = utils.encrypt([
@@ -175,7 +183,7 @@ exports.update = (current_user, vitabox_id, attributes) => {
 
 exports.delete = (current_user, vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
+    db.Vitabox.findOne({ where: { id: vitabox_id } }).then(
       vitabox => {
         if (vitabox) if (current_user.admin)
           vitabox.destroy().then(
@@ -193,7 +201,7 @@ exports.delete = (current_user, vitabox_id) => {
 
 exports.addUser = (current_user, vitabox_id, user_id, is_sponsor) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
+    db.Vitabox.findOne({ where: { id: vitabox_id } }).then(
       vitabox => {
         if (vitabox) if (current_user.admin)
           vitabox.addUser(user_id, { through: { sponsor: is_sponsor } }).then(
@@ -228,7 +236,7 @@ exports.getUsers = (vitabox) => {
 
 exports.removeUser = (current_user, vitabox_id, user_id) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
+    db.Vitabox.findOne({ where: { id: vitabox_id } }).then(
       vitabox => {
         if (vitabox) if (current_user.admin)
           vitabox.removeUser(user_id).then(
@@ -326,7 +334,7 @@ exports.getBoards = (vitabox, where_condiction) => {
 
 exports.verifySponsor = (current_user, vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id).then(
+    db.Vitabox.findOne({ where: { id: vitabox_id } }).then(
       vitabox => {
         if (vitabox) _isSponsor(vitabox, current_user).then(
           () => resolve(vitabox),
@@ -346,7 +354,8 @@ exports.verifyUser = (current_user, vitabox) => {
 
 exports.findToReset = (vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.Vitabox.findById(vitabox_id, {
+    db.Vitabox.findOne({
+      where: { id: vitabox_id },
       include: [
         { model: db.Board },
         { model: db.User },

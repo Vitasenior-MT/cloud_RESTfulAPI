@@ -199,6 +199,12 @@ module.exports = (app) => {
         .put('/patient/:id/exam', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateExamFrequency
         }))
+        .put('/patient/:id/info', versioning({
+            "1.0.0": controllers.v1_0_0.patient.updateInfo
+        }))
+        .get('/patient/:id/info', versioning({
+            "1.0.0": controllers.v1_0_0.patient.getPatientInfo
+        }))
         /*________________________________________________
         *__________________SENSOR MODEL___________________
         *_________________________________________________*/
@@ -277,6 +283,12 @@ module.exports = (app) => {
         .get('/warning', versioning({
             "1.0.0": controllers.v1_0_0.warning.getWarnings
         }))
+        .get('/warning/:page/patient', versioning({
+            "1.0.0": controllers.v1_0_0.warning.getPatientWarnings
+        }))
+        .get('/warning/:page/environment', versioning({
+            "1.0.0": controllers.v1_0_0.warning.getEnvironmentWarnings
+        }))
         .put('/warning', versioning({
             "1.0.0": controllers.v1_0_0.warning.checkWarnings
         }))
@@ -294,6 +306,12 @@ module.exports = (app) => {
         }))
         .put('/notification', versioning({
             "1.0.0": controllers.v1_0_0.notification.checkNotifications
+        }))
+        /*________________________________________________
+        *____________________SENSOR_______________________
+        *_________________________________________________*/
+        .get('/sensor/:id', versioning({
+            "1.0.0": controllers.v1_0_0.sensor.find
         }))
         /*________________________________________________
         *_____________________TRASH_______________________

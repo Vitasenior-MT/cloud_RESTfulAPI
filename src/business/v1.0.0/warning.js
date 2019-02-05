@@ -1,22 +1,32 @@
 var db = require('../../models/index'),
   utils = require('./utils');
 
-exports.getFromUser = (page, user) => {
+exports.getFromUserToEnvironment = (page, user) => {
   return new Promise((resolve, reject) => {
     if (page > 0) {
-      user.getVitaboxes().then(
-        vitaboxes => {
-          db.Warning.find().where({ vitabox_id: { $in: vitaboxes.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
-            if (err) reject({ code: 500, msg: err.message });
-            let promises = res.map(warning => {
-              if (warning.patient_id === null) return _getSensorWarningInfo(warning, vitaboxes.find(x => x.id == warning.vitabox_id).address);
-              else return _getPatientWarningInfo(warning);
-            });
-            Promise.all(promises).then(
-              data => resolve(data.filter(x => x)),
-              err => reject({ code: 500, msg: "Could not extract warnings" }));
-          });
-        }, err => reject({ code: 500, msg: err.message }));
+      user.getVitaboxes().then(vitaboxes =>
+        db.Warning.find().where({ vitabox_id: { $in: vitaboxes.map(x => x.id) } }).where({ patient_id: { $eq: null } }).sort('-datetime').skip((page - 1) * 24).limit(24).exec((err, res) => {
+          if (err) reject(err);
+          if (res) Promise.all(res.map(warning => _getEnvironmentWarningInfo(warning, vitaboxes.find(x => x.id == warning.vitabox_id).address))).then(
+            data => resolve(data.filter(x => x)),
+            err => reject({ code: 500, msg: err.message }));
+          else resolve([]);
+        }), err => reject({ code: 500, msg: err.message }));
+    } else reject({ code: 500, msg: "invalid page" });
+  })
+}
+
+exports.getFromUserToPatient = (page, user) => {
+  return new Promise((resolve, reject) => {
+    if (page > 0) {
+      user.getVitaboxes().then(vitaboxes =>
+        db.Warning.find().where({ vitabox_id: { $in: vitaboxes.map(x => x.id) } }).where({ patient_id: { $ne: null } }).sort('-datetime').skip((page - 1) * 24).limit(24).exec((err, res) => {
+          if (err) reject(err);
+          if (res) Promise.all(res.map(warning => _getPatientWarningInfo(warning))).then(
+            data => resolve(data.filter(x => x)),
+            err => reject({ code: 500, msg: err.message }));
+          else resolve([]);
+        }), err => reject({ code: 500, msg: err.message }));
     } else reject({ code: 500, msg: "invalid page" });
   })
 }
@@ -26,12 +36,12 @@ exports.getFromDoctor = (page, user) => {
     if (page > 0) {
       user.getPatients().then(
         patients => {
-          db.Warning.find().where({ patient_id: { $in: patients.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 25).limit(25).exec((err, res) => {
+          db.Warning.find().where({ patient_id: { $in: patients.map(x => x.id) } }).sort('-datetime').skip((page - 1) * 24).limit(24).exec((err, res) => {
             if (err) reject({ code: 500, msg: err.message });
-            let promises = res.map(warning => _getPatientWarningInfoToDoctor(warning, patients.find(x => x.id === warning.patient_id)));
-            Promise.all(promises).then(
+            if (res) Promise.all(res.map(warning => _getPatientWarningInfoToDoctor(warning, patients.find(x => x.id === warning.patient_id)))).then(
               data => resolve(data.filter(x => x)),
               err => reject({ code: 500, msg: err.message }));
+            else resolve([]);
           }, error => reject({ code: 500, msg: "Could not extract warnings" }));
         }, err => reject({ code: 500, msg: err.message }));
     } else reject({ code: 500, msg: "invalid page" });
@@ -40,7 +50,7 @@ exports.getFromDoctor = (page, user) => {
 
 exports.getFromVitabox = (vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.Warning.find().where({ vitabox_id: vitabox_id, seen_vitabox: null, patient_id: { $ne: null } }).exec((err, res) => {
+    db.Warning.find().where({ vitabox_id: vitabox_id }).where({ seen_vitabox: { $eq: null } }).where({ patient_id: { $ne: null } }).exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
       Promise.all(res.map(x => _getPatientWarningInfo(x))).then(
         data => resolve(data.filter(x => x)),
@@ -51,9 +61,9 @@ exports.getFromVitabox = (vitabox_id) => {
 
 exports.checkWarningByUser = (user) => {
   return new Promise((resolve, reject) => {
-    db.WarningUser.update({ user_id: user.id }, { "seen_date": new Date(), "count": 0 }, { multi: true }, (err, res) => {
+    db.WarningUser.updateMany({ user_id: user.id }, { $set: { "seen_date": new Date(), "count": 0 } }, { multi: true }, (err, res) => {
       if (err) reject(err);
-      if (user.doctor) db.WarningDoctor.where({ user_id: user.id }).update({ "seen_date": new Date(), "count": 0 }, (err, res) => {
+      if (user.doctor) db.WarningDoctor.updateMany({ user_id: user.id }, { $set: { "seen_date": new Date(), "count": 0 } }, (err, res) => {
         if (err) reject({ code: 500, msg: err.message });
         resolve();
       });
@@ -64,7 +74,7 @@ exports.checkWarningByUser = (user) => {
 
 exports.checkWarningByVitabox = (id, vitabox_id) => {
   return new Promise((resolve, reject) => {
-    db.Warning.where({ _id: id, vitabox_id: vitabox_id }).update({ "seen_vitabox": new Date() }, (err, res) => {
+    db.Warning.updateMany({ _id: id, vitabox_id: vitabox_id }, { $set: { "seen_vitabox": new Date() } }, (err, res) => {
       if (err) reject({ code: 500, msg: err.message });
       resolve();
     });
@@ -132,19 +142,22 @@ exports.removeWarningDoctor = (user_id, patient_id) => {
 //_____________ PRIVATE _________________
 //_______________________________________
 
-_getSensorWarningInfo = (warning, vitabox_address) => {
+_getEnvironmentWarningInfo = (warning, vitabox_address) => {
   return new Promise((resolve, reject) => {
-    db.Sensor.findById(warning.sensor_id, { include: [{ model: db.Sensormodel }, { model: db.Board, include: [{ model: db.Boardmodel }] }] }).then(
+    db.Sensor.findOne({
+      where: { id: warning.sensor_id },
+      include: [{ model: db.Sensormodel }, { model: db.Board, include: [{ model: db.Boardmodel }] }]
+    }).then(
       res => resolve({
         "id": warning._id,
         "datetime": warning.datetime,
         "message": warning.message,
         "sensor_id": warning.sensor_id,
-        "patient_id": null,
         "seen_vitabox": warning.seen_vitabox,
         "what": res.Sensormodel.to_read,
-        "who": res.Board.description ? res.Board.description : res.Board.Boardmodel.name,
+        "who": res.Board.description ? utils.decrypt(res.Board.description) : res.Board.Boardmodel.name,
         "entity": utils.decrypt(vitabox_address),
+        "tag": res.Sensormodel.tag
       }),
       err => reject(err));
   });
@@ -153,8 +166,13 @@ _getSensorWarningInfo = (warning, vitabox_address) => {
 _getPatientWarningInfo = (warning) => {
   return new Promise((resolve, reject) => {
     let promises = [
-      db.Sensor.findById(warning.sensor_id, { include: [{ model: db.Sensormodel }] }),
-      db.Patient.findById(warning.patient_id)
+      db.Sensor.findOne({
+        where: { id: warning.sensor_id },
+        include: [{ model: db.Sensormodel }, { model: db.Board, include: [{ model: db.Boardmodel }] }]
+      }),
+      db.Patient.findOne({
+        where: { id: warning.patient_id }
+      })
     ];
     Promise.all(promises).then(
       res => resolve({
@@ -166,7 +184,8 @@ _getPatientWarningInfo = (warning) => {
         "seen_vitabox": warning.seen_vitabox,
         "what": res[0].Sensormodel.to_read,
         "who": utils.decrypt(res[1].name),
-        "entity": utils.decrypt(res[1].name)
+        "entity": utils.decrypt(res[1].name),
+        "tag": res[0].Board.Boardmodel.tag
       }),
       err => reject(err));
   });
@@ -174,7 +193,10 @@ _getPatientWarningInfo = (warning) => {
 
 _getPatientWarningInfoToDoctor = (warning, patient) => {
   return new Promise((resolve, reject) => {
-    db.Sensor.findById(warning.sensor_id, { include: [{ model: db.Sensormodel }] }).then(
+    db.Sensor.findOne({
+      where: { id: warning.sensor_id },
+      include: [{ model: db.Sensormodel }, { model: db.Board, include: [{ model: db.Boardmodel }] }]
+    }).then(
       res => resolve({
         "id": warning._id,
         "datetime": warning.datetime,
@@ -183,7 +205,9 @@ _getPatientWarningInfoToDoctor = (warning, patient) => {
         "patient_id": patient.id,
         "seen_vitabox": warning.seen_vitabox,
         "what": res.Sensormodel.to_read,
-        "who": utils.decrypt(patient.name)
+        "who": utils.decrypt(patient.name),
+        "entity": utils.decrypt(patient.name),
+        "tag": res.Board.Boardmodel.tag
       }),
       err => reject(err));
   });
