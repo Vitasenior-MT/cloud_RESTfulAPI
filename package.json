@@ -1,6 +1,9 @@
 {
   "name": "vitasenior_mt_api",
   "main": "server.js",
+  "engines": {
+    "node": "6.16.0"
+  },
   "scripts": {
     "start": "NODE_ENV=production node server.js",
     "test": "mocha --timeout 1000",
@@ -50,6 +53,7 @@
       "User",
       "Vitabox",
       "Board",
+      "Sensor",
       "Patient",
       "Record",
       "Warning",

@@ -1,5 +1,6 @@
 var db = require('../../models/index'),
-  boardmodel = require('./board_model');
+  boardmodel = require('./board_model'),
+  utils = require('./utils');
 
 
 exports.create = (board_id, board_model_id) => {
@@ -20,7 +21,7 @@ exports.find = (sensor_id) => {
       where: { id: sensor_id },
       include: [
         {
-          model: db.Board, include: [
+          model: db.Board, attributes: ['id', 'mac_addr', 'description'], include: [
             { model: db.Vitabox },
             { model: db.Patient },
             { model: db.Boardmodel }
@@ -30,7 +31,10 @@ exports.find = (sensor_id) => {
       ]
     }).then(
       sensor => {
-        if (sensor) resolve(sensor);
+        if (sensor) {
+          sensor.Board.description = sensor.Board.description ? utils.decrypt(sensor.Board.description) : null;
+          resolve(sensor);
+        }
         else reject({ code: 500, msg: "Sensor not found" });
       }, error => reject({ code: 500, msg: error.message }));
   });

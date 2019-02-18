@@ -6,7 +6,7 @@ var business = require('../../business/index').v1_0_0;
  * @apiName findSensorById
  * @apiDescription find Sensor
  * @apiVersion 1.0.0
- * @apiUse user
+ * @apiUse box
  * 
  * @apiPermission admin
  * @apiParam {string} :id sensor id
@@ -30,6 +30,7 @@ var business = require('../../business/index').v1_0_0;
       "Board": {
         "id": "6b6899af-89bf-453b-a0ce-52523bb6aefd",
         "mac_addr": "45:44:54:65:65:16:51:31",
+        "description": "José António"
         "Boardmodel": {
             "id": "c5e10ee8-9d80-43e0-af6c-29e95a0ca66e",
             "type": "non-wearable",

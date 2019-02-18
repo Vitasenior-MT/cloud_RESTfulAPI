@@ -32,18 +32,18 @@ exports.listBetweenDatesByPatient = (sensor_id, patient_id, startDate, endDate) 
     });
 }
 
-_getRecordsWhere = (obj, page) => {
+_getRecordsWhere = (query, page) => {
     return new Promise((resolve, reject) => {
-        db.Record.find().where(obj).sort('-datetime').select("-_id").skip((page - 1) * 25).limit(25).exec((error, records) => {
+        db.Record.find().where(query).sort('-datetime').select("-_id").skip((page - 1) * 25).limit(25).exec((error, records) => {
             if (error) reject(error);
             resolve(records);
         });
     });
 }
 
-_getAllRecordsWhere = (obj) => {
+_getAllRecordsWhere = (query) => {
     return new Promise((resolve, reject) => {
-        db.Record.find().where(obj).exec((error, records) => {
+        db.Record.find().where(query).exec((error, records) => {
             if (error) reject(error);
             else resolve(records);
         });

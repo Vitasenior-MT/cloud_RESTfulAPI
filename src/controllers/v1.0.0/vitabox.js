@@ -91,6 +91,25 @@ exports.register = (req, res) => {
  * @apiParam {string} :id vitabox id
  * @apiParam {string} password password generated on creation
  * @apiSuccess {string} token jwt valid for 8 hours and must be placed at "Authorization" header
+ * @apiSuccess {decimal} latitude latitude of each vitabox, min: -90, max: 90 (based on google maps coordinates)
+ * @apiSuccess {decimal} longitude longitude of each vitabox, min: -180, max: 180 (based on google maps coordinates)
+ * @apiSuccess {string} address full address of each vitabox
+ * @apiSuccess {string} locality locality tag to get local pharmacies
+ * @apiSuccess {string} district district tag to get local pharmacies
+ * @apiSuccessExample {json} Response example:
+ * {
+ * token: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA"
+ *  vitabox:{
+ *      "id": "d1d66ccb-e5a0-4bd4-8580-6218f452e580",
+ *      "latitude": "38.8976763",
+ *      "longitude": "-77.0387185",
+ *      "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
+ *      "sponsor": true,
+ *      "active": false,
+ *      "locality": "tomar",
+ *      "district": "santarem"
+ *  }
+ * }
  */
 exports.requestToken = (req, res) => {
     business.vitabox.requestToken(req.params.id, req.body.password).then(
@@ -190,26 +209,11 @@ exports.requestToken = (req, res) => {
  *      }
  *  ]
  * }
- * @apiSuccessExample {json} Response example to vitabox:
- * {
- *  "id": "d1d66ccb-e5a0-4bd4-8580-6218f452e580",
- *  "latitude": "38.8976763",
- *  "longitude": "-77.0387185",
- *  "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
- *  "sponsor": true,
- *  "active": false,
- *  "locality": "tomar",
- *  "district": "santarem"
- * }
  */
 exports.list = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.list(req.client, req.params.own ? true : false).then(
             data => res.status(200).json({ vitaboxes: data }),
-            error => res.status(error.code).send(error.msg));
-    } else if (req.client && req.client.constructor.name === "Vitabox") {
-        business.vitabox.find(req.client.id).then(
-            data => res.status(200).json(data),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

@@ -261,7 +261,8 @@ exports.getPatients = (vitabox, where_condiction) => {
       attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'photo'],
       include: [
         {
-          model: db.Board, attributes: ['id', 'mac_addr'],
+          model: db.Board, attributes: ['id', 'mac_addr', 'active'],
+          where: where_condiction,
           include: [
             { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
             {

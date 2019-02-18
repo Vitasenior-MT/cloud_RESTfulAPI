@@ -41,7 +41,7 @@ module.exports.seed = (db) => {
                       { "transducer": "medidor", "measure": "freq. cardíaca", "to_read": "frequênca cardíaca", "unit": "bpm", "tag": "heartrate", "min_acceptable": "50", "max_acceptable": "100", "min_possible": "0", "max_possible": "400", "min_graph": "40", "max_graph": "110" },
                       { "transducer": "medidor", "measure": "temperatura corp.", "to_read": "temperatura corporal", "unit": "ºC", "tag": "bodytemp", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0", "min_graph": "0", "max_graph": "0" },
                       { "transducer": "medidor", "measure": "CO2", "to_read": "dióxido de carbono", "unit": "ppm", "tag": "diox", "min_acceptable": "0", "max_acceptable": "1250", "min_possible": "-1", "max_possible": "2000", "min_graph": "0", "max_graph": "1400" },
-                      { "transducer": "medidor", "measure": "glucose", "to_read": "glucose", "unit": "mmol/L", "tag": "glucose", "min_acceptable": "0", "max_acceptable": "8", "min_possible": "-1", "max_possible": "300", "min_graph": "0", "max_graph": "10" }
+                      { "transducer": "medidor", "measure": "glucose", "to_read": "glucose", "unit": "mmol/L", "tag": "bloodglucose", "min_acceptable": "0", "max_acceptable": "8", "min_possible": "-1", "max_possible": "300", "min_graph": "0", "max_graph": "10" }
                     ]).then(
                       sensor_models => board_models[0].addSensormodels([sensor_models[0].id, sensor_models[1].id, sensor_models[2].id, sensor_models[11].id]).then(
                         () => board_models[1].addSensormodels([sensor_models[8].id, sensor_models[9].id]).then(
@@ -94,7 +94,7 @@ module.exports.seed = (db) => {
                   { "transducer": "medidor", "measure": "freq. cardíaca", "to_read": "frequênca cardíaca", "unit": "bpm", "tag": "heartrate", "min_acceptable": "50", "max_acceptable": "100", "min_possible": "0", "max_possible": "400", "min_graph": "40", "max_graph": "110" },
                   { "transducer": "medidor", "measure": "temperatura corp.", "to_read": "temperatura corporal", "unit": "ºC", "tag": "bodytemp", "min_acceptable": "0", "max_acceptable": "0", "min_possible": "0", "max_possible": "0", "min_graph": "0", "max_graph": "0" },
                   { "transducer": "medidor", "measure": "CO2", "to_read": "dióxido de carbono", "unit": "ppm", "tag": "diox", "min_acceptable": "0", "max_acceptable": "1250", "min_possible": "-1", "max_possible": "2000", "min_graph": "0", "max_graph": "1400" },
-                  { "transducer": "medidor", "measure": "glucose", "to_read": "glucose", "unit": "mmol/L", "tag": "glucose", "min_acceptable": "0", "max_acceptable": "8", "min_possible": "-1", "max_possible": "300", "min_graph": "0", "max_graph": "10" },
+                  { "transducer": "medidor", "measure": "glucose", "to_read": "glucose", "unit": "mmol/L", "tag": "bloodglucose", "min_acceptable": "0", "max_acceptable": "8", "min_possible": "-1", "max_possible": "300", "min_graph": "0", "max_graph": "10" },
                 ]).then(
                   sensor_models => board_models[0].addSensormodels([sensor_models[0].id, sensor_models[1].id, sensor_models[2].id, sensor_models[11].id]).then(
                     () => board_models[1].addSensormodels([sensor_models[8].id, sensor_models[9].id]).then(

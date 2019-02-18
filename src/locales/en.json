@@ -69,5 +69,7 @@
 	"patient_chg_biodata": "updated the biometric data from patient '%s' (%s)",
 	"patient_chg_exams": "updated the exams scheduler from patient '%s' (%s)",
 	"patient_add_doctor": "added the user '%s' (%s) as doctor to patient '%s' (%s)",
-	"patient_rmv_doctor": "removed the user '%s' (%s) as doctor from patient '%s' (%s)"
+	"patient_rmv_doctor": "removed the user '%s' (%s) as doctor from patient '%s' (%s)",
+	"peso": "peso",
+	"Jose AntóNio": "Jose AntóNio"
 }

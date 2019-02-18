@@ -51,9 +51,9 @@ exports.find = function (patient_id) {
 exports.getInfo = function (patient_id) {
     return new Promise((resolve, reject) => {
         db.Patient.findOne({
-            where: { id: patient_id }, attributes: ['name', 'vitabox_id'], include: [{ model: db.Vitabox }, { model: db.Profile }, {
+            where: { id: patient_id }, attributes: ['id', 'name', 'vitabox_id'], include: [{ model: db.Vitabox }, { model: db.Profile }, {
                 model: db.Board,
-                attributes: ['id', 'mac_addr'],
+                attributes: ['id', 'mac_addr', 'description'],
                 include: [
                     { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
                     {
@@ -67,6 +67,7 @@ exports.getInfo = function (patient_id) {
                     patient.name = utils.decrypt(patient.name);
                     patient.Boards.forEach(board => {
                         delete board.dataValues.PatientBoard;
+                        board.description = board.description ? utils.decrypt(board.description) : null;
                     });
                     resolve(patient);
                 }
