@@ -254,15 +254,13 @@ exports.removeUser = (current_user, vitabox_id, user_id) => {
   });
 }
 
-exports.getPatients = (vitabox, where_condiction) => {
+exports.getPatients = (vitabox, active) => {
   return new Promise((resolve, reject) => {
     vitabox.getPatients({
-      where: where_condiction,
-      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'photo'],
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'photo', 'medication', 'info'],
       include: [
         {
           model: db.Board, attributes: ['id', 'mac_addr', 'active'],
-          where: where_condiction,
           include: [
             { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
             {
@@ -275,11 +273,14 @@ exports.getPatients = (vitabox, where_condiction) => {
       ]
     }).then(
       patients => {
+        if (active) patients = patients.filter(x => x.active);
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
           patient.photo = patient.photo ? utils.decrypt(patient.photo) : null;
           patient.cc = utils.decrypt(patient.cc);
           patient.nif = utils.decrypt(patient.nif);
+          patient.info = patient.info ? utils.decrypt(patient.info) : null;
+          if (active) patient.Boards = patient.Boards.filter(x => x.active);
           patient.Boards.forEach(board => {
             board.dataValues.since = board.PatientBoard.created_at;
             board.dataValues.frequency = board.PatientBoard.frequency;
@@ -314,10 +315,10 @@ exports.addBoard = (current_user, vitabox, board_id) => {
   });
 }
 
-exports.getBoards = (vitabox, where_condiction) => {
+exports.getBoards = (vitabox, active) => {
   return new Promise((resolve, reject) => {
     vitabox.getBoards({
-      where: where_condiction, attributes: ['id', 'description', 'mac_addr', 'node_id', 'updated_at', 'active'],
+      attributes: ['id', 'description', 'mac_addr', 'node_id', 'updated_at', 'active'],
       include: [
         { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
         {
@@ -326,6 +327,7 @@ exports.getBoards = (vitabox, where_condiction) => {
         }]
     }).then(
       boards => {
+        if (active) boards = boards.filter(x => x.active);
         boards.map(board => board.description = board.description ? utils.decrypt(board.description) : null);
         resolve(boards)
       },

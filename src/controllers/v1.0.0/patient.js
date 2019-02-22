@@ -18,6 +18,8 @@ var business = require('../../business/index').v1_0_0,
  * {
  *  patient:{
  *      "name": "José António",
+ *      "medication": ["paracetamol", "brufen"],
+ *      "info": "problemas a dormir",
  *      "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
@@ -112,7 +114,8 @@ exports.getPatientInfo = (req, res) => {
  *          "birthdate": "1987-02-28",
  *          "gender": "male",
  *          "cc": "123456789",
- *          "nif": "987654321"
+ *          "nif": "987654321",
+ *          "info": "sofre do sono"
  *     }
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
@@ -145,7 +148,9 @@ exports.updateInfo = (req, res) => {
  * @apiParamExample {json} Request example:
  *     {
  *          "height": 1.72,
- *          "weight": 78.2m
+ *          "weight": 78.2m,
+ *          "medication": ["paracetamol", "brufen"],
+ *          "info": "sofre do sono"
  *     }
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */

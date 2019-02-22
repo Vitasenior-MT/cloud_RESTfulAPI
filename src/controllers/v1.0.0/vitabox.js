@@ -647,16 +647,16 @@ exports.addPatient = (req, res) => {
  */
 exports.getPatients = (req, res) => {
     if (req.client) if (req.client.constructor.name === "Vitabox")
-        business.vitabox.getPatients(req.client, { active: true }).then(
+        business.vitabox.getPatients(req.client, true).then(
             data => res.status(200).json({ patients: data }),
             error => res.status(error.code).send(error.msg));
     else business.vitabox.find(req.params.id).then(
         vitabox => {
-            if (req.client.admin) business.vitabox.getPatients(vitabox, {}).then(
+            if (req.client.admin) business.vitabox.getPatients(vitabox).then(
                 data => res.status(200).json({ patients: data }),
                 error => res.status(error.code).send(error.msg));
             else business.vitabox.verifyUser(req.client, vitabox).then(
-                () => business.vitabox.getPatients(vitabox, {}).then(
+                () => business.vitabox.getPatients(vitabox).then(
                     data => res.status(200).json({ patients: data }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg));
@@ -896,16 +896,16 @@ exports.addBoard = (req, res) => {
  */
 exports.getBoards = (req, res) => {
     if (req.client) if (req.client.constructor.name === "Vitabox")
-        business.vitabox.getBoards(req.client, { active: true }).then(
+        business.vitabox.getBoards(req.client, true).then(
             data => res.status(200).json({ boards: data }),
             error => res.status(error.code).send(error.msg));
     else business.vitabox.find(req.params.id).then(
         vitabox => {
-            if (req.client.admin) business.vitabox.getBoards(vitabox, {}).then(
+            if (req.client.admin) business.vitabox.getBoards(vitabox).then(
                 data => res.status(200).json({ boards: data }),
                 error => res.status(error.code).send(error.msg));
             else business.vitabox.verifyUser(req.client, vitabox).then(
-                () => business.vitabox.getBoards(vitabox, {}).then(
+                () => business.vitabox.getBoards(vitabox).then(
                     data => res.status(200).json({ boards: data }),
                     error => res.status(error.code).send(error.msg)),
                 error => res.status(error.code).send(error.msg));
