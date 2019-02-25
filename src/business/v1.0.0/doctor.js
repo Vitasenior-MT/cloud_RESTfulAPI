@@ -93,7 +93,7 @@ exports.getPatients = (user) => {
             delete patient.Vitabox.dataValues.coordinates;
             patient.Boards.forEach(board => {
               board.dataValues.since = board.PatientBoard.created_at;
-              board.dataValues.frequency = board.PatientBoard.frequency;
+              board.dataValues.schedules = board.PatientBoard.schedules;
               delete board.dataValues.PatientBoard
             });
             return patient;

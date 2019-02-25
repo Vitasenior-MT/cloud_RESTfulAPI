@@ -366,6 +366,7 @@ exports.getLogs = (req, res) => {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
  *                  "description": "kitchen",
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
+ *                  "schedules": [10, 20],
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *                      "type": "environmental",

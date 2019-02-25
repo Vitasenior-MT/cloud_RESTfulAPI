@@ -26,7 +26,7 @@ var business = require('../../business/index').v1_0_0,
  *                  "description": "kitchen",
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *                  "since": "2018-07-23T05:15:27.000Z",
- *                  "frequency": 2,
+ *                  "schedules": [10, 20],
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *                      "type": "environmental",
@@ -418,26 +418,26 @@ exports.setPhoto = (req, res) => {
 /**
  * @api {put} /patient/:id/exam 09) Update Exam
  * @apiGroup Patient
- * @apiName updateExamFrequency
- * @apiDescription update exam frequency to patient
+ * @apiName updateSchedule
+ * @apiDescription update exam scheduling to patient
  * @apiVersion 1.0.0
  * @apiUse box
  * 
  * @apiPermission admin, sponsor
  * @apiParam {string} :id patient id
  * @apiParam {string} board_id board id
- * @apiParam {integer} frequency time in hours between exams (if null removes the scheduler)
+ * @apiParam {integer} schedules list of times in hours
  * @apiParamExample {json} Request example:
  *     {
  *          "board_id":"5d93585b-f511-4fa8-b69e-692c2474d5e8",
- *          "frequency": 2
+ *          "schedules": [10, 20]
  *     }
  * @apiSuccess {booleam} result returns true if was successfuly updated
  */
-exports.updateExamFrequency = (req, res) => {
+exports.updateSchedule = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
         business.patient.verifyDoctor(req.client, req.params.id).then(
-            () => business.board.updateFrequency(req.body.board_id, req.params.id, req.body.frequency).then(
+            () => business.board.updateSchedule(req.body.board_id, req.params.id, req.body.schedules).then(
                 () => res.status(200).json({ result: true }),
                 error => res.status(500).send("cannot update exame schedule")),
             error => res.status(error.code).send(error.msg));

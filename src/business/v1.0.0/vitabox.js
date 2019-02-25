@@ -283,7 +283,7 @@ exports.getPatients = (vitabox, active) => {
           if (active) patient.Boards = patient.Boards.filter(x => x.active);
           patient.Boards.forEach(board => {
             board.dataValues.since = board.PatientBoard.created_at;
-            board.dataValues.frequency = board.PatientBoard.frequency;
+            board.dataValues.schedules = board.PatientBoard.schedules;
             board.dataValues.last_commit = board.PatientBoard.last_commit;
             delete board.dataValues.PatientBoard;
           });

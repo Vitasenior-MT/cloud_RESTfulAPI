@@ -103,13 +103,17 @@ exports.switchMac = (board_id, mac_addr) => {
   });
 }
 
-exports.updateFrequency = (board_id, patient_id, frequency) => {
+exports.updateSchedule = (board_id, patient_id, schedules) => {
   return new Promise((resolve, reject) => {
-    db.PatientBoard.findOne({ where: { board_id: board_id, patient_id: patient_id } }).then(
-      board => board.update({ frequency: frequency }).then(
-        () => resolve(),
-        error => reject({ code: 500, msg: error.message })),
-      error => reject({ code: 500, msg: error.message }));
+    if (schedules && !schedules.some(isNaN)) {
+      db.PatientBoard.findOne({ where: { board_id: board_id, patient_id: patient_id } }).then(
+        board => board.update({ schedules: schedules }).then(
+          () => resolve(),
+          error => reject({ code: 500, msg: error.message })),
+        error => reject({ code: 500, msg: error.message }));
+    } else {
+      reject({ code: 500, msg: "Invalid schedules list" })
+    }
   });
 }
 

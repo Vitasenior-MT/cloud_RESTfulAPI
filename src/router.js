@@ -197,7 +197,7 @@ module.exports = (app) => {
             "1.0.0": controllers.v1_0_0.patient.setPhoto
         }))
         .put('/patient/:id/exam', versioning({
-            "1.0.0": controllers.v1_0_0.patient.updateExamFrequency
+            "1.0.0": controllers.v1_0_0.patient.updateSchedule
         }))
         .put('/patient/:id/info', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateInfo

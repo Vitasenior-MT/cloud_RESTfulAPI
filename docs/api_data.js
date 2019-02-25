@@ -3070,7 +3070,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n patient:{\n     \"name\": \"José António\",\n     \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"frequency\": 2,\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n }\n}",
+          "content": "{\n patient:{\n     \"name\": \"José António\",\n     \"medication\": [\"paracetamol\", \"brufen\"],\n     \"info\": \"problemas a dormir\",\n     \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"schedules\": [10, 20],\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n }\n}",
           "type": "json"
         }
       ]
@@ -3346,123 +3346,6 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "/patient/:id/exam",
-    "title": "09) Update Exam",
-    "group": "Patient",
-    "name": "updateExamFrequency",
-    "description": "<p>update exam frequency to patient</p>",
-    "version": "1.0.0",
-    "permission": [
-      {
-        "name": "admin, sponsor"
-      }
-    ],
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": ":id",
-            "description": "<p>patient id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "board_id",
-            "description": "<p>board id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "integer",
-            "optional": false,
-            "field": "frequency",
-            "description": "<p>time in hours between exams (if null removes the scheduler)</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Request example:",
-          "content": "{\n     \"board_id\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\",\n     \"frequency\": 2\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "booleam",
-            "optional": false,
-            "field": "result",
-            "description": "<p>returns true if was successfuly updated</p>"
-          }
-        ]
-      }
-    },
-    "filename": "src/controllers/v1.0.0/patient.js",
-    "groupTitle": "Patient",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Version",
-            "defaultValue": "1.0.0",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Content-Type",
-            "defaultValue": "application/json",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Authorization",
-            "defaultValue": "< token >",
-            "description": ""
-          },
-          {
-            "group": "Header",
-            "optional": false,
-            "field": "Accept-Language",
-            "defaultValue": "pt",
-            "description": ""
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "number",
-            "optional": false,
-            "field": "statusCode",
-            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "string",
-            "optional": false,
-            "field": "statusMessage",
-            "description": "<p>error description</p>"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "put",
     "url": "patient/:id/info",
     "title": "01) Update personal data",
     "group": "Patient",
@@ -3524,7 +3407,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"name\": \"José António\",\n     \"birthdate\": \"1987-02-28\",\n     \"gender\": \"male\",\n     \"cc\": \"123456789\",\n     \"nif\": \"987654321\"\n}",
+          "content": "{\n     \"name\": \"José António\",\n     \"birthdate\": \"1987-02-28\",\n     \"gender\": \"male\",\n     \"cc\": \"123456789\",\n     \"nif\": \"987654321\",\n     \"info\": \"sofre do sono\"\n}",
           "type": "json"
         }
       ]
@@ -3641,7 +3524,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"height\": 1.72,\n     \"weight\": 78.2m\n}",
+          "content": "{\n     \"height\": 1.72,\n     \"weight\": 78.2m,\n     \"medication\": [\"paracetamol\", \"brufen\"],\n     \"info\": \"sofre do sono\"\n}",
           "type": "json"
         }
       ]
@@ -3769,6 +3652,123 @@ define({ "api": [
           {
             "group": "Success 200",
             "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/patient.js",
+    "groupTitle": "Patient",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/patient/:id/exam",
+    "title": "09) Update Exam",
+    "group": "Patient",
+    "name": "updateSchedule",
+    "description": "<p>update exam scheduling to patient</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin, sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": ":id",
+            "description": "<p>patient id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "board_id",
+            "description": "<p>board id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "integer",
+            "optional": false,
+            "field": "schedules",
+            "description": "<p>list of times in hours</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"board_id\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\",\n     \"schedules\": [10, 20]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "booleam",
             "optional": false,
             "field": "result",
             "description": "<p>returns true if was successfuly updated</p>"
@@ -6006,7 +6006,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19, \n                 \"max\": 25\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64\n             }\n         ]\n         \"Vitabox\": {\n             \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n             \"latitude\": \"51.5058372\",\n             \"longitude\": \"-0.1899126\",\n             \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\"\n         }\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"schedules\": [10, 20],\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19, \n                 \"max\": 25\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64\n             }\n         ]\n         \"Vitabox\": {\n             \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n             \"latitude\": \"51.5058372\",\n             \"longitude\": \"-0.1899126\",\n             \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\"\n         }\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -7531,7 +7531,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"photo\": \"h43gj2h34j2B34hg342jhhsu46SAkwKsR1.jpg\"\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"frequency\": 2,\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n         \"Doctors\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"name\": \"Julia Almeida\", \n                 \"email\": \"jalme@a.aa\"\n             }\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"photo\": \"h43gj2h34j2B34hg342jhhsu46SAkwKsR1.jpg\"\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"schedules\": [10, 20],\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n         \"Doctors\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"name\": \"Julia Almeida\", \n                 \"email\": \"jalme@a.aa\"\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -7945,11 +7945,6 @@ define({ "api": [
         {
           "title": "Response example to admin:",
           "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"registered\": false,\n         \"active\": false,\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"registered\": false,\n         \"active\": false,\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n ]\n}",
-          "type": "json"
-        },
-        {
-          "title": "Response example to vitabox:",
-          "content": "{\n \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n \"latitude\": \"38.8976763\",\n \"longitude\": \"-77.0387185\",\n \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n \"sponsor\": true,\n \"active\": false,\n \"locality\": \"tomar\",\n \"district\": \"santarem\"\n}",
           "type": "json"
         }
       ]
@@ -8761,9 +8756,51 @@ define({ "api": [
             "optional": false,
             "field": "token",
             "description": "<p>jwt valid for 8 hours and must be placed at &quot;Authorization&quot; header</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "decimal",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>latitude of each vitabox, min: -90, max: 90 (based on google maps coordinates)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "decimal",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>longitude of each vitabox, min: -180, max: 180 (based on google maps coordinates)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "address",
+            "description": "<p>full address of each vitabox</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "locality",
+            "description": "<p>locality tag to get local pharmacies</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "district",
+            "description": "<p>district tag to get local pharmacies</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\ntoken: \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\"\n vitabox:{\n     \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"sponsor\": true,\n     \"active\": false,\n     \"locality\": \"tomar\",\n     \"district\": \"santarem\"\n }\n}",
+          "type": "json"
+        }
+      ]
     },
     "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox"
