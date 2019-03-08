@@ -166,8 +166,11 @@ module.exports = (app) => {
         .get('/board/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board.getSensorsFromBoard
         }))
-        .put('/board/:id', versioning({
+        .put('/board/:id/exchange', versioning({
             "1.0.0": controllers.v1_0_0.board.exchange
+        }))
+        .put('/board/:id/warnings', versioning({
+            "1.0.0": controllers.v1_0_0.board.switchWarnings
         }))
         .get('/inactive/board', versioning({
             "1.0.0": controllers.v1_0_0.board.listInactive

@@ -45,15 +45,19 @@ exports.create = (req, res) => {
         {
             "measures": [
                 {
-                    "min": 90,
-                    "max": 120,
+                    "min_diurnal": 95,
+                    "max_diurnal": 115,
+                    "min_nightly": 90,
+                    "max_nightly": 120,
                     "tag": "pulse",
                     "measure": "pulsação arterial",
                     "id": "5b58452ca0b2a007d78f7974"
                 },
                 {
-                    "min": 95,
-                    "max": 100,
+                    "min_diurnal": 100,
+                    "max_diurnal": 120,
+                    "min_nightly": 95,
+                    "max_nightly": 100,
                     "tag": "spo2",
                     "measure": "oximetria do pulso",
                     "id": "5b5845369e5e0807dc694fde"
@@ -136,8 +140,10 @@ exports.delete = (req, res) => {
  * @apiParam {decimal} max maximum acceptable value
  * @apiParamExample {json} Request example:
  *     {
- *        "min": "10",
- *        "max": "50",
+ *        "min_diurnal": 95,
+          "max_diurnal": 115,
+          "min_nightly": 90,
+          "max_nightly": 120,
  *        "tag": "musclemass",
  *        "measure": "muscle mass"
  *     }

@@ -254,7 +254,7 @@ exports.removeUser = (current_user, vitabox_id, user_id) => {
   });
 }
 
-exports.getPatients = (vitabox, active) => {
+exports.getPatients = (vitabox) => {
   return new Promise((resolve, reject) => {
     vitabox.getPatients({
       attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'photo', 'medication', 'info'],
@@ -273,14 +273,12 @@ exports.getPatients = (vitabox, active) => {
       ]
     }).then(
       patients => {
-        if (active) patients = patients.filter(x => x.active);
         patients.forEach(patient => {
           patient.name = utils.decrypt(patient.name);
           patient.photo = patient.photo ? utils.decrypt(patient.photo) : null;
           patient.cc = utils.decrypt(patient.cc);
           patient.nif = utils.decrypt(patient.nif);
           patient.info = patient.info ? utils.decrypt(patient.info) : null;
-          if (active) patient.Boards = patient.Boards.filter(x => x.active);
           patient.Boards.forEach(board => {
             board.dataValues.since = board.PatientBoard.created_at;
             board.dataValues.schedules = board.PatientBoard.schedules;
@@ -293,6 +291,41 @@ exports.getPatients = (vitabox, active) => {
             user.dataValues.since = user.DoctorPatient.created_at;
             user.dataValues.accepted = user.DoctorPatient.accepted;
             delete user.dataValues.DoctorPatient;
+          });
+        });
+        resolve(patients);
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.getPatientsToVitabox = (vitabox) => {
+  return new Promise((resolve, reject) => {
+    vitabox.getPatients({
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'photo'],
+      where: { active: true },
+      include: [
+        {
+          model: db.Board, attributes: ['id', 'mac_addr', 'active'],
+          where: { active: true },
+          include: [
+            { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
+            {
+              model: db.Sensor, attributes: ['id', 'last_values', 'last_commit'],
+              include: [{ model: db.Sensormodel, attributes: { exclude: ['created_at', 'updated_at'] } }]
+            }]
+        },
+        { model: db.Profile }
+      ]
+    }).then(
+      patients => {
+        patients.forEach(patient => {
+          patient.name = utils.decrypt(patient.name);
+          patient.photo = patient.photo ? utils.decrypt(patient.photo) : null;
+          patient.Boards.forEach(board => {
+            board.dataValues.since = board.PatientBoard.created_at;
+            board.dataValues.schedules = board.PatientBoard.schedules;
+            board.dataValues.last_commit = board.PatientBoard.last_commit;
+            delete board.dataValues.PatientBoard;
           });
         });
         resolve(patients);
@@ -315,10 +348,10 @@ exports.addBoard = (current_user, vitabox, board_id) => {
   });
 }
 
-exports.getBoards = (vitabox, active) => {
+exports.getBoards = (vitabox) => {
   return new Promise((resolve, reject) => {
     vitabox.getBoards({
-      attributes: ['id', 'description', 'mac_addr', 'node_id', 'updated_at', 'active'],
+      attributes: ['id', 'description', 'mac_addr', 'node_id', 'updated_at', 'active', 'get_warnings'],
       include: [
         { model: db.Boardmodel, attributes: ['id', 'type', 'name', 'tag'] },
         {
@@ -327,7 +360,6 @@ exports.getBoards = (vitabox, active) => {
         }]
     }).then(
       boards => {
-        if (active) boards = boards.filter(x => x.active);
         boards.map(board => board.description = board.description ? utils.decrypt(board.description) : null);
         resolve(boards)
       },

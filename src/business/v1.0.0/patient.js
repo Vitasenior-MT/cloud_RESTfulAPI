@@ -4,7 +4,7 @@ var db = require('../../models/index'),
 exports.createIfNotExists = (attributes, vitabox_id) => {
     return new Promise((resolve, reject) => {
         if (["male", "female", "undefined"].includes(attributes.gender))
-            if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(attributes.name)) {
+            if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_»«@£§€ªº,0-9]{1,50}$/.test(attributes.name)) {
                 if (/[1256789]\d{8}$/.test(attributes.nif)) {
                     if (/^[0-9]{8}([ -]*[0-9][ ]*[A-Z]{2}[0-9])*$/.test(attributes.cc)) {
                         let encrypted = utils.encrypt([utils.capitalString(attributes.name), attributes.cc, attributes.nif]);
@@ -80,19 +80,20 @@ exports.getInfo = function (patient_id) {
 
 exports.setInfoData = (patient, attributes) => {
     return new Promise((resolve, reject) => {
-        let encrypted = utils.encrypt([
+        let to_encrypt = [
             attributes.name ? utils.capitalString(attributes.name) : patient.name,
             attributes.cc ? attributes.cc : patient.cc,
-            attributes.nif ? attributes.nif : patient.nif,
-            attributes.info ? attributes.info : patient.info
-        ]);
+            attributes.nif ? attributes.nif : patient.nif
+        ]
+        if (attributes.info) to_encrypt.push(attributes.info);
+        let encrypted = utils.encrypt(to_encrypt);
         patient.update({
             name: encrypted.value[0],
             birthdate: attributes.birthdate ? attributes.birthdate : patient.birthdate,
             gender: attributes.gender ? attributes.gender : patient.gender,
             cc: encrypted.value[1],
             nif: encrypted.value[2],
-            info: encrypted.value[3]
+            info: encrypted.value[3] ? encrypted.value[3] : patient.info ? patient.info : ""
         }).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message }));

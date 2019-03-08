@@ -59,16 +59,20 @@ var business = require('../../business/index').v1_0_0,
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
  *                  "measure": "body fat", 
  *                  "tag": "bodyfat", 
- *                  "min": 19,
- *                  "max": 25,
+ *                  "min_diurnal": 20,
+                    "max_diurnal": 30,
+                    "min_nightly": 21,
+                    "max_nightly": 31,
  *                  "last_values": [22, 23, 25, 23]
  *              },
  *              {
  *                  "id": "32443b5e-28cd-ab43-b86b-a423442401b8", 
  *                  "measure": "weight", 
  *                  "tag": "weight", 
- *                  "min": 58, 
- *                  "max": 64,
+ *                  "min_diurnal": 58, 
+ *                  "max_diurnal": 64,
+ *                  "min_nightly": 60, 
+ *                  "max_nightly": 70,
  *                  "last_value": [63, 64]
  *              }
  *          ],
@@ -183,8 +187,10 @@ exports.updateBiometric = (req, res) => {
  *          "profiles":[
  *              {
  *                "id": "585402ef-68dd-44a4-a44b-04152e659d11",
- *                "min": 100,
- *                "max": 110  
+ *                 "min_diurnal": 58, 
+*                  "max_diurnal": 64,
+*                  "min_nightly": 60, 
+*                  "max_nightly": 70,
  *              }
  *          ],
  *          "description": "Diabetes tipo 1"
@@ -426,18 +432,20 @@ exports.setPhoto = (req, res) => {
  * @apiPermission admin, sponsor
  * @apiParam {string} :id patient id
  * @apiParam {string} board_id board id
- * @apiParam {integer} schedules list of times in hours
+ * @apiParam {array} schedules list of times in hours
+ * @apiParam {integer} frequency range days between exams
  * @apiParamExample {json} Request example:
  *     {
  *          "board_id":"5d93585b-f511-4fa8-b69e-692c2474d5e8",
- *          "schedules": [10, 20]
+ *          "schedules": [10, 20],
+ *          "frequency": 2
  *     }
  * @apiSuccess {booleam} result returns true if was successfuly updated
  */
 exports.updateSchedule = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
         business.patient.verifyDoctor(req.client, req.params.id).then(
-            () => business.board.updateSchedule(req.body.board_id, req.params.id, req.body.schedules).then(
+            () => business.board.updateSchedule(req.body.board_id, req.params.id, req.body).then(
                 () => res.status(200).json({ result: true }),
                 error => res.status(500).send("cannot update exame schedule")),
             error => res.status(error.code).send(error.msg));

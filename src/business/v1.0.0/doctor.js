@@ -94,6 +94,7 @@ exports.getPatients = (user) => {
             patient.Boards.forEach(board => {
               board.dataValues.since = board.PatientBoard.created_at;
               board.dataValues.schedules = board.PatientBoard.schedules;
+              board.dataValues.frequency = board.PatientBoard.frequency;
               delete board.dataValues.PatientBoard
             });
             return patient;

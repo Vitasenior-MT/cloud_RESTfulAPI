@@ -340,13 +340,17 @@ exports.setSettings = (req, res) => {
  *     {
  *          "latitude": "38.8976763",
  *          "longitude": "-77.0387185",
- *          "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA"
+ *          "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
+ *          "locality": "tomar",
+ *          "district": "santarem"
  *     }
  * @apiParamExample {json} Request example to admin:
  *     {
  *          "latitude": "38.8976763",
  *          "longitude": "-77.0387185",
  *          "address": "1600 Pennsylvania Ave NW, Washington, DC 20500, EUA",
+ *          "locality": "tomar",
+ *          "district": "santarem"
  *          "settings":{
  *              "cnfg1": "true",
  *              "cnfg2": "12345",
@@ -537,7 +541,7 @@ exports.addPatient = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
         business.vitabox.verifySponsor(req.client, req.params.id).then(
             vitabox => business.patient.createIfNotExists(req.body, vitabox.id).then(
-                patient => business.vitabox.getBoards(vitabox, {}).then(
+                patient => business.vitabox.getBoards(vitabox).then(
                     boards => {
                         let promises = [];
                         boards.filter(x => x.Boardmodel.type === "non-wearable").map(board => {
@@ -647,8 +651,11 @@ exports.addPatient = (req, res) => {
  */
 exports.getPatients = (req, res) => {
     if (req.client) if (req.client.constructor.name === "Vitabox")
-        business.vitabox.getPatients(req.client, true).then(
-            data => res.status(200).json({ patients: data }),
+        business.vitabox.getPatientsToVitabox(req.client).then(
+            data => {
+                data.forEach(patient => console.log("patient: " + patient.name, "boards: ", patient.Boards.map(x => x.Boardmodel.name)));
+                res.status(200).json({ patients: data });
+            },
             error => res.status(error.code).send(error.msg));
     else business.vitabox.find(req.params.id).then(
         vitabox => {
@@ -817,7 +824,7 @@ exports.addBoard = (req, res) => {
                                 () => res.status(200).json({ board: board })),
                             error => res.status(500).send(error.message));
                     } else {
-                        business.vitabox.getPatients(vitabox, {}).then(
+                        business.vitabox.getPatients(vitabox).then(
                             patients => {
                                 if (req.body.type === "non-wearable") {
                                     patients.map(patient => {
@@ -896,8 +903,8 @@ exports.addBoard = (req, res) => {
  */
 exports.getBoards = (req, res) => {
     if (req.client) if (req.client.constructor.name === "Vitabox")
-        business.vitabox.getBoards(req.client, true).then(
-            data => res.status(200).json({ boards: data }),
+        business.vitabox.getBoards(req.client).then(
+            data => res.status(200).json({ boards: data.filter(x => x.active) }),
             error => res.status(error.code).send(error.msg));
     else business.vitabox.find(req.params.id).then(
         vitabox => {

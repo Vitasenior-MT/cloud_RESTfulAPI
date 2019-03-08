@@ -712,7 +712,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/board/:id/patient",
-    "title": "04) Add Patient",
+    "title": "05) Add Patient",
     "group": "Board",
     "name": "addPatientToBoard",
     "description": "<p>Associate a patient with a board</p>",
@@ -945,7 +945,7 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "/board/:id",
+    "url": "/board/:id/exchange",
     "title": "02) Change MAC or description",
     "group": "Board",
     "name": "exchangeBoard",
@@ -995,7 +995,117 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "booleam",
+            "type": "boolean",
+            "optional": false,
+            "field": "result",
+            "description": "<p>returns true if was successfuly updated</p>"
+          }
+        ]
+      }
+    },
+    "filename": "src/controllers/v1.0.0/board.js",
+    "groupTitle": "Board",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "/board/:id/warnings",
+    "title": "03) activate/disable warnings",
+    "group": "Board",
+    "name": "exchangeBoard",
+    "description": "<p>alter MAC address to board exchange</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin, sponsor"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>board id to switch warnings report</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": false,
+            "field": "flag",
+            "description": "<p>activate/disable warnings to the board</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n     \"flag\": false\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
             "optional": false,
             "field": "result",
             "description": "<p>returns true if was successfuly updated</p>"
@@ -1063,7 +1173,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/board/:id",
-    "title": "03) Get Board",
+    "title": "04) Get Board",
     "group": "Board",
     "name": "getBoardById",
     "description": "<p>get Board</p>",
@@ -1155,7 +1265,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/board/:id/sensor",
-    "title": "06) Get Sensors",
+    "title": "07) Get Sensors",
     "group": "Board",
     "name": "getSensorsFromBoard",
     "description": "<p>Get sensors from a board</p>",
@@ -1247,7 +1357,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/inactive/board",
-    "title": "07) Get inactive",
+    "title": "08) Get inactive",
     "group": "Board",
     "name": "listInactive",
     "description": "<p>list all inactive boards</p>",
@@ -2150,7 +2260,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/board/:id/patient",
-    "title": "05) Remove Patient",
+    "title": "06) Remove Patient",
     "group": "Board",
     "name": "removePatientFromBoard",
     "description": "<p>Disassociate a patient from a board</p>",
@@ -3070,7 +3180,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n patient:{\n     \"name\": \"José António\",\n     \"medication\": [\"paracetamol\", \"brufen\"],\n     \"info\": \"problemas a dormir\",\n     \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"schedules\": [10, 20],\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n }\n}",
+          "content": "{\n patient:{\n     \"name\": \"José António\",\n     \"medication\": [\"paracetamol\", \"brufen\"],\n     \"info\": \"problemas a dormir\",\n     \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"schedules\": [10, 20],\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min_diurnal\": 20,\n                    \"max_diurnal\": 30,\n                    \"min_nightly\": 21,\n                    \"max_nightly\": 31,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min_diurnal\": 58, \n                 \"max_diurnal\": 64,\n                 \"min_nightly\": 60, \n                 \"max_nightly\": 70,\n                 \"last_value\": [63, 64]\n             }\n         ],\n }\n}",
           "type": "json"
         }
       ]
@@ -3641,7 +3751,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"profiles\":[\n         {\n           \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n           \"min\": 100,\n           \"max\": 110  \n         }\n     ],\n     \"description\": \"Diabetes tipo 1\"\n}",
+          "content": "{\n     \"profiles\":[\n         {\n           \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n            \"min_diurnal\": 58, \n             \"max_diurnal\": 64,\n             \"min_nightly\": 60, \n             \"max_nightly\": 70,\n         }\n     ],\n     \"description\": \"Diabetes tipo 1\"\n}",
           "type": "json"
         }
       ]
@@ -3748,17 +3858,24 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "integer",
+            "type": "array",
             "optional": false,
             "field": "schedules",
             "description": "<p>list of times in hours</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "integer",
+            "optional": false,
+            "field": "frequency",
+            "description": "<p>range days between exams</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"board_id\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\",\n     \"schedules\": [10, 20]\n}",
+          "content": "{\n     \"board_id\":\"5d93585b-f511-4fa8-b69e-692c2474d5e8\",\n     \"schedules\": [10, 20],\n     \"frequency\": 2\n}",
           "type": "json"
         }
       ]
@@ -3889,7 +4006,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n   \"min\": \"10\",\n   \"max\": \"50\",\n   \"tag\": \"musclemass\",\n   \"measure\": \"muscle mass\"\n}",
+          "content": "{\n   \"min_diurnal\": 95,\n      \"max_diurnal\": 115,\n      \"min_nightly\": 90,\n      \"max_nightly\": 120,\n   \"tag\": \"musclemass\",\n   \"measure\": \"muscle mass\"\n}",
           "type": "json"
         }
       ]
@@ -4212,7 +4329,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n\"profiles\": [\n        {\n            \"measures\": [\n                {\n                    \"min\": 90,\n                    \"max\": 120,\n                    \"tag\": \"pulse\",\n                    \"measure\": \"pulsação arterial\",\n                    \"id\": \"5b58452ca0b2a007d78f7974\"\n                },\n                {\n                    \"min\": 95,\n                    \"max\": 100,\n                    \"tag\": \"spo2\",\n                    \"measure\": \"oximetria do pulso\",\n                    \"id\": \"5b5845369e5e0807dc694fde\"\n                }\n            ],\n            \"name\": \"Diabetico\",\n            \"id\": \"5b5845209e5e0807dc694fdd\"\n        }\n    ]\n}",
+          "content": "{\n\"profiles\": [\n        {\n            \"measures\": [\n                {\n                    \"min_diurnal\": 95,\n                    \"max_diurnal\": 115,\n                    \"min_nightly\": 90,\n                    \"max_nightly\": 120,\n                    \"tag\": \"pulse\",\n                    \"measure\": \"pulsação arterial\",\n                    \"id\": \"5b58452ca0b2a007d78f7974\"\n                },\n                {\n                    \"min_diurnal\": 100,\n                    \"max_diurnal\": 120,\n                    \"min_nightly\": 95,\n                    \"max_nightly\": 100,\n                    \"tag\": \"spo2\",\n                    \"measure\": \"oximetria do pulso\",\n                    \"id\": \"5b5845369e5e0807dc694fde\"\n                }\n            ],\n            \"name\": \"Diabetico\",\n            \"id\": \"5b5845209e5e0807dc694fdd\"\n        }\n    ]\n}",
           "type": "json"
         }
       ]
@@ -6006,7 +6123,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"schedules\": [10, 20],\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19, \n                 \"max\": 25\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64\n             }\n         ]\n         \"Vitabox\": {\n             \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n             \"latitude\": \"51.5058372\",\n             \"longitude\": \"-0.1899126\",\n             \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\"\n         }\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"schedules\": [10, 20],\n                 \"frequency\": 2,\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19, \n                 \"max\": 25\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64\n             }\n         ]\n         \"Vitabox\": {\n             \"id\": \"a6abfa76-68f0-4325-b3ab-6c540a800284\",\n             \"latitude\": \"51.5058372\",\n             \"longitude\": \"-0.1899126\",\n             \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\"\n         }\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -8606,12 +8723,12 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example to common user:",
-          "content": "{\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\"\n}",
+          "content": "{\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"locality\": \"tomar\",\n     \"district\": \"santarem\"\n}",
           "type": "json"
         },
         {
           "title": "Request example to admin:",
-          "content": "{\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"settings\":{\n         \"cnfg1\": \"true\",\n         \"cnfg2\": \"12345\",\n         \"cnfg3\": \"some other config\"\n     }\n}",
+          "content": "{\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"locality\": \"tomar\",\n     \"district\": \"santarem\"\n     \"settings\":{\n         \"cnfg1\": \"true\",\n         \"cnfg2\": \"12345\",\n         \"cnfg3\": \"some other config\"\n     }\n}",
           "type": "json"
         }
       ]
