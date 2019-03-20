@@ -443,7 +443,7 @@ exports.addUser = (req, res) => {
  * @apiSuccess {string} email email of each user
  * @apiSuccess {datetime} since relationship date with the vitabox
  * @apiSuccess {boolean} sponsor flag indicating if the user is sponsor of the vitabox
- * @apiSuccessExample {json} Response example:
+ * @apiSuccessExample {json} Response example to Users:
  * {
  *  "users": [
  *      {
@@ -462,11 +462,36 @@ exports.addUser = (req, res) => {
  *      }
  *  ]
  * }
+ * @apiSuccessExample {json} Response example to Vitabox:
+ * {
+ *  "users": [
+ *      {
+ *          "id": "585402ef-68dd-44a4-a44b-04152e659d11",
+ *          "name": "Donald Trump",
+ *          "sponsor": false
+ *      },
+ *      {
+ *          "id": "78007a69-baa2-4b24-b936-234883811b6a",
+ *          "name": "Queen Elizabeth",
+ *          "sponsor": true
+ *      }
+ *  ],
+ *  "doctors":[
+ *      {
+ *          "id": "585402ef-68dd-44a4-a44b-04152e659d11",
+ *          "name": "Dr(a). Donald Trump"
+ *      }
+ *      {
+ *          "id": "585345ef-68dd-4412-a456-034234352341",
+ *          "name": "Dr(a). Richard Michel"
+ *      }
+ *  ]
+ * }
  */
 exports.getUsers = (req, res) => {
     if (req.client) if (req.client.constructor.name === "Vitabox")
-        business.vitabox.getUsers(req.client).then(
-            data => res.status(200).json({ users: data }),
+        business.vitabox.getUsersToVitabox(req.client).then(
+            data => res.status(200).json(data),
             error => res.status(error.code).send(error.msg));
     else business.vitabox.find(req.params.id).then(
         vitabox => {
@@ -592,6 +617,7 @@ exports.addPatient = (req, res) => {
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *                  "since": "2018-07-23T05:15:27.000Z",
  *                  "schedules": [10, 20],
+ *                  "last_commit": "2018-07-23T05:15:27.000Z",
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *                      "type": "environmental",

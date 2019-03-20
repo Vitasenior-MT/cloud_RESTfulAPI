@@ -234,6 +234,27 @@ exports.getUsers = (vitabox) => {
   });
 }
 
+exports.getUsersToVitabox = (vitabox) => {
+  return new Promise((resolve, reject) => {
+    Promise.all([
+      vitabox.getUsers({ attributes: ['id', 'name'] }),
+      vitabox.getPatients({ attributes: ['id', 'name'], include: [{ model: db.User, as: 'Doctors', attributes: ['id', 'name'] }] })
+    ]).then(
+      res => {
+        res[0].forEach(user => {
+          user.name = utils.decrypt(user.name);
+          user.dataValues.sponsor = user.dataValues.UserVitabox.dataValues.sponsor;
+          delete user.dataValues.UserVitabox;
+        });
+        res[1].forEach(patient => {
+          patient.Doctors.forEach(doctor => doctor.name = "Dr(a). " + utils.decrypt(doctor.name));
+        });
+        let doctors = [].concat.apply([], res[1].map(patient => { return patient.Doctors.map(x => { return { id: x.id, name: "Dr(a). " + utils.decrypt(x.name) } }) }));
+        resolve({ users: res[0], doctors: doctors });
+      }, error => reject({ code: 500, msg: error.message }));
+  });
+}
+
 exports.removeUser = (current_user, vitabox_id, user_id) => {
   return new Promise((resolve, reject) => {
     db.Vitabox.findOne({ where: { id: vitabox_id } }).then(

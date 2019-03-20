@@ -219,7 +219,7 @@ exports.removePatientFromBoard = (req, res) => {
                     board.removePatient(req.body.patient_id),
                     broker.record.removeByBoardPatient(req.body.patient_id, req.params.id),
                 ];
-                board.Sensors.map(x => promises.push(business.profile.removeByTag(req.body.patient_id, x.Sensormodel.tag)));
+                board.Sensors.forEach(x => promises.push(business.profile.removeByTag(req.body.patient_id, x.Sensormodel.tag)));
                 if (board.Boardmodel.type === "wearable") promises.push(business.board.updateDescription(board, ""));
 
                 if (req.client.admin) Promise.all(promises).then(

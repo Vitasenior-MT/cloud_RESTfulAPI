@@ -1,6 +1,6 @@
 {
-  "name": "VitaseniorMT - test",
-  "short_name": "vitatest",
+  "name": "vitaseniordev",
+  "short_name": "vitadev",
   "icons": [
     {
       "src": "/static/img/icons/android-chrome-192x192.png",
