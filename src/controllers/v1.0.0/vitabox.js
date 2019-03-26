@@ -678,10 +678,7 @@ exports.addPatient = (req, res) => {
 exports.getPatients = (req, res) => {
     if (req.client) if (req.client.constructor.name === "Vitabox")
         business.vitabox.getPatientsToVitabox(req.client).then(
-            data => {
-                data.forEach(patient => console.log("patient: " + patient.name, "boards: ", patient.Boards.map(x => x.Boardmodel.name)));
-                res.status(200).json({ patients: data });
-            },
+            data => res.status(200).json({ patients: data }),
             error => res.status(error.code).send(error.msg));
     else business.vitabox.find(req.params.id).then(
         vitabox => {
