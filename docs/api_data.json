@@ -945,8 +945,8 @@
   },
   {
     "type": "put",
-    "url": "/board/:id/exchange",
-    "title": "02) Change MAC or description",
+    "url": "/board/:id/warnings",
+    "title": "03) activate/disable warnings",
     "group": "Board",
     "name": "exchangeBoard",
     "description": "<p>alter MAC address to board exchange</p>",
@@ -964,28 +964,21 @@
             "type": "string",
             "optional": false,
             "field": "id",
-            "description": "<p>board id to exchange</p>"
+            "description": "<p>board id to switch warnings report</p>"
           },
           {
             "group": "Parameter",
-            "type": "string",
+            "type": "boolean",
             "optional": false,
-            "field": "mac_addr",
-            "description": "<p>new MAC address (just for admin)</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "description",
-            "description": "<p>new description (just for sponsor)</p>"
+            "field": "flag",
+            "description": "<p>activate/disable warnings to the board</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"mac_addr\": \"45:44:54:65:65:16:51:31\",\n     \"description\": \"new description\"\n}",
+          "content": "{\n     \"flag\": false\n}",
           "type": "json"
         }
       ]
@@ -1062,8 +1055,8 @@
   },
   {
     "type": "put",
-    "url": "/board/:id/warnings",
-    "title": "03) activate/disable warnings",
+    "url": "/board/:id/exchange",
+    "title": "02) Change MAC or description",
     "group": "Board",
     "name": "exchangeBoard",
     "description": "<p>alter MAC address to board exchange</p>",
@@ -1081,21 +1074,28 @@
             "type": "string",
             "optional": false,
             "field": "id",
-            "description": "<p>board id to switch warnings report</p>"
+            "description": "<p>board id to exchange</p>"
           },
           {
             "group": "Parameter",
-            "type": "boolean",
+            "type": "string",
             "optional": false,
-            "field": "flag",
-            "description": "<p>activate/disable warnings to the board</p>"
+            "field": "mac_addr",
+            "description": "<p>new MAC address (just for admin)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "description",
+            "description": "<p>new description (just for sponsor)</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n     \"flag\": false\n}",
+          "content": "{\n     \"mac_addr\": \"45:44:54:65:65:16:51:31\",\n     \"description\": \"new description\"\n}",
           "type": "json"
         }
       ]
@@ -4723,6 +4723,110 @@
   },
   {
     "type": "get",
+    "url": "/record/analytic",
+    "title": "6) List analytic files",
+    "group": "Record",
+    "name": "listAnalyticFiles",
+    "description": "<p>list all records from analytic files</p>",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "files",
+            "description": "<p>list of filenames</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "filename",
+            "description": "<p>filename of the file</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "size",
+            "description": "<p>size of the file</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\n \"files\": [\n     {\n         \"filename\": \"2018-03-02T15:40:23.000Z_bio.csv\",\n         \"size\": \"56987 bytes\"\n ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/controllers/v1.0.0/record.js",
+    "groupTitle": "Record",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Version",
+            "defaultValue": "1.0.0",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Authorization",
+            "defaultValue": "< token >",
+            "description": ""
+          },
+          {
+            "group": "Header",
+            "optional": false,
+            "field": "Accept-Language",
+            "defaultValue": "pt",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "number",
+            "optional": false,
+            "field": "statusCode",
+            "description": "<p>http status code: 500 to business logic errors and 401 to unauthorized</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "string",
+            "optional": false,
+            "field": "statusMessage",
+            "description": "<p>error description</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
     "url": "/record/sensor/:id/start/:sdate/end/:edate",
     "title": "4) List (Dates)",
     "group": "Record",
@@ -7648,7 +7752,7 @@
       "examples": [
         {
           "title": "Response example:",
-          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"photo\": \"h43gj2h34j2B34hg342jhhsu46SAkwKsR1.jpg\"\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"schedules\": [10, 20],\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n         \"Doctors\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"name\": \"Julia Almeida\", \n                 \"email\": \"jalme@a.aa\"\n             }\n         ]\n     }\n ]\n}",
+          "content": "{\n \"patients\": [\n     {\n         \"id\": \"a77ea0fe-5e34-4189-9702-95cb69b4cd1d\",\n         \"birthdate\": \"1987-02-28\",\n         \"name\": \"José António\",\n         \"gender\": \"male\",\n         \"since\": \"2018-02-19T14:55:59.000Z\",\n         \"active\": true,\n         \"weight\": 79.6,\n         \"height\": 1.74,\n         \"cc\": \"123456789\",\n         \"nif\": \"987654321\",\n         \"photo\": \"h43gj2h34j2B34hg342jhhsu46SAkwKsR1.jpg\"\n         \"Boards\": [\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\",\n                 \"description\": \"kitchen\",\n                 \"mac_addr\": \"00:12:4b:00:06:0d:60:c8\",\n                 \"since\": \"2018-07-23T05:15:27.000Z\",\n                 \"schedules\": [10, 20],\n                 \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                 \"Boardmodel\": {\n                     \"id\": \"17770821-6f5a-41b3-8ea3-d42c000326c6\",\n                     \"type\": \"environmental\",\n                     \"name\": \"Zolertia RE-Mote\",\n                     \"tag\": \"zolertiaremote\"\n                 },\n                 \"Sensors\": [\n                     {\n                         \"id\": \"9cd77116-6edb-4072-9d66-204fca3d5a07\",\n                         \"last_values\": [ 17, 16, 13, 16, 15 ],\n                         \"last_commit\": \"2018-07-23T05:15:27.000Z\",\n                         \"Sensormodel\": {\n                             \"id\": \"1f8eab67-d39e-439e-b508-6ef6f2c6794a\",\n                             \"transducer\": \"dht22\",\n                             \"measure\": \"humidity\",\n                             \"unit\": \"%\",\n                             \"min_acceptable\": \"30.00000\",\n                             \"max_acceptable\": \"50.00000\",\n                             \"min_possible\": \"20.00000\",\n                             \"max_possible\": \"60.00000\",\n                             \"to_read\": \"temperature\",\n                             \"tag\": \"humi\"\n                         }\n                     }\n                 ]\n             }\n         ],\n         \"Profiles\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"measure\": \"body fat\", \n                 \"tag\": \"bodyfat\", \n                 \"min\": 19,\n                 \"max\": 25,\n                 \"last_values\": [22, 23, 25, 23]\n             },\n             {\n                 \"id\": \"32443b5e-28cd-ab43-b86b-a423442401b8\", \n                 \"measure\": \"weight\", \n                 \"tag\": \"weight\", \n                 \"min\": 58, \n                 \"max\": 64,\n                 \"last_value\": [63, 64]\n             }\n         ],\n         \"Doctors\":[\n             {\n                 \"id\": \"950c8b5e-6f43-4686-b21b-a435e96401b7\", \n                 \"name\": \"Julia Almeida\", \n                 \"email\": \"jalme@a.aa\"\n             }\n         ]\n     }\n ]\n}",
           "type": "json"
         }
       ]
@@ -7868,8 +7972,13 @@
       },
       "examples": [
         {
-          "title": "Response example:",
+          "title": "Response example to Users:",
           "content": "{\n \"users\": [\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"email\": \"donaldtrump@usa.com\",\n         \"name\": \"Donald Trump\",\n         \"since\": \"2018-02-19T14:41:13.000Z\",\n         \"sponsor\": false\n     },\n     {\n         \"id\": \"78007a69-baa2-4b24-b936-234883811b6a\",\n         \"email\": \"queenelizabeth@majesty.uk\",\n         \"name\": \"Queen Elizabeth\",\n         \"since\": \"2018-02-19T14:40:14.000Z\",\n         \"sponsor\": true\n     }\n ]\n}",
+          "type": "json"
+        },
+        {
+          "title": "Response example to Vitabox:",
+          "content": "{\n \"users\": [\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"name\": \"Donald Trump\",\n         \"sponsor\": false\n     },\n     {\n         \"id\": \"78007a69-baa2-4b24-b936-234883811b6a\",\n         \"name\": \"Queen Elizabeth\",\n         \"sponsor\": true\n     }\n ],\n \"doctors\":[\n     {\n         \"id\": \"585402ef-68dd-44a4-a44b-04152e659d11\",\n         \"name\": \"Dr(a). Donald Trump\"\n     }\n     {\n         \"id\": \"585345ef-68dd-4412-a456-034234352341\",\n         \"name\": \"Dr(a). Richard Michel\"\n     }\n ]\n}",
           "type": "json"
         }
       ]

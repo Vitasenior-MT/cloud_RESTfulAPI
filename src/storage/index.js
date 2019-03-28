@@ -13,6 +13,18 @@ exports.connectToStorage = () => {
   });
 }
 
+exports.listFiles = (bucketName) => {
+  return new Promise((resolve, reject) => {
+    store.listObjects({ Bucket: bucketName }).promise()
+      .then((data) => {
+        if (data != null && data.Contents != null) {
+          resolve(data.Contents.map(content => { return { filename: content.Key, size: content.Size + " bytes" } }));
+        } else reject({ code: 500, msg: "No files found" });
+      })
+      .catch((error) => reject({ code: 500, msg: error.message }));
+  });
+}
+
 exports.uploadFile = (bucketName, itemName, fileData) => {
   return new Promise((resolve, reject) => {
     store.upload({ Bucket: bucketName, Key: itemName, Body: fileData }, { partSize: 5242880, queueSize: 1 }).promise()
@@ -20,7 +32,6 @@ exports.uploadFile = (bucketName, itemName, fileData) => {
       .catch(error => reject({ code: 500, msg: error.message }));
   });
 }
-
 
 exports.downloadFile = (bucketName, imageName) => {
   return new Promise((resolve, reject) => {

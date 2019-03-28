@@ -241,11 +241,17 @@ module.exports = (app) => {
         .get('/record/sensor/:sid/patient/:pid/start/:sdate/end/:edate', versioning({
             "1.0.0": controllers.v1_0_0.record.listBetweenDatesByPatient
         }))
+        .get('/record/analytic', versioning({
+            "1.0.0": controllers.v1_0_0.record.listAnalyticFiles
+        }))
         /*________________________________________________
         *_____________________FILES_______________________
         *_________________________________________________*/
         .get('/file/:id', versioning({
             "1.0.0": controllers.v1_0_0.manage.fileDownload
+        }))
+        .delete('/file/:id', versioning({
+            "1.0.0": controllers.v1_0_0.manage.fileRemove
         }))
         /*________________________________________________
         *_________________PROFILE MODEL___________________
@@ -315,12 +321,6 @@ module.exports = (app) => {
         *_________________________________________________*/
         .get('/sensor/:id', versioning({
             "1.0.0": controllers.v1_0_0.sensor.find
-        }))
-        /*________________________________________________
-        *_____________________TRASH_______________________
-        *_________________________________________________*/
-        .get('/testdb', versioning({
-            "1.0.0": controllers.v1_0_0.manage.testDb
         }))
 
     app.all('*', (req, res) => {
