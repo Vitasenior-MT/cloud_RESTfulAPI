@@ -33,17 +33,6 @@ exports.removeByPatient = (patient_id) => {
   });
 }
 
-exports.removeBySensors = (sensor_ids) => {
-  return new Promise((resolve, reject) => {
-    broker.getChannel().sendToQueue(
-      'remove_record_by_sensors',                             // queue name
-      new Buffer(JSON.stringify({ sensor_ids: sensor_ids })), // data
-      { persistent: true }                                    // options
-    );
-    resolve();
-  });
-}
-
 exports.removeByBoardPatient = (patient_id, board_id) => {
   return new Promise((resolve, reject) => {
     broker.getChannel().sendToQueue(

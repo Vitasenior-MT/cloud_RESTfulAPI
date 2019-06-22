@@ -21,7 +21,7 @@ exports.listDoctorRequests = (doctor_id) => {
     db.DoctorPatient.findAll({ where: { user_id: doctor_id, accepted: false } }).then(
       requests => {
         let promises = requests.map(request =>
-          new Promise((resolve, reject) => db.Patient.findOne({ where: { id: request.patient_id }}).then(
+          new Promise((resolve, reject) => db.Patient.findOne({ where: { id: request.patient_id } }).then(
             patient => resolve({
               created_at: request.created_at,
               patient_id: patient.id,
@@ -61,7 +61,7 @@ exports.acceptAsDoctor = (doctor_id, patient_id, flag) => {
 exports.getPatients = (user) => {
   return new Promise((resolve, reject) => {
     user.getPatients({
-      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'profile', 'photo'],
+      attributes: ['id', 'birthdate', 'name', 'gender', ['created_at', 'since'], 'active', 'weight', 'height', 'cc', 'nif', 'profile', 'photo', 'info', 'medication'],
       include: [
         {
           model: db.Board, attributes: ['id', 'mac_addr'],
@@ -83,6 +83,7 @@ exports.getPatients = (user) => {
             patient.name = utils.decrypt(patient.name);
             patient.cc = utils.decrypt(patient.cc);
             patient.nif = utils.decrypt(patient.nif);
+            patient.info = patient.info ? utils.decrypt(patient.info) : null;
             patient.photo = patient.photo ? utils.decrypt(patient.photo) : null;
             patient.Vitabox.address == utils.decrypt(patient.Vitabox.address);
             patient.Vitabox.locality = utils.decrypt(patient.Vitabox.locality);
@@ -92,6 +93,7 @@ exports.getPatients = (user) => {
             delete patient.Vitabox.dataValues.coordinates;
             patient.Boards.forEach(board => {
               board.dataValues.since = board.PatientBoard.created_at;
+              board.dataValues.schedules = board.PatientBoard.schedules;
               board.dataValues.frequency = board.PatientBoard.frequency;
               delete board.dataValues.PatientBoard
             });

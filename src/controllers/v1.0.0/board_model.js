@@ -142,7 +142,10 @@ exports.delete = (req, res) => {
 exports.setSensor = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.setSensor(req.params.id, req.body.sensor_id).then(
-            res => broker.notification.log(req.client.id, ["boardmodel_add_sensormodel", res.sensormodel, res.boardmodel].join("+")).then(
+            obj => Promise.all([
+                broker.notification.log(req.client.id, ["boardmodel_add_sensormodel", obj.sensormodel.to_read, obj.boardmodel].join("+")),
+                broker.sensormodel.add(req.params.id, obj.sensormodel)
+            ]).then(
                 () => res.status(200).json({ result: true }),
                 error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
@@ -213,14 +216,12 @@ exports.getSensors = (req, res) => {
 exports.removeSensor = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.admin) {
         business.boardmodel.removeSensor(req.params.id, req.body.sensor_id).then(
-            res => {
-                Promise.all([
-                    broker.record.removeBySensors(res.sids),
-                    broker.notification.log(req.client.id, ["boardmodel_rmv_sensormodel", res.sensormodel, res.boardmodel].join("+"))
+            obj => Promise.all([
+                    broker.notification.log(req.client.id, ["boardmodel_rmv_sensormodel", obj.sensormodel.to_read, obj.boardmodel].join("+")),
+                    broker.sensormodel.remove(req.params.id, obj.sensormodel)
                 ]).then(
                     () => res.status(200).json({ result: true }),
-                    error => res.status(error.code).send(error.msg));
-            },
+                    error => res.status(error.code).send(error.msg)),
             error => res.status(error.code).send(error.msg));
     } else {
         res.status(401).send(req.t("unauthorized"));

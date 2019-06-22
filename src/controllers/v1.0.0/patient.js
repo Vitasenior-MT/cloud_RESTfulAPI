@@ -18,13 +18,15 @@ var business = require('../../business/index').v1_0_0,
  * {
  *  patient:{
  *      "name": "José António",
+ *      "medication": ["paracetamol", "brufen"],
+ *      "info": "problemas a dormir",
  *      "Boards": [
  *              {
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7",
  *                  "description": "kitchen",
  *                  "mac_addr": "00:12:4b:00:06:0d:60:c8",
  *                  "since": "2018-07-23T05:15:27.000Z",
- *                  "frequency": 2,
+ *                  "schedules": [10, 20],
  *                  "Boardmodel": {
  *                      "id": "17770821-6f5a-41b3-8ea3-d42c000326c6",
  *                      "type": "environmental",
@@ -57,16 +59,20 @@ var business = require('../../business/index').v1_0_0,
  *                  "id": "950c8b5e-6f43-4686-b21b-a435e96401b7", 
  *                  "measure": "body fat", 
  *                  "tag": "bodyfat", 
- *                  "min": 19,
- *                  "max": 25,
+ *                  "min_diurnal": 20,
+                    "max_diurnal": 30,
+                    "min_nightly": 21,
+                    "max_nightly": 31,
  *                  "last_values": [22, 23, 25, 23]
  *              },
  *              {
  *                  "id": "32443b5e-28cd-ab43-b86b-a423442401b8", 
  *                  "measure": "weight", 
  *                  "tag": "weight", 
- *                  "min": 58, 
- *                  "max": 64,
+ *                  "min_diurnal": 58, 
+ *                  "max_diurnal": 64,
+ *                  "min_nightly": 60, 
+ *                  "max_nightly": 70,
  *                  "last_value": [63, 64]
  *              }
  *          ],
@@ -112,7 +118,8 @@ exports.getPatientInfo = (req, res) => {
  *          "birthdate": "1987-02-28",
  *          "gender": "male",
  *          "cc": "123456789",
- *          "nif": "987654321"
+ *          "nif": "987654321",
+ *          "info": "sofre do sono"
  *     }
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
@@ -145,7 +152,9 @@ exports.updateInfo = (req, res) => {
  * @apiParamExample {json} Request example:
  *     {
  *          "height": 1.72,
- *          "weight": 78.2m
+ *          "weight": 78.2m,
+ *          "medication": ["paracetamol", "brufen"],
+ *          "info": "sofre do sono"
  *     }
  * @apiSuccess {boolean} result returns true if was successfuly updated
  */
@@ -178,8 +187,10 @@ exports.updateBiometric = (req, res) => {
  *          "profiles":[
  *              {
  *                "id": "585402ef-68dd-44a4-a44b-04152e659d11",
- *                "min": 100,
- *                "max": 110  
+ *                 "min_diurnal": 58, 
+*                  "max_diurnal": 64,
+*                  "min_nightly": 60, 
+*                  "max_nightly": 70,
  *              }
  *          ],
  *          "description": "Diabetes tipo 1"
@@ -413,26 +424,28 @@ exports.setPhoto = (req, res) => {
 /**
  * @api {put} /patient/:id/exam 09) Update Exam
  * @apiGroup Patient
- * @apiName updateExamFrequency
- * @apiDescription update exam frequency to patient
+ * @apiName updateSchedule
+ * @apiDescription update exam scheduling to patient
  * @apiVersion 1.0.0
  * @apiUse box
  * 
  * @apiPermission admin, sponsor
  * @apiParam {string} :id patient id
  * @apiParam {string} board_id board id
- * @apiParam {integer} frequency time in hours between exams (if null removes the scheduler)
+ * @apiParam {array} schedules list of times in hours
+ * @apiParam {integer} frequency range days between exams
  * @apiParamExample {json} Request example:
  *     {
  *          "board_id":"5d93585b-f511-4fa8-b69e-692c2474d5e8",
+ *          "schedules": [10, 20],
  *          "frequency": 2
  *     }
  * @apiSuccess {booleam} result returns true if was successfuly updated
  */
-exports.updateExamFrequency = (req, res) => {
+exports.updateSchedule = (req, res) => {
     if (req.client && req.client.constructor.name === "User" && req.client.doctor) {
         business.patient.verifyDoctor(req.client, req.params.id).then(
-            () => business.board.updateFrequency(req.body.board_id, req.params.id, req.body.frequency).then(
+            () => business.board.updateSchedule(req.body.board_id, req.params.id, req.body).then(
                 () => res.status(200).json({ result: true }),
                 error => res.status(500).send("cannot update exame schedule")),
             error => res.status(error.code).send(error.msg));

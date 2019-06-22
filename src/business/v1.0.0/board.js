@@ -95,21 +95,34 @@ exports.updateDescription = (board, description) => {
   });
 }
 
-exports.switchMac = (board_id, mac_addr) => {
+exports.switchMac = (board_id, mac) => {
   return new Promise((resolve, reject) => {
-    db.Board.update({ mac_addr: mac_addr }), { where: { id: board_id } }.then(
+    db.Board.update({ mac_addr: mac.toLowerCase() }, { where: { id: board_id } }).then(
       () => resolve(),
       error => reject({ code: 500, msg: error.message }));
   });
 }
 
-exports.updateFrequency = (board_id, patient_id, frequency) => {
+exports.switchWarnings = (board_id, flag) => {
   return new Promise((resolve, reject) => {
-    db.PatientBoard.findOne({ where: { board_id: board_id, patient_id: patient_id } }).then(
-      board => board.update({ frequency: frequency }).then(
-        () => resolve(),
-        error => reject({ code: 500, msg: error.message })),
+    db.Board.update({ get_warnings: flag }, { where: { id: board_id } }).then(
+      () => resolve(),
       error => reject({ code: 500, msg: error.message }));
+  });
+}
+
+exports.updateSchedule = (board_id, patient_id, params) => {
+  return new Promise((resolve, reject) => {
+    if (params.schedules && !params.schedules.some(isNaN))
+      if (params.frequency !== undefined) {
+        db.PatientBoard.update(
+          { schedules: params.schedules, frequency: params.frequency > 0 ? params.frequency : null },
+          { where: { board_id: board_id, patient_id: patient_id } }
+        ).then(
+          () => resolve(),
+          error => reject({ code: 500, msg: error.message }));
+      } else reject({ code: 500, msg: "Invalid frequency" });
+    else reject({ code: 500, msg: "Invalid schedules list" });
   });
 }
 

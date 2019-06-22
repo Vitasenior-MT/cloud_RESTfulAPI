@@ -1,5 +1,6 @@
 var business = require('../../business/index').v1_0_0,
-    broker = require('../../brokers/index');
+    broker = require('../../brokers/index'),
+    store = require('../../storage/index');
 
 /**
  * @api {post} /record 1) Receive
@@ -264,5 +265,34 @@ exports.listBetweenDatesByPatient = (req, res) => {
                 else res.status(500).send("This sensor doesn't belong to the patient");
                 else res.status(500).send("This sensor doesn't belong to any vitabox");
             }, error => res.status(error.code).send(error.msg));
+    } else res.status(401).send(req.t("unauthorized"));
+}
+
+/**
+ * @api {get} /record/analytic 6) List analytic files
+ * @apiGroup Record
+ * @apiName listAnalyticFiles
+ * @apiDescription list all records from analytic files
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin
+ * @apiSuccess {array} files list of filenames
+ * @apiSuccess {string} filename filename of the file
+ * @apiSuccess {string} size size of the file
+ * @apiSuccessExample {json} Response example:
+ * {
+ *  "files": [
+ *      {
+ *          "filename": "2018-03-02T15:40:23.000Z_bio.csv",
+ *          "size": "56987 bytes"
+ *  ]
+ * }
+ */
+exports.listAnalyticFiles = (req, res) => {
+    if (req.client && req.client.constructor.name === "User" && req.client.admin) {
+        store.listFiles(process.env.STORE_ANALYTIC_BUCKET).then(
+            files => res.status(200).json({ files: files }),
+            error => res.status(error.code).send(error.msg));
     } else res.status(401).send(req.t("unauthorized"));
 }

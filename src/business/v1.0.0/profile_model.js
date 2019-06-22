@@ -33,11 +33,11 @@ exports.remove = (id) => {
     db.Profilemodel.findOne({ '_id': id }).populate('measures').exec((err, res) => {
       if (err) reject({ code: 500, msg: err.message });
       let promises = res.measures.map(x => new Promise((resolve, reject) => {
-          db.Profilemeasure.deleteOne({ _id: x._id }).exec((err, res) => {
-            if (err) reject({ code: 500, msg: err.message });
-            else resolve();
-          });
-        }));
+        db.Profilemeasure.deleteOne({ _id: x._id }).exec((err, res) => {
+          if (err) reject({ code: 500, msg: err.message });
+          else resolve();
+        });
+      }));
       Promise.all(promises).then(
         () => db.Profilemodel.deleteOne({ _id: id }).exec((err, res) => {
           if (err) reject({ code: 500, msg: err.message });
@@ -49,7 +49,14 @@ exports.remove = (id) => {
 
 exports.addMeasure = (profile_id, measure) => {
   return new Promise((resolve, reject) => {
-    db.Profilemeasure.create({ min: measure.min, max: measure.max, tag: measure.tag, measure: measure.measure }).then(
+    db.Profilemeasure.create({
+      min_diurnal: measure.min_diurnal,
+      max_diurnal: measure.max_diurnal,
+      min_nightly: measure.min_nightly,
+      max_nightly: measure.max_nightly,
+      tag: measure.tag,
+      measure: measure.measure
+    }).then(
       res => db.Profilemodel.findOne({ '_id': profile_id }).populate('measures').exec((err, profile) => {
         if (err) reject({ code: 500, msg: err.message });
         if (!profile.measures.some(x => x.tag === measure.tag)) {

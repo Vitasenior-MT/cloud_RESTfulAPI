@@ -166,8 +166,11 @@ module.exports = (app) => {
         .get('/board/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board.getSensorsFromBoard
         }))
-        .put('/board/:id', versioning({
+        .put('/board/:id/exchange', versioning({
             "1.0.0": controllers.v1_0_0.board.exchange
+        }))
+        .put('/board/:id/warnings', versioning({
+            "1.0.0": controllers.v1_0_0.board.switchWarnings
         }))
         .get('/inactive/board', versioning({
             "1.0.0": controllers.v1_0_0.board.listInactive
@@ -197,7 +200,7 @@ module.exports = (app) => {
             "1.0.0": controllers.v1_0_0.patient.setPhoto
         }))
         .put('/patient/:id/exam', versioning({
-            "1.0.0": controllers.v1_0_0.patient.updateExamFrequency
+            "1.0.0": controllers.v1_0_0.patient.updateSchedule
         }))
         .put('/patient/:id/info', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateInfo
@@ -238,11 +241,17 @@ module.exports = (app) => {
         .get('/record/sensor/:sid/patient/:pid/start/:sdate/end/:edate', versioning({
             "1.0.0": controllers.v1_0_0.record.listBetweenDatesByPatient
         }))
+        .get('/record/analytic', versioning({
+            "1.0.0": controllers.v1_0_0.record.listAnalyticFiles
+        }))
         /*________________________________________________
         *_____________________FILES_______________________
         *_________________________________________________*/
         .get('/file/:id', versioning({
             "1.0.0": controllers.v1_0_0.manage.fileDownload
+        }))
+        .delete('/file/:id', versioning({
+            "1.0.0": controllers.v1_0_0.manage.fileRemove
         }))
         /*________________________________________________
         *_________________PROFILE MODEL___________________
@@ -312,12 +321,6 @@ module.exports = (app) => {
         *_________________________________________________*/
         .get('/sensor/:id', versioning({
             "1.0.0": controllers.v1_0_0.sensor.find
-        }))
-        /*________________________________________________
-        *_____________________TRASH_______________________
-        *_________________________________________________*/
-        .get('/testdb', versioning({
-            "1.0.0": controllers.v1_0_0.manage.testDb
         }))
 
     app.all('*', (req, res) => {

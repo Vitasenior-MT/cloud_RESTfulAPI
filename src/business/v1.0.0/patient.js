@@ -4,7 +4,7 @@ var db = require('../../models/index'),
 exports.createIfNotExists = (attributes, vitabox_id) => {
     return new Promise((resolve, reject) => {
         if (["male", "female", "undefined"].includes(attributes.gender))
-            if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_\-»«@£§€ªº,0-9]{1,50}$/.test(attributes.name)) {
+            if (/[A-Z][a-zA-Z\'áéíóõãÁÉÍÓ][^#&<>\"~;$^%{}?!*+_»«@£§€ªº,0-9]{1,50}$/.test(attributes.name)) {
                 if (/[1256789]\d{8}$/.test(attributes.nif)) {
                     if (/^[0-9]{8}([ -]*[0-9][ ]*[A-Z]{2}[0-9])*$/.test(attributes.cc)) {
                         let encrypted = utils.encrypt([utils.capitalString(attributes.name), attributes.cc, attributes.nif]);
@@ -51,7 +51,8 @@ exports.find = function (patient_id) {
 exports.getInfo = function (patient_id) {
     return new Promise((resolve, reject) => {
         db.Patient.findOne({
-            where: { id: patient_id }, attributes: ['id', 'name', 'vitabox_id'], include: [{ model: db.Vitabox }, { model: db.Profile }, {
+            where: { id: patient_id }, attributes: ['id', 'name', 'vitabox_id', 'medication', 'info'],
+            include: [{ model: db.Vitabox }, { model: db.Profile }, {
                 model: db.Board,
                 attributes: ['id', 'mac_addr', 'description'],
                 include: [
@@ -65,6 +66,7 @@ exports.getInfo = function (patient_id) {
             patient => {
                 if (patient) {
                     patient.name = utils.decrypt(patient.name);
+                    patient.info = patient.info ? utils.decrypt(patient.info) : null;
                     patient.Boards.forEach(board => {
                         delete board.dataValues.PatientBoard;
                         board.description = board.description ? utils.decrypt(board.description) : null;
@@ -78,17 +80,20 @@ exports.getInfo = function (patient_id) {
 
 exports.setInfoData = (patient, attributes) => {
     return new Promise((resolve, reject) => {
-        let encrypted = utils.encrypt([
+        let to_encrypt = [
             attributes.name ? utils.capitalString(attributes.name) : patient.name,
             attributes.cc ? attributes.cc : patient.cc,
             attributes.nif ? attributes.nif : patient.nif
-        ]);
+        ]
+        if (attributes.info) to_encrypt.push(attributes.info);
+        let encrypted = utils.encrypt(to_encrypt);
         patient.update({
             name: encrypted.value[0],
             birthdate: attributes.birthdate ? attributes.birthdate : patient.birthdate,
             gender: attributes.gender ? attributes.gender : patient.gender,
             cc: encrypted.value[1],
-            nif: encrypted.value[2]
+            nif: encrypted.value[2],
+            info: encrypted.value[3] ? encrypted.value[3] : patient.info ? patient.info : ""
         }).then(
             () => resolve(),
             error => reject({ code: 500, msg: error.message }));
@@ -97,11 +102,28 @@ exports.setInfoData = (patient, attributes) => {
 
 exports.setBiometricData = (patient_id, attributes) => {
     return new Promise((resolve, reject) => {
-        db.Patient.update({
-            height: attributes.height,
-            weight: attributes.weight,
-            active: true
-        }, { where: { id: patient_id } }).then(
+        let encrypted = null, to_update = null;
+        if (attributes.info) {
+            encrypted = utils.encrypt([attributes.info]);
+            if (encrypted.error) reject({ code: 500, msg: error.message });
+            else {
+                to_update = {
+                    height: attributes.height,
+                    weight: attributes.weight,
+                    active: true,
+                    info: encrypted.value[0],
+                    medication: (attributes.medication && attributes.medication.length > 0) ? attributes.medication : []
+                };
+            }
+        } else {
+            to_update = {
+                height: attributes.height,
+                weight: attributes.weight,
+                active: true,
+                medication: (attributes.medication && attributes.medication.length > 0) ? attributes.medication : []
+            };
+        }
+        db.Patient.update(to_update, { where: { id: patient_id } }).then(
             result => resolve(result),
             error => reject({ code: 500, msg: error.message }));
     });

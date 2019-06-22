@@ -40,7 +40,7 @@ exports.create = (req, res) => {
 
 
 /**
- * @api {put} /board/:id 02) Change MAC or description
+ * @api {put} /board/:id/exchange 02) Change MAC or description
  * @apiGroup Board
  * @apiName exchangeBoard
  * @apiDescription alter MAC address to board exchange
@@ -56,7 +56,7 @@ exports.create = (req, res) => {
  *          "mac_addr": "45:44:54:65:65:16:51:31",
  *          "description": "new description"
  *     }
- * @apiSuccess {booleam} result returns true if was successfuly updated
+ * @apiSuccess {boolean} result returns true if was successfuly updated
  */
 exports.exchange = (req, res) => {
     if (req.client && req.client.constructor.name === "User") {
@@ -77,7 +77,42 @@ exports.exchange = (req, res) => {
 }
 
 /**
- * @api {get} /board/:id 03) Get Board
+ * @api {put} /board/:id/warnings 03) activate/disable warnings
+ * @apiGroup Board
+ * @apiName exchangeBoard
+ * @apiDescription alter MAC address to board exchange
+ * @apiVersion 1.0.0
+ * @apiUse box
+ * 
+ * @apiPermission admin, sponsor
+ * @apiParam {string} id board id to switch warnings report
+ * @apiParam {boolean} flag activate/disable warnings to the board
+ * @apiParamExample {json} Request example:
+ *     {
+ *          "flag": false
+ *     }
+ * @apiSuccess {boolean} result returns true if was successfuly updated
+ */
+exports.switchWarnings = (req, res) => {
+    if (req.client && req.client.constructor.name === "User") {
+        if (req.client.admin) {
+            business.board.switchWarnings(req.params.id, req.body.flag).then(
+                () => res.status(200).json({ result: true }),
+                error => res.status(error.code).send(error.msg));
+        } else {
+            business.board.get(req.params.id).then(
+                board => business.vitabox.verifySponsor(req.client, board.vitabox_id).then(
+                    () => business.board.switchWarnings(req.params.id, req.body.flag).then(
+                        () => res.status(200).json({ result: true }),
+                        error => res.status(error.code).send(error.msg)),
+                    error => res.status(error.code).send(error.msg)),
+                error => res.status(error.code).send(error.msg));
+        }
+    } else { res.status(401).send("Unauthorized"); }
+}
+
+/**
+ * @api {get} /board/:id 04) Get Board
  * @apiGroup Board
  * @apiName getBoardById
  * @apiDescription get Board
@@ -126,7 +161,7 @@ exports.getById = (req, res) => {
 }
 
 /**
- * @api {post} /board/:id/patient 04) Add Patient
+ * @api {post} /board/:id/patient 05) Add Patient
  * @apiGroup Board
  * @apiName addPatientToBoard
  * @apiDescription Associate a patient with a board
@@ -161,7 +196,7 @@ exports.addPatientToBoard = (req, res) => {
 }
 
 /**
- * @api {delete} /board/:id/patient 05) Remove Patient
+ * @api {delete} /board/:id/patient 06) Remove Patient
  * @apiGroup Board
  * @apiName removePatientFromBoard
  * @apiDescription Disassociate a patient from a board
@@ -184,7 +219,7 @@ exports.removePatientFromBoard = (req, res) => {
                     board.removePatient(req.body.patient_id),
                     broker.record.removeByBoardPatient(req.body.patient_id, req.params.id),
                 ];
-                board.Sensors.map(x => promises.push(business.profile.removeByTag(req.body.patient_id, x.Sensormodel.tag)));
+                board.Sensors.forEach(x => promises.push(business.profile.removeByTag(req.body.patient_id, x.Sensormodel.tag)));
                 if (board.Boardmodel.type === "wearable") promises.push(business.board.updateDescription(board, ""));
 
                 if (req.client.admin) Promise.all(promises).then(
@@ -200,7 +235,7 @@ exports.removePatientFromBoard = (req, res) => {
 }
 
 /**
- * @api {get} /board/:id/sensor 06) Get Sensors
+ * @api {get} /board/:id/sensor 07) Get Sensors
  * @apiGroup Board
  * @apiName getSensorsFromBoard
  * @apiDescription Get sensors from a board
@@ -240,7 +275,7 @@ exports.getSensorsFromBoard = (req, res) => {
 }
 
 /**
- * @api {get} /inactive/board 07) Get inactive
+ * @api {get} /inactive/board 08) Get inactive
  * @apiGroup Board
  * @apiName listInactive
  * @apiDescription list all inactive boards 
