@@ -141,9 +141,9 @@ exports.sendEmail = (type, to, token) => {
             }
 
             transporter.sendMail(mailOptions, (err) => {
-                if (err) reject({ code: 500, msg: err.message });
-                else resolve();
+                if (err) console.error(err.message);
             });
+            resolve();
 
         } catch (err) { reject({ code: 500, msg: error }); }
 

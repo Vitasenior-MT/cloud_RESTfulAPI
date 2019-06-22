@@ -7946,11 +7946,6 @@
           "title": "Response example to admin:",
           "content": "{\n \"vitaboxes\": [\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"38.8976763\",\n         \"longitude\": \"-77.0387185\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n         \"registered\": false,\n         \"active\": false,\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n     {\n         \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n         \"latitude\": \"51.5058372\",\n         \"longitude\": \"-0.1899126\",\n         \"settings\":{\n             \"cnfg1\": \"true\",\n             \"cnfg2\": \"12345\",\n             \"cnfg3\": \"some other config\"\n         },\n         \"address\": \"Kensington Gardens, London W8 4PX, Reino Unido\",\n         \"registered\": false,\n         \"active\": false,\n         \"locality\": \"tomar\",\n         \"district\": \"santarem\"\n         \"created_at\": \"2018-02-22T11:57:53.000Z\",\n         \"updated_at\": \"2018-02-22T11:57:53.000Z\"\n     }\n ]\n}",
           "type": "json"
-        },
-        {
-          "title": "Response example to vitabox:",
-          "content": "{\n \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n \"latitude\": \"38.8976763\",\n \"longitude\": \"-77.0387185\",\n \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n \"sponsor\": true,\n \"active\": false,\n \"locality\": \"tomar\",\n \"district\": \"santarem\"\n}",
-          "type": "json"
         }
       ]
     },
@@ -8761,9 +8756,51 @@
             "optional": false,
             "field": "token",
             "description": "<p>jwt valid for 8 hours and must be placed at &quot;Authorization&quot; header</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "decimal",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>latitude of each vitabox, min: -90, max: 90 (based on google maps coordinates)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "decimal",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>longitude of each vitabox, min: -180, max: 180 (based on google maps coordinates)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "address",
+            "description": "<p>full address of each vitabox</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "locality",
+            "description": "<p>locality tag to get local pharmacies</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "district",
+            "description": "<p>district tag to get local pharmacies</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Response example:",
+          "content": "{\ntoken: \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0YmIyNTFjLWYxY2EtNGVjZC04OTNlLTU2YWU0MDRlZjhlZiIsInJvbGUiOiJVc2VyIiwiaWF0IjoxNTI1MzQzNTg4LCJleHAiOjE1MjUzNzIzODgsInN1YiI6Ijo6ZmZmZjoxMC4wLjIuMiJ9.eZQ9dmDROpIh_6aEcoTTgH_DGauqNxqIsYSsW-tNoXQsLyBQb0VPLnFRzi7n_yKB_D43SGfj8PxBaDmt0WWgbjlKOJdP6WZYz5W_eVWDjpcNjzIq2nj8W1B3AstxZ5RmnP-NFd96Vot-O7mXXk96zGqTzIPYZcL3eX-MvgugCbGr2ikzyJ9y4oWxedzZTsY7u1C_Fy9ZuIG_LFUAZ7yBFXOWYSYdI8VEwxF3rgU1eagUZKO8ZMzVsRQPptSWA3i5-fJW3-k6tfstRcr-nUBOda7diBmuw6cT7zDgtuEyctouuH_RAP-lNuoIpn8pbiSunrNB2D8CGh7RP7CPvu3NSA\"\n vitabox:{\n     \"id\": \"d1d66ccb-e5a0-4bd4-8580-6218f452e580\",\n     \"latitude\": \"38.8976763\",\n     \"longitude\": \"-77.0387185\",\n     \"address\": \"1600 Pennsylvania Ave NW, Washington, DC 20500, EUA\",\n     \"sponsor\": true,\n     \"active\": false,\n     \"locality\": \"tomar\",\n     \"district\": \"santarem\"\n }\n}",
+          "type": "json"
+        }
+      ]
     },
     "filename": "src/controllers/v1.0.0/vitabox.js",
     "groupTitle": "Vitabox"
