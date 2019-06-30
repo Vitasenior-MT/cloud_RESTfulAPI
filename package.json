@@ -8,7 +8,7 @@
     "test": "NODE_ENV=test node server.js && mocha --timeout 1000",
     "dev": "NODE_ENV=development node server.js",
     "build": "webpack -p --progress --optimize-minimize",
-    "prod":"NODE_ENV=production node ./build/bundle.js",
+    "prod":"NODE_ENV=docker node ./build/bundle.js",
     "doc": "apidoc -i src/ -f .js -o docs/"
   },
   "author": "Diogo Mendes",

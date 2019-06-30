@@ -77,7 +77,7 @@
 
 
 // Get the env variables from .env
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV !== "docker") {
     require('dotenv').config();
 }
 
