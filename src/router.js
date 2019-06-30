@@ -9,317 +9,317 @@ module.exports = (app) => {
         /*________________________________________________
         *_____________________USERS_______________________
         *_________________________________________________*/
-        .post('/register', versioning({
+        .post('/api/register', versioning({
             "1.0.0": controllers.v1_0_0.user.register,
             "2.0.0": (req, res) => res.json({ error: 'invalid version' })
         }))
-        .get('/validate/:token', versioning({
+        .get('/api/validate/:token', versioning({
             "1.0.0": controllers.v1_0_0.user.validateEmail
         }))
-        .post('/login', versioning({
+        .post('/api/login', versioning({
             "1.0.0": controllers.v1_0_0.user.login,
         }))
-        .get('/check', versioning({
+        .get('/api/check', versioning({
             "1.0.0": controllers.v1_0_0.user.verifyToken
         }))
-        .post('/chpass', versioning({
+        .post('/api/chpass', versioning({
             "1.0.0": controllers.v1_0_0.user.changePassword,
         }))
-        .post('/forgot', versioning({
+        .post('/api/forgot', versioning({
             "1.0.0": controllers.v1_0_0.user.forgotPassword,
         }))
-        .post('/reset', versioning({
+        .post('/api/reset', versioning({
             "1.0.0": controllers.v1_0_0.user.resetPassword,
         }))
-        .post('/photo', versioning({
+        .post('/api/photo', versioning({
             "1.0.0": controllers.v1_0_0.user.setPhoto,
         }))
-        .get('/user', versioning({
+        .get('/api/user', versioning({
             "1.0.0": controllers.v1_0_0.user.list,
         }))
-        .get('/user/:id/log', versioning({
+        .get('/api/user/:id/log', versioning({
             "1.0.0": controllers.v1_0_0.user.getLogs,
         }))
-        .get('/doctor/patient', versioning({
+        .get('/api/doctor/patient', versioning({
             "1.0.0": controllers.v1_0_0.user.getPatients,
         }))
-        .get('/doctor/request/list', versioning({
+        .get('/api/doctor/request/list', versioning({
             "1.0.0": controllers.v1_0_0.user.getRequests,
         }))
-        .get('/doctor/request/count', versioning({
+        .get('/api/doctor/request/count', versioning({
             "1.0.0": controllers.v1_0_0.user.getRequestsCount,
         }))
         /*________________________________________________
         *____________________ VITABOX_____________________
         *_________________________________________________*/
-        .post('/vitabox', versioning({
+        .post('/api/vitabox', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.create
         }))
-        .get('/vitabox', versioning({
+        .get('/api/vitabox', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.list
         }))
-        .get('/vitabox/:own', versioning({
+        .get('/api/vitabox/:own', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.list
         }))
-        .post('/vitabox/:id/register', versioning({
+        .post('/api/vitabox/:id/register', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.register
         }))
-        .post('/vitabox/:id/connect', versioning({
+        .post('/api/vitabox/:id/connect', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.requestToken
         }))
-        .get('/vitabox/:id/settings', versioning({
+        .get('/api/vitabox/:id/settings', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getSettings
         }))
-        .put('/vitabox/:id/settings', versioning({
+        .put('/api/vitabox/:id/settings', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.setSettings
         }))
-        .put('/vitabox/:id/update', versioning({
+        .put('/api/vitabox/:id/update', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.update
         }))
-        .put('/vitabox/:id/reset', versioning({
+        .put('/api/vitabox/:id/reset', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.reset
         }))
-        .delete('/vitabox/:id', versioning({
+        .delete('/api/vitabox/:id', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.delete
         }))
-        .get('/vitabox/:id/user', versioning({
+        .get('/api/vitabox/:id/user', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getUsers
         }))
-        .post('/vitabox/:id/user', versioning({
+        .post('/api/vitabox/:id/user', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.addUser
         }))
-        .delete('/vitabox/:id/user', versioning({
+        .delete('/api/vitabox/:id/user', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removeUser
         }))
-        .post('/vitabox/:id/patient', versioning({
+        .post('/api/vitabox/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.addPatient
         }))
-        .get('/vitabox/:id/patient', versioning({
+        .get('/api/vitabox/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getPatients
         }))
-        .put('/vitabox/:id/patient/disable', versioning({
+        .put('/api/vitabox/:id/patient/disable', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.disablePatient
         }))
-        .put('/vitabox/:id/patient/enable', versioning({
+        .put('/api/vitabox/:id/patient/enable', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.enablePatient
         }))
-        .delete('/vitabox/:id/patient', versioning({
+        .delete('/api/vitabox/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removePatient
         }))
-        .post('/vitabox/:id/board', versioning({
+        .post('/api/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.addBoard
         }))
-        .get('/vitabox/:id/board', versioning({
+        .get('/api/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.getBoards
         }))
-        .put('/vitabox/:id/board/disable', versioning({
+        .put('/api/vitabox/:id/board/disable', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.disableBoard
         }))
-        .put('/vitabox/:id/board/enable', versioning({
+        .put('/api/vitabox/:id/board/enable', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.enableBoard
         }))
-        .delete('/vitabox/:id/board', versioning({
+        .delete('/api/vitabox/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.removeBoard
         }))
-        .get('/inactive/vitabox', versioning({
+        .get('/api/inactive/vitabox', versioning({
             "1.0.0": controllers.v1_0_0.vitabox.listInactive
         }))
         /*________________________________________________
         *__________________ BOARD MODEL___________________
         *_________________________________________________*/
-        .post('/boardmodel', versioning({
+        .post('/api/boardmodel', versioning({
             "1.0.0": controllers.v1_0_0.board_model.create
         }))
-        .get('/boardmodel', versioning({
+        .get('/api/boardmodel', versioning({
             "1.0.0": controllers.v1_0_0.board_model.list
         }))
-        .put('/boardmodel/:id', versioning({
+        .put('/api/boardmodel/:id', versioning({
             "1.0.0": controllers.v1_0_0.board_model.update
         }))
-        .delete('/boardmodel/:id', versioning({
+        .delete('/api/boardmodel/:id', versioning({
             "1.0.0": controllers.v1_0_0.board_model.delete
         }))
-        .post('/boardmodel/:id/sensor', versioning({
+        .post('/api/boardmodel/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board_model.setSensor
         }))
-        .get('/boardmodel/:id/sensor', versioning({
+        .get('/api/boardmodel/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board_model.getSensors
         }))
-        .delete('/boardmodel/:id/sensor', versioning({
+        .delete('/api/boardmodel/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board_model.removeSensor
         }))
         /*________________________________________________
         *_____________________BOARD_______________________
         *_________________________________________________*/
-        .post('/board', versioning({
+        .post('/api/board', versioning({
             "1.0.0": controllers.v1_0_0.board.create
         }))
-        .get('/board/:id', versioning({
+        .get('/api/board/:id', versioning({
             "1.0.0": controllers.v1_0_0.board.getById
         }))
-        .post('/board/:id/patient', versioning({
+        .post('/api/board/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.board.addPatientToBoard
         }))
-        .delete('/board/:id/patient', versioning({
+        .delete('/api/board/:id/patient', versioning({
             "1.0.0": controllers.v1_0_0.board.removePatientFromBoard
         }))
-        .get('/board/:id/sensor', versioning({
+        .get('/api/board/:id/sensor', versioning({
             "1.0.0": controllers.v1_0_0.board.getSensorsFromBoard
         }))
-        .put('/board/:id/exchange', versioning({
+        .put('/api/board/:id/exchange', versioning({
             "1.0.0": controllers.v1_0_0.board.exchange
         }))
-        .put('/board/:id/warnings', versioning({
+        .put('/api/board/:id/warnings', versioning({
             "1.0.0": controllers.v1_0_0.board.switchWarnings
         }))
-        .get('/inactive/board', versioning({
+        .get('/api/inactive/board', versioning({
             "1.0.0": controllers.v1_0_0.board.listInactive
         }))
         /*________________________________________________
         *____________________PATIENT______________________
         *_________________________________________________*/
-        .put('/patient/:id/biometric', versioning({
+        .put('/api/patient/:id/biometric', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateBiometric
         }))
-        .get('/patient/:id/board', versioning({
+        .get('/api/patient/:id/board', versioning({
             "1.0.0": controllers.v1_0_0.patient.getBoardsFromPatient
         }))
-        .put('/patient/:id/profile', versioning({
+        .put('/api/patient/:id/profile', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateProfile
         }))
-        .post('/patient/:id/doctor', versioning({
+        .post('/api/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.addDoctor
         }))
-        .put('/patient/:id/doctor', versioning({
+        .put('/api/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.acceptAsDoctor
         }))
-        .delete('/patient/:id/doctor', versioning({
+        .delete('/api/patient/:id/doctor', versioning({
             "1.0.0": controllers.v1_0_0.patient.removeDoctor
         }))
-        .post('/patient/:id/photo', versioning({
+        .post('/api/patient/:id/photo', versioning({
             "1.0.0": controllers.v1_0_0.patient.setPhoto
         }))
-        .put('/patient/:id/exam', versioning({
+        .put('/api/patient/:id/exam', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateSchedule
         }))
-        .put('/patient/:id/info', versioning({
+        .put('/api/patient/:id/info', versioning({
             "1.0.0": controllers.v1_0_0.patient.updateInfo
         }))
-        .get('/patient/:id/info', versioning({
+        .get('/api/patient/:id/info', versioning({
             "1.0.0": controllers.v1_0_0.patient.getPatientInfo
         }))
         /*________________________________________________
         *__________________SENSOR MODEL___________________
         *_________________________________________________*/
-        .post('/sensormodel', versioning({
+        .post('/api/sensormodel', versioning({
             "1.0.0": controllers.v1_0_0.sensor_model.create
         }))
-        .get('/sensormodel', versioning({
+        .get('/api/sensormodel', versioning({
             "1.0.0": controllers.v1_0_0.sensor_model.list
         }))
-        .put('/sensormodel/:id', versioning({
+        .put('/api/sensormodel/:id', versioning({
             "1.0.0": controllers.v1_0_0.sensor_model.update
         }))
-        .delete('/sensormodel/:id', versioning({
+        .delete('/api/sensormodel/:id', versioning({
             "1.0.0": controllers.v1_0_0.sensor_model.delete
         }))
         /*________________________________________________
         *____________________RECORDS______________________
         *_________________________________________________*/
-        .post('/record', versioning({
+        .post('/api/record', versioning({
             "1.0.0": controllers.v1_0_0.record.create
         }))
-        .get('/record/sensor/:id/page/:page', versioning({
+        .get('/api/record/sensor/:id/page/:page', versioning({
             "1.0.0": controllers.v1_0_0.record.listFromPage
         }))
-        .get('/record/sensor/:id/start/:sdate/end/:edate', versioning({
+        .get('/api/record/sensor/:id/start/:sdate/end/:edate', versioning({
             "1.0.0": controllers.v1_0_0.record.listBetweenDates
         }))
-        .get('/record/sensor/:sid/patient/:pid/page/:page', versioning({
+        .get('/api/record/sensor/:sid/patient/:pid/page/:page', versioning({
             "1.0.0": controllers.v1_0_0.record.listFromPageByPatient
         }))
-        .get('/record/sensor/:sid/patient/:pid/start/:sdate/end/:edate', versioning({
+        .get('/api/record/sensor/:sid/patient/:pid/start/:sdate/end/:edate', versioning({
             "1.0.0": controllers.v1_0_0.record.listBetweenDatesByPatient
         }))
-        .get('/record/analytic', versioning({
+        .get('/api/record/analytic', versioning({
             "1.0.0": controllers.v1_0_0.record.listAnalyticFiles
         }))
         /*________________________________________________
         *_____________________FILES_______________________
         *_________________________________________________*/
-        .get('/file/:id', versioning({
+        .get('/api/file/:id', versioning({
             "1.0.0": controllers.v1_0_0.manage.fileDownload
         }))
-        .delete('/file/:id', versioning({
+        .delete('/api/file/:id', versioning({
             "1.0.0": controllers.v1_0_0.manage.fileRemove
         }))
         /*________________________________________________
         *_________________PROFILE MODEL___________________
         *_________________________________________________*/
-        .post('/profilemodel', versioning({
+        .post('/api/profilemodel', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.create
         }))
-        .get('/profilemodel', versioning({
+        .get('/api/profilemodel', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.list
         }))
-        .put('/profilemodel/:id', versioning({
+        .put('/api/profilemodel/:id', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.update
         }))
-        .delete('/profilemodel/:id', versioning({
+        .delete('/api/profilemodel/:id', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.delete
         }))
-        .post('/profilemodel/:id/measure', versioning({
+        .post('/api/profilemodel/:id/measure', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.AddMeasure
         }))
-        .delete('/profilemodel/:pid/measure/:mid', versioning({
+        .delete('/api/profilemodel/:pid/measure/:mid', versioning({
             "1.0.0": controllers.v1_0_0.profile_model.removeMeasure
         }))
         /*________________________________________________
         *_____________________ERROR_______________________
         *_________________________________________________*/
-        .get('/error/:page', versioning({
+        .get('/api/error/:page', versioning({
             "1.0.0": controllers.v1_0_0.error.list
         }))
-        .put('/error/:id', versioning({
+        .put('/api/error/:id', versioning({
             "1.0.0": controllers.v1_0_0.error.check
         }))
         /*________________________________________________
         *____________________WARNING______________________
         *_________________________________________________*/
-        .get('/warning/:page', versioning({
+        .get('/api/warning/:page', versioning({
             "1.0.0": controllers.v1_0_0.warning.getWarnings
         }))
-        .get('/warning', versioning({
+        .get('/api/warning', versioning({
             "1.0.0": controllers.v1_0_0.warning.getWarnings
         }))
-        .get('/warning/:page/patient', versioning({
+        .get('/api/warning/:page/patient', versioning({
             "1.0.0": controllers.v1_0_0.warning.getPatientWarnings
         }))
-        .get('/warning/:page/environment', versioning({
+        .get('/api/warning/:page/environment', versioning({
             "1.0.0": controllers.v1_0_0.warning.getEnvironmentWarnings
         }))
-        .put('/warning', versioning({
+        .put('/api/warning', versioning({
             "1.0.0": controllers.v1_0_0.warning.checkWarnings
         }))
         /*________________________________________________
         *_________________NOTIFICATION____________________
         *_________________________________________________*/
-        .get('/notification/:page', versioning({
+        .get('/api/notification/:page', versioning({
             "1.0.0": controllers.v1_0_0.notification.getNotifications
         }))
-        .get('/notification', versioning({
+        .get('/api/notification', versioning({
             "1.0.0": controllers.v1_0_0.notification.getNotifications
         }))
-        .post('/notification', versioning({
+        .post('/api/notification', versioning({
             "1.0.0": controllers.v1_0_0.notification.postNotification
         }))
-        .put('/notification', versioning({
+        .put('/api/notification', versioning({
             "1.0.0": controllers.v1_0_0.notification.checkNotifications
         }))
         /*________________________________________________
         *____________________SENSOR_______________________
         *_________________________________________________*/
-        .get('/sensor/:id', versioning({
+        .get('/api/sensor/:id', versioning({
             "1.0.0": controllers.v1_0_0.sensor.find
         }))
 
