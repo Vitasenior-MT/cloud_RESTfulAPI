@@ -5,7 +5,7 @@ module.exports.seed = (db) => {
 
     db.User.count({ where: { admin: true } }).then(
       count => {
-        if (count < 1) if (process.env.NODE_ENV !== "production") // DEVELOPMENT ENV 
+        if (count < 1) if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "docker") // DEVELOPMENT ENV 
         {
           // console.log("will seed");
           let encrypted = utils.encrypt(["admin@a.aa", "jose@a.aa", "doctor@a.aa", "123qweASD", "passvita", "José António", "Administrator Exemple", "Doctor Exemple", "santarem", "tomar", "39.6003075+-8.3906627", "Rua teste"])
