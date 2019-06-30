@@ -114,7 +114,7 @@ Promise.all([
             // start http server
             server.on('request', app);
 
-            let port = process.env.PORT || 8080;
+            let port = process.env.PORT || 9000;
             server.listen(port, () => {
                 console.log('\x1b[32m%s %d\x1b[0m.', '(PLAIN) Server listening on port', port);
             });
