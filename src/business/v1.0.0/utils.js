@@ -30,7 +30,10 @@ exports.createToken = (obj) => {
       expiresIn: "8h",
       algorithm: "RS256"
     };
-    jwt.sign(payload, process.env.PRIVATE_KEY, options, (error, token) => {
+
+    let prKey="-----BEGIN PRIVATE KEY-----\n"+process.env.PRIVATE_KEY+"=\n-----END PRIVATE KEY-----";
+
+    jwt.sign(payload, prKey, options, (error, token) => {
       if (error) reject({ code: 500, msg: error.message });
       resolve(token);
     });
@@ -43,7 +46,9 @@ exports.validateToken = (token) => {
       algorithms: ["RS256"]
     };
 
-    jwt.verify(token, process.env.PUBLIC_KEY, options, (error, payload) => {
+    let puKey="-----BEGIN PUBLIC KEY-----\n"+process.env.PUBLIC_KEY+"\n-----END PUBLIC KEY-----";
+
+    jwt.verify(token, puKey, options, (error, payload) => {
       if (error) reject({ code: 500, msg: error.message });
       db[payload.role].findOne({ where: { id: payload.id } }).then(
         obj => resolve(obj),
