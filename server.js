@@ -102,8 +102,10 @@ Promise.all([
             // middleware for all routes
             require('./src/middleware')(app);
 
-            // Present Clients SPA
-            app.use('/', express.static(path.resolve(__dirname, 'public')));
+            if (process.env.NODE_ENV !== "docker") {
+                // Present Clients SPA
+                app.use('/', express.static(path.resolve(__dirname, 'public')));
+            }
             // Present Documentation
             app.use('/docs', express.static(path.resolve(__dirname, 'docs')));
 
