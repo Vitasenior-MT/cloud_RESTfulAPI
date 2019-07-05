@@ -125,17 +125,17 @@ exports.sendEmail = (type, to, token) => {
             switch (type) {
                 case "recover_pass":
                     mailOptions = {
-                        to: utils.decrypt(to),
+                        to: to,
                         from: process.env.MAIL_USER,
                         subject: "Vitasenior-MT Password Reset",
-                        html: "<h2>Reset Password</h2><hr><p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p><p>Please use this code to reset your password: <b>' + token + '</b></p><p>If you did not request this, please ignore this email and your password will remain unchanged.</p>"
+                        html: '<h2>Reset Password</h2><hr><p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p><p>Please use this code to reset your password: <b>' + token + '</b></p><p>If you did not request this, please ignore this email and your password will remain unchanged.</p>'
                     }; break;
                 case "confirm_email":
                     mailOptions = {
                         to: utils.decrypt(to),
                         from: process.env.MAIL_USER,
                         subject: "Vitasenior-MT Email Confirmation",
-                        html: '<h2>Confirm Email</h2><hr><p>You are receiving this because you (or someone else) have registered to Vitasenior-MT service.</p><p>Please click <a href="' + process.env.OWN_ADDRESS + 'validate/' + token + '">here</a> to confirm the email</p><p>If you did not request this, please ignore this email and the registration will be removed.</p>'
+                        html: '<h2>Confirm Email</h2><hr><p>You are receiving this because you (or someone else) have registered to Vitasenior-MT service.</p><p>Please click <a href="' + process.env.OWN_ADDRESS + 'api/validate/' + token + '">here</a> to confirm the email</p><p>If you did not request this, please ignore this email and the registration will be removed.</p>'
                     }; break;
                 default: break;
             }
