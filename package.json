@@ -18,7 +18,7 @@
     "body-parser": "~1.0.1",
     "crypto": "^1.0.1",
     "dotenv": "^5.0.0",
-    "express": "~4.0.0",
+    "express": "~4.17.1",
     "express-routes-versioning": "^1.0.1",
     "i18n": "^0.8.3",
     "ibm-cos-sdk": "^1.4.1",
